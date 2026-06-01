@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="骨科備料">
+<title>骨科手術備料查詢</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #131929;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --teal: #14b8a6;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .logo {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .header-title { font-size: 17px; font-weight: 700; }
+  .header-sub { font-size: 11px; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 1px; }
+  .search-wrap { position: relative; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); }
+  .search-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 10px 12px 10px 38px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--text3); }
+
+  /* Filter tabs */
+  .filter-wrap {
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-wrap::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  /* Cards */
+  .cards-wrap { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    active: transform: scale(0.98);
+  }
+  .card:active { transform: scale(0.98); border-color: var(--accent); }
+  .card-header {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+    flex: 1;
+  }
+  .card-chevron {
+    color: var(--text3);
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: transform 0.2s;
+  }
+  .card.open .card-chevron { transform: rotate(180deg); color: var(--accent2); }
+  .card-meta {
+    padding: 0 16px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent2); }
+  .badge-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .badge-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .badge-teal { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+
+  /* Detail panel */
+  .card-detail {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    background: var(--surface2);
+  }
+  .card.open .card-detail { display: block; }
+
+  /* Quick mode strip */
+  .quick-strip {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .quick-btn {
+    flex: 1;
+    padding: 9px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text2);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .quick-btn.qactive {
+    border-color: var(--accent);
+    color: var(--accent2);
+    background: rgba(59,130,246,0.1);
+  }
+
+  /* Sections */
+  .section { margin-bottom: 14px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label span {
+    width: 3px; height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .section-content {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+
+  /* Tags for tools */
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+
+  /* Notes */
+  .note-item {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .note-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .note-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(59,130,246,0.2);
+    color: var(--accent2);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 15px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; max-width: 480px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 16px;
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 10px;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .nav-item.active { color: var(--accent2); }
+  .nav-item svg { width: 22px; height: 22px; }
+
+  /* Stats bar */
+  .stats-bar {
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .stat-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .stat-pill strong { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">🦴</div>
+    <div>
+      <div class="header-title">骨科手術備料查詢</div>
+      <div class="header-sub">Orthopedic Surgical Prep</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" type="text" id="searchInput" placeholder="搜尋術式、器械、耗材..." oninput="doFilter()">
+  </div>
+</div>
+
+<div class="filter-wrap" id="filterWrap"></div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="cards-wrap" id="cardsWrap"></div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="setView('all')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    全部術式
+  </div>
+  <div class="nav-item" onclick="setView('etga')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+    全身麻醉
+  </div>
+  <div class="nav-item" onclick="setView('la')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    局部麻醉
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    id: 1,
+    procedure: "Acromioplasty & Rotator Cuff Repair",
+    dept: "骨科",
+    anesthesia: "ETGA",
+    position: "半坐臥",
+    disinfect: "Alc-BI(謝、戴、吳) / 2%CHG(許、王、賴、林)",
+    tools: ["骨科大基本包(POR01)","Mini Bur(OMB-1)","電鑽(OCDRZ3)","Mini Saw(OCMSZ-1)","Osteotome(OSTM-4)","K-Pin(OKP-1)","Bone file(KOR12)","Right Angle中(C0008M)","小Rongeur(GOR01A)"],
+    supplies: ["10號刀片","20號刀片","4吋褪套+紗繩","OP site 28×30","但丁","Suction tube","清潔片","三角巾","記號筆","Bone Wax","電燒及導電片","Ti-Cron 5號、2號","紗球"],
+    meds: "",
+    notes: ["手術可用鉗釘或不用，術前先與醫師確認","鉗釘有分健保與自費，需廠商事先送來","術前確認是否有送器域及廠商跟刀"]
+  },
+  {
+    id: 2,
+    procedure: "Shoulder Arthroscopy",
+    dept: "骨科",
+    anesthesia: "ETGA",
+    position: "半坐臥 + Shoulder table",
+    disinfect: "2% CHG",
+    tools: ["關節鏡包(POR09)","肩關節鏡器械包(IOR12)","Arthroscopic Inse.(OAI-1)","Arthroscopic Set.(OAI-2)","純被鉗(C0009B)","K-Pin(OKP-1)","電鑽(OCDRZ1)","小鑱鏟(IOR01S)"],
+    supplies: ["11號刀片","4吋褪套","C-arm套","OP site 45×55(×2)","20cc空針+18G","16or18 IC Cath Set.","2000cc N/S","1/8 Hemovac","記號筆","Suction tube","三角巾","Foley+尿袋","Shaver","關節鏡輸液Set","氣化棒","Troca","30度/70度關節鏡","光源線","鏡頭"],
+    meds: "",
+    notes: ["若使用鉗釘有分健保與自費，術前確認廠商","氣化棒要簽自費同意書","Troca計費不收費","Passer Needle計費不收費"]
+  },
+  {
+    id: 3,
+    procedure: "Trigger Finger Release",
+    dept: "骨科",
+    anesthesia: "L.A or IVGS",
+    position: "平臥，Hand table",
+    disinfect: "Alc-BI(謝、戴、吳) / 2%CHG(許、王、賴、林)",
+    tools: ["外科小包(PGS03)","掌腱剪(KOR14)","嬰兒鉤(R0003)","小組織剪(K0006S)","剝離器(KPL04)","驅血帶"],
+    supplies: ["15號刀片","25針頭","10cc空針","4吋褪套"],
+    meds: "2%Xylocaine+E",
+    notes: ["使用驅血帶","Dr.通常用Nylon縫合"]
+  },
+  {
+    id: 4,
+    procedure: "Ganglion Cyst Excision",
+    dept: "骨科",
+    anesthesia: "L.A or IVGS",
+    position: "平臥，Hand table",
+    disinfect: "Alc-BI(謝、戴、吳) / 2%CHG(許、王、賴、林)",
+    tools: ["外科小包(PGS03)","掌腱剪(KOR14)","嬰兒鉤(R0003)","小組織剪(K0006S)","剝離器(KPL04)","12Fr S/Tip(SO0040)","小括匙(K0008S)","小Rongeur(GOR01A)"],
+    supplies: ["15號刀片","25針頭","10cc空針","4吋褪套"],
+    meds: "2%Xylocaine+E",
+    notes: ["使用驅血帶","Dr.通常用Nylon縫合"]
+  }
+];
+
+let currentFilter = 'all';
+let currentSearch = '';
+let openId = null;
+let quickMode = {}; // per card: 'full' or 'quick'
+
+function getFiltered() {
+  return DATA.filter(s => {
+    const matchFilter =
+      currentFilter === 'all' ||
+      (currentFilter === 'etga' && s.anesthesia === 'ETGA') ||
+      (currentFilter === 'la' && s.anesthesia.includes('L.A'));
+    if (!matchFilter) return false;
+    if (!currentSearch) return true;
+    const q = currentSearch.toLowerCase();
+    return s.procedure.toLowerCase().includes(q) ||
+      s.tools.join(' ').toLowerCase().includes(q) ||
+      s.supplies.join(' ').toLowerCase().includes(q) ||
+      s.position.toLowerCase().includes(q);
+  });
+}
+
+function renderFilters() {
+  const filters = [
+    { key: 'all', label: '全部' },
+    { key: 'etga', label: 'ETGA 全身麻醉' },
+    { key: 'la', label: 'L.A / IVGS 局部' },
+  ];
+  document.getElementById('filterWrap').innerHTML = filters.map(f => `
+    <button class="filter-btn ${currentFilter === f.key ? 'active' : ''}" onclick="setFilter('${f.key}')">${f.label}</button>
+  `).join('');
+}
+
+function setFilter(key) {
+  currentFilter = key;
+  renderFilters();
+  renderCards();
+}
+
+function setView(v) {
+  document.querySelectorAll('.nav-item').forEach((el, i) => el.classList.remove('active'));
+  const map = { all: 0, etga: 1, la: 2 };
+  document.querySelectorAll('.nav-item')[map[v]].classList.add('active');
+  setFilter(v);
+}
+
+function doFilter() {
+  currentSearch = document.getElementById('searchInput').value;
+  renderCards();
+}
+
+function aneBadge(ane) {
+  if (ane === 'ETGA') return '<span class="badge badge-blue">ETGA</span>';
+  return '<span class="badge badge-green">L.A / IVGS</span>';
+}
+
+function posBadge(pos) {
+  return `<span class="badge badge-teal">📐 ${pos}</span>`;
+}
+
+function toggleCard(id) {
+  openId = openId === id ? null : id;
+  renderCards();
+  if (openId) {
+    setTimeout(() => {
+      const el = document.getElementById('card-' + openId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+function setQuick(id, mode, e) {
+  e.stopPropagation();
+  quickMode[id] = mode;
+  renderCards();
+}
+
+function renderDetail(s) {
+  const mode = quickMode[s.id] || 'full';
+  const quickContent = mode === 'quick' ? `
+    <div class="section">
+      <div class="section-label"><span style="background:var(--amber)"></span>麻醉 / 姿勢</div>
+      <div class="section-content">${s.anesthesia}｜${s.position}</div>
+    </div>
+    <div class="section">
+      <div class="section-label"><span style="background:var(--accent)"></span>消毒方式</div>
+      <div class="section-content">${s.disinfect}</div>
+    </div>
+    ${s.meds ? `<div class="section">
+      <div class="section-label"><span style="background:var(--red)"></span>藥物</div>
+      <div class="section-content" style="color:#fca5a5;font-weight:500;">${s.meds}</div>
+    </div>` : ''}
+  ` : `
+    <div class="section">
+      <div class="section-label"><span style="background:var(--amber)"></span>姿勢</div>
+      <div class="section-content">${s.position}</div>
+    </div>
+    <div class="section">
+      <div class="section-label"><span style="background:var(--teal)"></span>消毒方式</div>
+      <div class="section-content">${s.disinfect}</div>
+    </div>
+    <div class="section">
+      <div class="section-label"><span style="background:var(--accent)"></span>工具 / 器械</div>
+      <div class="tags">${s.tools.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="section">
+      <div class="section-label"><span style="background:var(--green)"></span>耗材</div>
+      <div class="tags">${s.supplies.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    ${s.meds ? `<div class="section">
+      <div class="section-label"><span style="background:var(--red)"></span>藥物</div>
+      <div class="section-content" style="color:#fca5a5;font-weight:500;">${s.meds}</div>
+    </div>` : ''}
+    ${s.notes.length ? `<div class="section">
+      <div class="section-label"><span style="background:var(--amber)"></span>備註</div>
+      <div class="section-content" style="padding:8px 12px;">
+        ${s.notes.map((n, i) => `<div class="note-item"><span class="note-num">${i+1}</span><span>${n}</span></div>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
+
+  return `
+    <div class="card-detail">
+      <div class="quick-strip">
+        <button class="quick-btn ${mode === 'full' ? 'qactive' : ''}" onclick="setQuick(${s.id},'full',event)">📋 完整備料</button>
+        <button class="quick-btn ${mode === 'quick' ? 'qactive' : ''}" onclick="setQuick(${s.id},'quick',event)">⚡ 術中快查</button>
+      </div>
+      ${quickContent}
+    </div>
+  `;
+}
+
+function renderCards() {
+  const filtered = getFiltered();
+  const wrap = document.getElementById('cardsWrap');
+  const stats = document.getElementById('statsBar');
+
+  stats.innerHTML = `<div class="stat-pill">共 <strong>${filtered.length}</strong> 筆術式</div>`;
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到符合的術式</div></div>`;
+    return;
+  }
+
+  wrap.innerHTML = filtered.map(s => `
+    <div class="card ${openId === s.id ? 'open' : ''}" id="card-${s.id}" onclick="toggleCard(${s.id})">
+      <div class="card-header">
+        <div class="card-title">${s.procedure}</div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-meta">
+        ${aneBadge(s.anesthesia)}
+        ${posBadge(s.position)}
+      </div>
+      ${openId === s.id ? renderDetail(s) : ''}
+    </div>
+  `).join('');
+}
+
+renderFilters();
+renderCards();
+</script>
+</body>
+</html>
