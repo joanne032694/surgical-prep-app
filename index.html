@@ -7,7 +7,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="手術用物手冊">
 <title>手術室手術用物準備手冊</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#5b8fa8">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#faf8f3;--bg2:#f5f2eb;--surface:#fff;--surface2:#fdf9f2;
@@ -613,6 +617,69 @@ function confirmReview(){
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 document.getElementById('reviewOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('reviewOverlay'))closeReview();});
+</script>
+
+<style>
+.install-banner{
+  position:fixed;bottom:96px;left:50%;transform:translateX(-50%);
+  width:calc(100% - 28px);max-width:452px;
+  background:linear-gradient(135deg,#5b8fa8,#3a7a94);
+  color:#fff;border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 4px 20px rgba(91,143,168,0.4);
+  z-index:150;animation:slideUp .4s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.install-banner.hidden{display:none;}
+.install-icon{font-size:32px;flex-shrink:0;}
+.install-text{flex:1;}
+.install-title{font-size:15px;font-weight:700;margin-bottom:2px;}
+.install-sub{font-size:12px;opacity:.85;}
+.install-btn{background:#fff;color:#5b8fa8;border:none;border-radius:8px;font-family:var(--sans);font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.install-close{background:none;border:none;color:rgba(255,255,255,0.7);font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0;}
+</style>
+
+<div class="install-banner hidden" id="installBanner">
+  <div class="install-icon">📲</div>
+  <div class="install-text">
+    <div class="install-title">安裝到手機主畫面</div>
+    <div class="install-sub">像 APP 一樣快速開啟，可離線使用</div>
+  </div>
+  <button class="install-btn" onclick="doInstall()">安裝</button>
+  <button class="install-close" onclick="hideBanner()">✕</button>
+</div>
+
+<script>
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById('installBanner').classList.remove('hidden');
+});
+function doInstall(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{
+    deferredPrompt=null;
+    document.getElementById('installBanner').classList.add('hidden');
+  });
+}
+function hideBanner(){
+  document.getElementById('installBanner').classList.add('hidden');
+}
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('installBanner').classList.add('hidden');
+});
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(e => console.log('SW error', e));
+  });
+}
 </script>
 </body>
 </html>
