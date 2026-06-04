@@ -198,6 +198,34 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 [class*="dept-"] .badge-dept { background: var(--dc-bg); color: var(--dc); border-color: var(--dc-border); }
 [class*="dept-"] .dept-btn-color { background: var(--dc); }
 
+
+/* NOTIFICATION BANNER */
+.notif-banner{
+  background:linear-gradient(135deg,#e67e22,#f39c12);
+  color:#fff;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.notif-banner:active{opacity:.85;}
+.notif-banner.hidden{display:none;}
+.notif-left{display:flex;align-items:center;gap:10px;}
+.notif-icon{font-size:22px;}
+.notif-title{font-size:15px;font-weight:700;}
+.notif-sub{font-size:12px;opacity:.9;margin-top:1px;}
+.notif-arrow{font-size:20px;opacity:.8;}
+
+/* PENDING LIST MODAL */
+.pending-modal{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:100%;max-width:448px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,0.15);max-height:85vh;overflow-y:auto;}
+.pending-modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+.pending-modal-sub{font-size:13px;color:var(--text3);margin-bottom:16px;}
+.pending-item{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r);padding:13px 14px;margin-bottom:10px;cursor:pointer;transition:all .15s;}
+.pending-item:hover{border-color:var(--amber);box-shadow:0 2px 8px rgba(200,129,58,0.15);}
+.pending-item-proc{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.pending-item-meta{font-size:12px;color:var(--text3);display:flex;flex-wrap:wrap;gap:6px 14px;}
+.pending-item-meta span strong{color:var(--text2);}
+.btn-review-now{background:var(--green);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;padding:6px 14px;cursor:pointer;margin-top:8px;transition:all .2s;display:inline-block;}
+
 </style>
 </head>
 <body>
@@ -222,6 +250,18 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       <span class="user-role" id="userRoleDisplay"></span>
     </div>
     <button class="logout-btn" onclick="doLogout()">登出</button>
+  </div>
+
+  <!-- Notification Banner -->
+  <div class="notif-banner hidden" id="notifBanner" onclick="openPendingList()">
+    <div class="notif-left">
+      <div class="notif-icon">🔔</div>
+      <div>
+        <div class="notif-title" id="notifTitle">你有待審核的術式</div>
+        <div class="notif-sub" id="notifSub">點此查看並審核</div>
+      </div>
+    </div>
+    <div class="notif-arrow">›</div>
   </div>
   <div class="header">
     <div class="header-top">
@@ -255,6 +295,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       局部麻醉
     </div>
   </div>
+
+  <!-- Pending List Modal -->
+  <div class="modal-overlay" id="pendingListOverlay">
+    <div class="pending-modal">
+      <div class="pending-modal-title">
+        <span>🔔 待審核清單</span>
+        <button class="modal-close" onclick="closePendingList()">✕</button>
+      </div>
+      <div class="pending-modal-sub" id="pendingListSub"></div>
+      <div id="pendingListContent"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Edit Modal -->
@@ -351,7 +404,7 @@ function doLogin(){
   document.getElementById('mainApp').style.display='block';
   document.getElementById('userNameDisplay').textContent=name;
   document.getElementById('userRoleDisplay').textContent='｜'+getUserLabel(name);
-  renderDepts();renderFilters();renderCards();
+  renderDepts();renderFilters();renderCards();updateNotifBanner();
 }
 function doLogout(){
   currentUser=null;
@@ -574,7 +627,7 @@ function saveRecord(){
     DATA.push(rec);
     showToast('📝 新術式已送出，等待審核者審核');
   }
-  saveData();closeModal();renderDepts();renderCards();
+  saveData();closeModal();renderDepts();renderCards();updateNotifBanner();
 }
 
 // REVIEW
@@ -611,12 +664,57 @@ function confirmReview(){
   DATA[idx].reviewer=selectedReviewer;
   DATA[idx].reviewDate=today;
   DATA[idx].pending=null;
-  saveData();closeReview();renderCards();showToast('✅ 審核通過，內容已正式公佈！');
+  saveData();closeReview();renderCards();updateNotifBanner();showToast('✅ 審核通過，內容已正式公佈！');
+}
+
+
+// ===== NOTIFICATION =====
+function updateNotifBanner(){
+  if(!currentUser) return;
+  // Find pending items this user can review
+  const myPending = DATA.filter(s => s.pending && canReviewDept(currentUser, s.dept));
+  const banner = document.getElementById('notifBanner');
+  const title = document.getElementById('notifTitle');
+  const sub = document.getElementById('notifSub');
+  if(myPending.length > 0){
+    banner.classList.remove('hidden');
+    title.textContent = `你有 ${myPending.length} 筆術式待審核`;
+    sub.textContent = `點此查看並審核 → 審核通過後正式公佈`;
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+function openPendingList(){
+  if(!currentUser) return;
+  const myPending = DATA.filter(s => s.pending && canReviewDept(currentUser, s.dept));
+  document.getElementById('pendingListSub').textContent = 
+    `共 ${myPending.length} 筆術式等待你審核`;
+  
+  document.getElementById('pendingListContent').innerHTML = myPending.length === 0
+    ? '<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">目前沒有待審核的術式</div></div>'
+    : myPending.map(s => `
+      <div class="pending-item">
+        <div class="pending-item-proc">${s.pending.procedure || s.procedure}</div>
+        <div class="pending-item-meta">
+          <span>🏥 <strong>${s.dept}</strong></span>
+          <span>✏️ 修改者：<strong>${s.pending.editor}</strong></span>
+          <span>📅 ${s.pending.editorDate}</span>
+        </div>
+        <button class="btn-review-now" onclick="closePendingList();openReview(${s.id},event)">立即審核</button>
+      </div>
+    `).join('');
+  
+  document.getElementById('pendingListOverlay').classList.add('show');
+}
+function closePendingList(){
+  document.getElementById('pendingListOverlay').classList.remove('show');
 }
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 document.getElementById('reviewOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('reviewOverlay'))closeReview();});
+document.getElementById('pendingListOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('pendingListOverlay'))closePendingList();});
 </script>
 
 <style>
