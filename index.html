@@ -274,38 +274,28 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 <script>
 const STORAGE_KEY = 'surgical_prep_v5';
 const JSONBIN_KEY = '$2a$10$7fHIqfHAhyGUWet8qM4hze3yUwYgugTZNCLe9tBljpkp.XiSiBdFO';
-const JSONBIN_BIN_KEY = 'surgical_prep_bin_id';
+const JSONBIN_BIN_ID = '6a268b12da38895dfe98c3e3';
 
 async function syncToCloud(data) {
   try {
-    const binId = localStorage.getItem(JSONBIN_BIN_KEY);
-    if(binId) {
-      // Update existing bin
-      await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-        method: 'PUT',
-        headers: {'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},
-        body: JSON.stringify({data})
-      });
-    } else {
-      // Create new bin
-      const res = await fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY,'X-Bin-Name':'SurgicalPrep'},
-        body: JSON.stringify({data})
-      });
-      const json = await res.json();
-      localStorage.setItem(JSONBIN_BIN_KEY, json.metadata.id);
-    }
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify({data})
+    });
+    if(!res.ok) console.error('Sync failed:', res.status);
   } catch(e) { console.error('Cloud sync error:', e); }
 }
 
 async function loadFromCloud() {
   try {
-    const binId = localStorage.getItem(JSONBIN_BIN_KEY);
-    if(!binId) return null;
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: {'X-Master-Key':JSONBIN_KEY}
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
     });
+    if(!res.ok) return null;
     const json = await res.json();
     return json.record?.data || null;
   } catch(e) { return null; }
