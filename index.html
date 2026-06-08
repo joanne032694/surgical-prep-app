@@ -237,6 +237,33 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .diff-tag.new{background:rgba(192,70,74,0.15);color:var(--red);}
 .c-blue{color:#5b8fa8;}
 
+
+/* FULLPAGE DETAIL */
+.fullpage-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;overflow-y:auto;padding-bottom:90px;}
+.fullpage-overlay.show{display:block;}
+.fullpage-header{background:rgba(250,248,243,0.97);border-bottom:2px solid var(--border2);padding:14px 16px;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;}
+.fullpage-back{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:20px;flex-shrink:0;transition:all .15s;}
+.fullpage-back:active{background:var(--bg2);}
+.fullpage-header-info{flex:1;min-width:0;}
+.fullpage-dept{font-size:13px;color:var(--text3);margin-bottom:2px;}
+.fullpage-title{font-size:18px;font-weight:700;color:var(--text);line-height:1.3;}
+.fullpage-edit{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;transition:all .15s;}
+.fullpage-edit:active{background:var(--accent-dim);}
+.fullpage-body{padding:16px;}
+.fullpage-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.fullpage-quick{display:flex;gap:8px;margin-bottom:16px;}
+.fullpage-quick-btn{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--surface);color:var(--text3);font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
+.fullpage-quick-btn.active{border-color:var(--accent);color:var(--accent2);background:var(--accent-dim);font-weight:700;}
+.fullpage-section{margin-bottom:16px;}
+.fullpage-section-label{font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.fullpage-section-label::before{content:"";width:4px;height:15px;border-radius:2px;background:currentColor;opacity:0.6;flex-shrink:0;}
+.fullpage-content{font-size:17px;color:var(--text2);line-height:1.85;background:var(--surface);border-radius:var(--rs);padding:13px 15px;border:1.5px solid var(--border);}
+.fullpage-tags{display:flex;flex-wrap:wrap;gap:7px;}
+.fullpage-tag{font-size:15px;padding:7px 14px;border-radius:var(--rs);background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);}
+.fullpage-record{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:11px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px 16px;}
+.fullpage-record span{font-size:13px;color:var(--text3);}
+.fullpage-record strong{color:var(--text2);font-weight:600;}
+
 </style>
 </head>
 <body>
@@ -305,6 +332,22 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       局部麻醉
     </div>
+  </div>
+
+
+  <!-- Fullpage Detail -->
+  <div class="fullpage-overlay" id="fullpageOverlay">
+    <div class="fullpage-header">
+      <button class="fullpage-back" onclick="closeFullpage()">‹</button>
+      <div class="fullpage-header-info">
+        <div class="fullpage-dept" id="fp_dept"></div>
+        <div class="fullpage-title" id="fp_title"></div>
+      </div>
+      <button class="fullpage-edit" id="fp_editBtn" onclick="fullpageEdit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>
+    <div class="fullpage-body" id="fp_body"></div>
   </div>
 
   <!-- Pending List Modal -->
@@ -477,7 +520,7 @@ function deptBadge(d){
   return`<span class="badge" style="background:${color}18;color:${color};border-color:${color}40;font-size:14px;">${d}</span>`;
 }
 
-function toggleCard(id){openId=openId===id?null:id;renderCards();if(openId)setTimeout(()=>{const el=document.getElementById('card-'+openId);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},60);}
+function toggleCard(id){ openFullpage(id); }
 function setQuick(id,m,e){e.stopPropagation();quickMode[id]=m;renderCards();}
 
 function renderRecordInfo(s){
@@ -593,7 +636,7 @@ function renderCards(){
         </div>
       </div>
       <div class="card-meta">${deptBadge(s.dept)}${aneBadge(s.anesthesia)}<span class="badge badge-pos">📐 ${s.position}</span>${statusBadge}${pendingBadge}</div>
-      ${openId===s.id?renderDetail(s):''}
+
     </div>`;
   }).join('');
 }
@@ -719,6 +762,105 @@ function confirmReview(){
   saveData();closeReview();renderCards();updateNotifBanner();showToast('✅ 審核通過，內容已正式公佈！');
 }
 
+
+
+// ===== FULLPAGE =====
+let fullpageId = null;
+let fullpageMode = 'full';
+
+function openFullpage(id){
+  fullpageId = id;
+  fullpageMode = 'full';
+  renderFullpage();
+  document.getElementById('fullpageOverlay').classList.add('show');
+  document.getElementById('fullpageOverlay').scrollTop = 0;
+}
+
+function closeFullpage(){
+  document.getElementById('fullpageOverlay').classList.remove('show');
+  fullpageId = null;
+}
+
+function fullpageEdit(){
+  if(fullpageId) openEdit(fullpageId, new Event('click'));
+}
+
+function setFullpageMode(m){
+  fullpageMode = m;
+  renderFullpage();
+}
+
+function renderFullpage(){
+  const s = DATA.find(d=>d.id===fullpageId);
+  if(!s) return;
+  const color = (typeof DEPT_COLORS !== 'undefined' ? DEPT_COLORS[s.dept] : null) || '#5b8fa8';
+
+  document.getElementById('fp_dept').textContent = s.dept;
+  document.getElementById('fp_dept').style.color = color;
+  document.getElementById('fp_title').textContent = s.procedure;
+
+  // Status badges
+  const statusBadge = s.status==='已審核'
+    ?'<span class="badge badge-approved">✓ 已審核</span>'
+    :'<span class="badge badge-pending">⏳ 待審核</span>';
+  const aneBadge2 = (function(a){
+    const u=a.toUpperCase();
+    if(u.includes('ETGA'))return`<span class="badge badge-blue">ETGA</span>`;
+    if(u.includes('L.A')||u.includes('IVG'))return`<span class="badge badge-green">L.A/IVG</span>`;
+    return`<span class="badge badge-amber">${a.split(' ')[0]}</span>`;
+  })(s.anesthesia);
+  const pendingBadge = s.pending?'<span class="badge badge-draft">📝 待審版本</span>':'';
+
+  const m = fullpageMode;
+  let body = '';
+
+  // Meta badges
+  body += `<div class="fullpage-meta">
+    <span class="badge" style="background:${color}18;color:${color};border-color:${color}40;font-size:13px;">${s.dept}</span>
+    ${aneBadge2}
+    <span class="badge badge-pos">📐 ${s.position}</span>
+    ${statusBadge}${pendingBadge}
+  </div>`;
+
+  // Quick strip
+  body += `<div class="fullpage-quick">
+    <button class="fullpage-quick-btn ${m==='full'?'active':''}" onclick="setFullpageMode('full')">📋 完整備料</button>
+    <button class="fullpage-quick-btn ${m==='quick'?'active':''}" onclick="setFullpageMode('quick')">⚡ 術中快查</button>
+  </div>`;
+
+  // Record info
+  let recParts = [];
+  recParts.push(`<span>📝 原編著：<strong>${s.author||'—'}</strong></span>`);
+  if(s.editor) recParts.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
+  if(s.reviewer) recParts.push(`<span>✅ 審核者：<strong>${s.reviewer}</strong>${s.reviewDate?' ('+s.reviewDate+')':''}</span>`);
+  body += `<div class="fullpage-record">${recParts.join('')}</div>`;
+
+  // Pending notice
+  if(s.pending){
+    body += renderPendingNotice(s);
+  }
+
+  if(m==='quick'){
+    body += `
+      <div class="fullpage-section"><div class="fullpage-section-label c-amber">麻醉 ／ 姿勢</div><div class="fullpage-content">${s.anesthesia} ｜ ${s.position}</div></div>
+      <div class="fullpage-section"><div class="fullpage-section-label c-teal">消毒方式</div><div class="fullpage-content">${s.disinfect||'—'}</div></div>
+      ${s.meds?`<div class="fullpage-section"><div class="fullpage-section-label c-red">藥物</div><div class="fullpage-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
+    `;
+  } else {
+    body += `
+      <div class="fullpage-section"><div class="fullpage-section-label c-amber">姿勢</div><div class="fullpage-content">${s.position||'—'}</div></div>
+      <div class="fullpage-section"><div class="fullpage-section-label c-teal">消毒方式</div><div class="fullpage-content">${s.disinfect||'—'}</div></div>
+      ${(s.tools&&s.tools.length)?`<div class="fullpage-section"><div class="fullpage-section-label c-accent">工具 ／ 器械</div><div class="fullpage-tags">${s.tools.map(t=>`<span class="fullpage-tag">${t}</span>`).join('')}</div></div>`:''}
+      ${(s.supplies&&s.supplies.length)?`<div class="fullpage-section"><div class="fullpage-section-label c-green">耗材</div><div class="fullpage-tags">${s.supplies.map(t=>`<span class="fullpage-tag">${t}</span>`).join('')}</div></div>`:''}
+      ${s.meds?`<div class="fullpage-section"><div class="fullpage-section-label c-red">藥物</div><div class="fullpage-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
+      ${s.implantNotes?`<div class="fullpage-section"><div class="fullpage-section-label c-amber">骨材備註</div><div class="fullpage-content">${s.implantNotes}</div></div>`:''}
+      ${s.doctorHabits?`<div class="fullpage-section"><div class="fullpage-section-label c-teal">醫生習慣</div><div class="fullpage-content">${s.doctorHabits}</div></div>`:''}
+      ${s.notes?`<div class="fullpage-section"><div class="fullpage-section-label c-accent">注意事項</div><div class="fullpage-content">${s.notes}</div></div>`:''}
+    `;
+  }
+
+  document.getElementById('fp_body').innerHTML = body;
+}
 
 // ===== NOTIFICATION =====
 function updateNotifBanner(){
