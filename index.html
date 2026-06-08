@@ -391,7 +391,7 @@ const DEFAULT_DATA=[{"id": 1, "dept": "骨科", "procedure": "Acromioplasty & Ro
 
 
 function isReviewer(name){ return ADMINS.includes(name)||Object.values(DEPT_REVIEWERS).some(a=>a.includes(name)); }
-function canReviewDept(name,dept){ return ADMINS.includes(name)||(DEPT_REVIEWERS[dept]||[]).includes(name); }
+function canReviewDept(name,dept){ if(ADMINS.includes(name)) return true; return (DEPT_REVIEWERS[dept]||[]).includes(name); }
 function getUserLabel(name){
   if(ADMINS.includes(name)) return '全科管理員';
   const depts=Object.entries(DEPT_REVIEWERS).filter(([d,a])=>a.includes(name)).map(([d])=>d);
@@ -571,6 +571,7 @@ function renderCards(){
   let statsHtml=`<div class="stat-pill">顯示 <strong>${f.length}</strong> 筆</div><div class="stat-pill">本科 <strong>${deptCount}</strong> 筆</div><div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
   if(pendingCount>0) statsHtml+=`<div class="stat-pill" style="border-color:var(--amber);color:var(--amber);">⏳ 待審核 <strong>${pendingCount}</strong> 筆</div>`;
   document.getElementById('statsBar').innerHTML=statsHtml;
+  updateNotifBanner();
 
   const w=document.getElementById('cardsWrap');
   if(!f.length){w.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到符合的術式</div></div>`;return;}
@@ -678,9 +679,18 @@ function openReview(id,e){
   reviewTargetId=id;
   selectedReviewer=null;
   const s=DATA.find(d=>d.id===id);
-  const reviewersList=ADMINS.includes(currentUser)
-    ?(DEPT_REVIEWERS[s.dept]||[]).length>0?(DEPT_REVIEWERS[s.dept]):[currentUser]
-    :[currentUser];
+  // Admins see all dept reviewers; dept reviewers see themselves + dept colleagues
+  let reviewersList;
+  if(ADMINS.includes(currentUser)){
+    reviewersList=(DEPT_REVIEWERS[s.dept]||[]).length>0
+      ?[...DEPT_REVIEWERS[s.dept], ...ADMINS]
+      :ADMINS;
+  } else {
+    // Dept reviewer - show all colleagues in same dept
+    reviewersList=DEPT_REVIEWERS[s.dept]||[currentUser];
+  }
+  // Remove duplicates
+  reviewersList=[...new Set(reviewersList)];
   document.getElementById('reviewProcName').textContent=`「${s.pending?.procedure||s.procedure}」`;
   document.getElementById('reviewerList').innerHTML=reviewersList.map(r=>
     `<button class="reviewer-btn" onclick="selectReviewer('${r}',this)">${r}</button>`
@@ -720,8 +730,9 @@ function updateNotifBanner(){
   const sub = document.getElementById('notifSub');
   if(myPending.length > 0){
     banner.classList.remove('hidden');
-    title.textContent = `你有 ${myPending.length} 筆術式待審核`;
-    sub.textContent = `點此查看並審核 → 審核通過後正式公佈`;
+    const depts=[...new Set(myPending.map(s=>s.dept))].join('、');
+    title.textContent = `🔴 你有 ${myPending.length} 筆術式待審核`;
+    sub.textContent = `科別：${depts} → 點此查看並審核`;
   } else {
     banner.classList.add('hidden');
   }
