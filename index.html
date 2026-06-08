@@ -519,7 +519,12 @@ function deptBadge(d){
   return`<span class="badge" style="background:${color}18;color:${color};border-color:${color}40;font-size:14px;">${d}</span>`;
 }
 
-function toggleCard(id){ openFullpage(id); }
+function toggleCard(id){ 
+  const fp = document.getElementById('fullpageOverlay');
+  if(fp){ 
+    openFullpage(id); 
+  }
+}
 function setQuick(id,m,e){e.stopPropagation();quickMode[id]=m;renderCards();}
 
 function renderRecordInfo(s){
@@ -764,12 +769,16 @@ function openFullpage(id){
   fullpageId = id;
   fullpageMode = 'full';
   renderFullpage();
-  document.getElementById('fullpageOverlay').classList.add('show');
-  document.getElementById('fullpageOverlay').scrollTop = 0;
+  const fpEl = document.getElementById('fullpageOverlay');
+  fpEl.style.cssText = 'display:block !important;';
+  fpEl.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
 }
 
 function closeFullpage(){
-  document.getElementById('fullpageOverlay').classList.remove('show');
+  const fpEl = document.getElementById('fullpageOverlay');
+  fpEl.style.cssText = 'display:none !important;';
+  document.body.style.overflow = '';
   fullpageId = null;
 }
 
