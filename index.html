@@ -273,18 +273,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 
 <script>
 const STORAGE_KEY = 'surgical_prep_v5';
-const JSONBIN_KEY = '$2a$10$7fHIqfHAhyGUWet8qM4hze3yUwYgugTZNCLe9tBljpkp.XiSiBdFO';
-const JSONBIN_BIN_ID = '6a268b12da38895dfe98c3e3';
+const FIREBASE_URL = 'https://surgicalprep-9cfa1-default-rtdb.firebaseio.com';
 
 async function syncToCloud(data) {
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    const res = await fetch(`${FIREBASE_URL}/data.json`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_KEY
-      },
-      body: JSON.stringify({data})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
     if(!res.ok) console.error('Sync failed:', res.status);
   } catch(e) { console.error('Cloud sync error:', e); }
@@ -292,12 +288,10 @@ async function syncToCloud(data) {
 
 async function loadFromCloud() {
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
+    const res = await fetch(`${FIREBASE_URL}/data.json`);
     if(!res.ok) return null;
     const json = await res.json();
-    return json.record?.data || null;
+    return json || null;
   } catch(e) { return null; }
 }
 const ALL_DEPTS = ["全部科別", "眼科", "一般外科", "直腸外科", "胸腔外科", "乳房外科", "小兒外科", "神經外科", "整形外科", "骨科", "泌尿科", "耳鼻喉科", "心臟外科", "口腔外科", "達文西手術", "婦產科"];
@@ -353,7 +347,11 @@ async function doLogin(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
   } else {
-    showToast('✅ 使用本機資料');
+    // First time - upload default data to cloud
+    DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    await syncToCloud(DATA);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    showToast('✅ 已初始化雲端資料（' + DATA.length + ' 筆）');
   }
   renderAll();
 }
