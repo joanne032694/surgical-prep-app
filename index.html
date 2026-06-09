@@ -40,7 +40,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .user-role{font-size:12px;color:var(--text3);margin-left:6px;}
 .logout-btn{font-size:12px;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:999px;padding:4px 12px;cursor:pointer;}
 /* NOTIF */
-.notif-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+.notif-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;position:sticky;top:0;z-index:120;box-shadow:0 2px 12px rgba(192,57,43,0.4);animation:notifPulse 1.5s ease-in-out infinite;}
+@keyframes notifPulse{0%,100%{opacity:1}50%{opacity:0.85}}
 .notif-banner.hidden{display:none;}
 .notif-left{display:flex;align-items:center;gap:10px;}
 .notif-icon{font-size:22px;}
@@ -731,7 +732,7 @@ document.getElementById('reviewOverlay').addEventListener('click',e=>{ if(e.targ
 
 // NOTIF
 function updateNotif(){
-  const myPending=DATA.filter(s=>s.pending&&canReview(currentUser,s.dept));
+  const myPending=DATA.filter(s=>s.pending && s.pending.editor && canReview(currentUser,s.dept));
   const banner=document.getElementById('notifBanner');
   if(myPending.length>0){
     banner.classList.remove('hidden');
