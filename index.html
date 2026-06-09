@@ -303,14 +303,13 @@ const STORAGE_KEY = 'surgical_prep_v5';
 const FIREBASE_URL = 'https://surgicalprep-9cfa1-default-rtdb.firebaseio.com';
 
 async function syncToCloud(data) {
-  try {
-    const res = await fetch(`${FIREBASE_URL}/data.json`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if(!res.ok) console.error('Sync failed:', res.status);
-  } catch(e) { console.error('Cloud sync error:', e); }
+  const res = await fetch(`${FIREBASE_URL}/data.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if(!res.ok) throw new Error('Sync failed: ' + res.status);
+  return true;
 }
 
 async function loadFromCloud() {
@@ -334,9 +333,14 @@ function loadData(){
   }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
-function saveData(){
+async function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
-  syncToCloud(DATA);
+  try {
+    await syncToCloud(DATA);
+    showToast('☁️ 已同步到雲端，其他人可看到');
+  } catch(e) {
+    showToast('⚠️ 雲端同步失敗：' + e.message);
+  }
 }
 
 let DATA = loadData();
@@ -646,7 +650,7 @@ function viewPhoto(src){
 document.getElementById('photoViewerClose').addEventListener('click',()=>document.getElementById('photoViewer').classList.remove('show'));
 document.getElementById('photoViewer').addEventListener('click',e=>{ if(e.target.id==='photoViewer') document.getElementById('photoViewer').classList.remove('show'); });
 
-function saveRecord(){
+async function saveRecord(){
   const p=document.getElementById('f_procedure').value.trim();
   const a=document.getElementById('f_anesthesia').value.trim();
   if(!p||!a){ showToast('⚠️ 術式名稱和麻醉方式為必填'); return; }
@@ -666,7 +670,6 @@ function saveRecord(){
       toolPhotos:editToolPhotos, posPhotos:editPosPhotos,
       editor:currentUser, editorDate:today
     };
-    showToast('📝 已送出，等待審核者審核');
   }else{
     const newId=Math.max(0,...DATA.map(d=>d.id))+1;
     DATA.push({
@@ -684,9 +687,10 @@ function saveRecord(){
       status:'待審核', author:currentUser,
       editor:'', editorDate:'', reviewer:'', reviewDate:'', pending:null
     });
-    showToast('✅ 新增成功');
   }
-  saveData(); closeModal(); renderAll();
+  closeModal();
+  await saveData();
+  renderAll();
   if(fpId) renderFp();
 }
 
@@ -707,7 +711,7 @@ function selectReviewer(name,btn){
   btn.classList.add('selected');
 }
 document.getElementById('reviewCancel').addEventListener('click',()=>{ document.getElementById('reviewOverlay').classList.remove('show'); });
-document.getElementById('reviewOk').addEventListener('click',()=>{
+document.getElementById('reviewOk').addEventListener('click',async ()=>{
   if(!selectedReviewer){ showToast('請選擇審核者姓名'); return; }
   const idx=DATA.findIndex(d=>d.id===reviewTargetId);
   if(idx<0) return;
@@ -718,11 +722,10 @@ document.getElementById('reviewOk').addEventListener('click',()=>{
   DATA[idx].reviewer=selectedReviewer;
   DATA[idx].reviewDate=today;
   DATA[idx].pending=null;
-  saveData();
   document.getElementById('reviewOverlay').classList.remove('show');
+  await saveData();
   renderAll();
   if(fpId===reviewTargetId) renderFp();
-  showToast('✅ 審核通過，內容已正式公佈！');
 });
 document.getElementById('reviewOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('reviewOverlay')) document.getElementById('reviewOverlay').classList.remove('show'); });
 
