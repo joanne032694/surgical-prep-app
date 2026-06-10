@@ -398,11 +398,21 @@ async function doLogin(){
   showToast('⏳ 載入最新資料...');
   const cloudData = await loadFromCloud();
   if(cloudData && cloudData.length > 0){
-    DATA = cloudData;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-    showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
+    // 比對 DEFAULT_DATA，把雲端沒有的新筆數補進去
+    const cloudIds = new Set(cloudData.map(d=>d.id));
+    const missing = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
+    if(missing.length > 0){
+      DATA = [...cloudData, ...missing];
+      await syncToCloud(DATA);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+      showToast('✅ 已補入 ' + missing.length + ' 筆新資料並同步（共 ' + DATA.length + ' 筆）');
+    } else {
+      DATA = cloudData;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+      showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
+    }
   } else {
-    // First time - upload default data to cloud
+    // 第一次，用 DEFAULT_DATA 初始化雲端
     DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
     await syncToCloud(DATA);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
