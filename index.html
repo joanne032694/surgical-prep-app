@@ -1,278 +1,214 @@
-<script>
-// ==================== 1. 常數與預設資料優先宣告 ====================
-const STORAGE_KEY = 'surgical_prep_v5';
-const FIREBASE_URL = 'https://surgicalprep-9cfa1-default-rtdb.firebaseio.com';
-
-const ALL_DEPTS = ["全部科別", "眼科", "一般外科", "直腸外科", "胸腔外科", "乳房外科", "小兒外科", "神經外科", "整形外科", "骨科", "泌尿科", "耳鼻喉科", "心臟外科", "口腔外科", "達文西手術", "婦產科"];
-const DEPT_REVIEWERS = {"眼科": ["王嘉羚", "張佩琪", "蕭帆妤", "王婷婷"], "一般外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "直腸外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "胸腔外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "乳房外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "小兒外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "神經外科": ["羅秀如", "程郁淳", "蕭帆妤", "王婷婷"], "整形外科": ["王玉仙", "辜嬿潔", "蕭帆妤", "王婷婷"], "骨科": ["卓湘晴", "黃淑嬅", "徐禾沐", "蕭帆妤", "王婷婷"], "泌尿科": ["郭妍伶", "林靜子", "蕭帆妤", "王婷婷"], "耳鼻喉科": ["洪怡婷", "蕭帆妤", "王婷婷"], "心臟外科": ["黃怡婷", "汪瑄柔", "陳玉茹", "蕭帆妤", "王婷婷"], "口腔外科": ["林昕澄", "謝佩芳", "蕭帆妤", "王婷婷"], "達文西手術": ["高靖緹", "周芳怡", "蕭帆妤", "王婷婷"], "婦產科": ["楊衣甄", "蕭帆妤", "王婷婷"]};
-const ADMINS = ["王婷婷", "蕭帆妤"];
-const DEPT_COLORS = {"眼科": "#e74c8b", "一般外科": "#e86b2a", "直腸外科": "#d4572a", "胸腔外科": "#3a7bd5", "乳房外科": "#c0478a", "小兒外科": "#27ae8f", "神經外科": "#7c5fd4", "整形外科": "#e0903a", "骨科": "#2e86c1", "泌尿科": "#16a085", "耳鼻喉科": "#d4b030", "心臟外科": "#c0392b", "口腔外科": "#7d6608", "達文西手術": "#1abc9c", "婦產科": "#e056a0"};
-
-const DEFAULT_DATA = [
-  {"id": 1, "dept": "骨科", "procedure": "Acromioplasty & Rotator Cuff Repair", "anesthesia": "ETGA", "position": "半坐臥", "disinfect": "Alc-BI(謝、戴、吳) / 2%CHG(許、王、賴、林)", "tools": "骨科大基本包(POR01) / Mini Bur(OMB-1) / 電鑽(OCDRZ3) / Mini Saw(OCMSZ-1) / Osteotome(OSTM-4) / K-Pin(OKP-1) / Bone file(KOR12) / Right Angle中(C0008M) / 小Rongeur(GOR01A)", "supplies": "10號刀片 / 20號刀片 / 4吋襪套+紗繃 / OP site 28×30 / 但丁 / Suction tube / 清潔片 / 三角巾 / 記號筆 / Bone Wax / 電燒及導電片 / Ti-Cron 5號、2號 / 紗球", "meds": "", "implantNotes": "1.手術可用錨釘或不用，術前先與醫師確認 2.錨釘有分健保與自費，需廠商事先送來 3.術前確認是否有送器械及廠商跟刀", "doctorHabits": "Dr.戴：消毒Alc-BI，術後A.T.K消毒，OP site 30×28，縫線1/0+2/0+4/0 Polysorb角針+美容膠+白紗+3M+三角巾 / Dr.吳：消毒Alc-BI，縫線1/0+2/0 Vicryl+4/0 Polysorb / Dr.許：消毒2%CHG，縫線1/0+2/0 Vicryl+4/0 Nylon+Tetra藥膏", "notes": "1.病人半坐臥，Myostand要先鋪起來 2.多上1包中單 3.Saw、Burr、Drill by order再上", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null},
-  // 💡 請在此處維持貼上你原本 id 2 到 id 52 的所有手術資料 💡
-  {"id": 53, "dept": "骨科", "procedure": "Unilateral Biportal Endoscopy", "anesthesia": "ETGA", "position": "俯臥(胸:長條脂肪墊×2 / 小腿:枕頭×1 / 膝蓋:甜甜圈×2)", "disinfect": "Alc-BI", "tools": "雙通道脊椎內視鏡系統(UBE-1) / 骨科後開手術包(POR07) / 骨科脊椎手術包(POR06) / 婦科剖腹包", "supplies": "11號刀片 / 20號刀片 / 10號刀片 / C-arm套 / 4吋紗繃 / 3cc空針 / 10cc空針 / Foley+尿袋 / 記號筆 / S/tube×2 / OP site 28×30 / OP site 45×55 / 2000cc N/S / 關節鏡輸液Set / Adrenalin(Amp) / Bone Wax(p.r.n)", "meds": "Adrenalin", "implantNotes": "1.電燒(水電燒/氣化儀)兩種廠牌：庭宇(黑色主機在6房懸臂架) / Depuy(移動式主機在12房對面庫房) 2.自費止血劑長Troca(Folease $15,000 / SurgiFlo $19,800)", "doctorHabits": "Dr.姜：輸液Set長管+7房水接頭+S掛鉤、不用Pump、需高腳蹬 / Dr.許：黑色趴架在骨科庫房 / Table上Myostand架床上 / 貼導電片、可能Open / C-arm和影像系統放痛麻對側、水電燒和影像系統放不同邊", "notes": "1.需C-arm，全程穿鉛衣 2.先跟3R借Myostand 3.醫生站患側，對側C-arm Monitor→主機→影像系統 4.Bipolar與Burr主機與影像系統放不同側 5.泡UBE鏡子0度和30度及光源線，鏡頭送CSR高壓消毒", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}
-];
-
-// ==================== 2. 全域狀態與資料初始化 ====================
-let DATA = loadData();
-let currentUser = null;
-let currentDept = '全部科別', currentAne = 'all', currentSearch = '';
-let fpId = null, fpMode = 'full';
-let editingId = null, reviewTargetId = null, selectedReviewer = null;
-
-function loadData(){
-  try{
-    const s = localStorage.getItem(STORAGE_KEY);
-    if(s) return JSON.parse(s);
-  }catch(e){}
-  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="手術用物手冊">
+<title>手術室手術用物準備手冊</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f3;--bg2:#f5f2eb;--surface:#fff;--surface2:#fdf9f2;
+  --border:#e8e2d6;--border2:#d4cbbe;
+  --accent:#5b8fa8;--accent2:#4a7a94;--accent-dim:rgba(91,143,168,0.1);
+  --green:#4a9e7a;--green-dim:rgba(74,158,122,0.1);
+  --amber:#c8813a;--amber-dim:rgba(200,129,58,0.12);
+  --red:#c0464a;--red-dim:rgba(192,70,74,0.1);
+  --teal:#3a9090;--teal-dim:rgba(58,144,144,0.1);
+  --text:#2c2620;--text2:#6b5f54;--text3:#a8998c;
+  --sans:"Noto Sans TC",sans-serif;--r:12px;--rs:8px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 2px 12px rgba(0,0,0,0.04);
 }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:90px;}
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 28px;max-width:480px;margin:0 auto;}
+.login-screen.hidden{display:none;}
+.login-logo">🏥</div>
+.login-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;text-align:center;}
+.login-sub{font-size:14px;color:var(--text3);margin-bottom:32px;text-align:center;line-height:1.6;}
+.login-field{width:100%;max-width:320px;margin-bottom:12px;}
+.login-label{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.login-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:18px;padding:13px 14px;outline:none;transition:all .2s;}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.login-btn{width:100%;max-width:320px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:17px;font-weight:700;padding:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(91,143,168,0.35);}
+.login-btn:active{transform:scale(.98);}
+/* USER BAR */
+.user-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;}
+.user-name{font-size:14px;font-weight:700;color:var(--accent2);}
+.user-role{font-size:12px;color:var(--text3);margin-left:6px;}
+.logout-btn{font-size:12px;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:999px;padding:4px 12px;cursor:pointer;}
+/* NOTIF */
+.notif-banner{background:linear-gradient(135deg,#c0464a,#e74c3c);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;border-radius:var(--rs);margin:10px 14px 0;box-shadow:0 2px 12px rgba(192,70,74,0.3);animation:notifPulse 1.5s ease-in-out infinite;}
+@keyframes notifPulse{0%,100%{opacity:1}50%{opacity:0.85}}
+.notif-banner.hidden{display:none;}
+.notif-left{display:flex;align-items:center;gap:10px;}
+.notif-icon{font-size:22px;}
+.notif-title{font-size:15px;font-weight:700;}
+.notif-sub{font-size:12px;opacity:.9;margin-top:1px;}
+/* HEADER */
+.header{background:rgba(250,248,243,0.97);border-bottom:1px solid var(--border);padding:14px 16px 12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.header-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,#e8f0f5,#d4e6f0);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.header-title{font-size:18px;font-weight:700;color:var(--text);}
+.header-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.btn-add{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.search-wrap{position:relative;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.search-input{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:16px;padding:10px 12px 10px 38px;outline:none;}
+.search-input:focus{border-color:var(--accent);background:#fff;}
+.search-input::placeholder{color:var(--text3);}
+/* FILTERS */
+.dept-wrap,.filter-wrap{padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dept-wrap::-webkit-scrollbar,.filter-wrap::-webkit-scrollbar{display:none;}
+.dept-btn,.filter-btn{flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent2);font-weight:600;}
+/* STATS */
+.stats-bar{padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg2);border-bottom:1px solid var(--border);}
+.stat-pill{font-size:13px;color:var(--text3);padding:3px 10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;}
+.stat-pill strong{color:var(--accent2);font-weight:700;}
+/* CARDS */
+.cards-wrap{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:2px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);animation:fadeUp .25s ease both;cursor:pointer;border-left-width:5px;}
+.card-header{padding:14px 14px 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-title{font-size:17px;font-weight:700;line-height:1.4;color:var(--text);flex:1;}
+.card-chevron{color:var(--text3);flex-shrink:0;font-size:20px;}
+.card-meta{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:5px;}
+.badge{font-size:12px;padding:3px 9px;border-radius:5px;font-weight:600;border:1px solid transparent;}
+.badge-blue{background:rgba(91,143,168,0.12);color:var(--accent2);border-color:rgba(91,143,168,0.2);}
+.badge-green{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.2);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.2);}
+.badge-pos{background:rgba(168,153,140,0.1);color:var(--text2);border-color:var(--border);font-size:12px;}
+.badge-pending{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.3);font-size:11px;}
+.badge-approved{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.3);font-size:11px;}
+/* FULLPAGE */
+.fullpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;overflow-y:auto;padding-bottom:90px;}
+.fp-header{background:rgba(250,248,243,0.97);border-bottom:2px solid var(--border2);padding:12px 16px;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;max-width:480px;margin:0 auto;}
+.fp-back{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:22px;flex-shrink:0;}
+.fp-info{flex:1;min-width:0;}
+.fp-dept{font-size:13px;color:var(--text3);margin-bottom:2px;}
+.fp-title{font-size:18px;font-weight:700;color:var(--text);line-height:1.3;}
+.fp-edit{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;}
+.fp-body{padding:16px;max-width:480px;margin:0 auto;}
+.fp-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.fp-quick{display:flex;gap:8px;margin-bottom:16px;}
+.fp-qbtn{flex:1;padding:10px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--surface);color:var(--text3);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
+.fp-qbtn.active{border-color:var(--accent);color:var(--accent2);background:var(--accent-dim);font-weight:700;}
+.fp-record{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:5px 14px;}
+.fp-record span{font-size:13px;color:var(--text3);}
+.fp-record strong{color:var(--text2);font-weight:600;}
+.fp-section{margin-bottom:14px;}.fp-label{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.fp-label::before{content:"";width:4px;height:14px;border-radius:2px;background:currentColor;opacity:.6;flex-shrink:0;}
+.fp-content{font-size:16px;color:var(--text2);line-height:1.85;background:var(--surface);border-radius:var(--rs);padding:12px 14px;border:1.5px solid var(--border);}
+.fp-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.fp-tag{font-size:14px;padding:6px 12px;border-radius:var(--rs);background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);}
+.pending-notice{background:rgba(200,129,58,0.08);border:1px solid rgba(200,129,58,0.3);border-radius:var(--rs);padding:12px;margin-bottom:14px;}
+.pending-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:5px;}
+.pending-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.btn-review{background:var(--green);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;padding:8px 16px;cursor:pointer;}
+.diff-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;margin-bottom:7px;}
+.diff-label{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;color:var(--text3);}
+.diff-old{font-size:13px;color:var(--text3);padding:5px 8px;background:rgba(168,153,140,0.08);border-radius:4px;text-decoration:line-through;opacity:.7;margin-bottom:4px;}
+.diff-new{font-size:14px;color:var(--red);padding:5px 8px;background:rgba(192,70,74,0.06);border-radius:4px;border-left:3px solid var(--red);font-weight:600;}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(250,248,243,0.97);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:100;backdrop-filter:blur(20px);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:11px;font-weight:500;transition:color .15s;}
+.nav-item.active{color:var(--accent);}
+.nav-item svg{width:22px;height:22px;}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-icon{font-size:44px;margin-bottom:12px;opacity:.4;}
+.empty-text{font-size:15px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(44,38,32,.5);z-index:400;overflow-y:auto;padding:20px 14px;backdrop-filter:blur(6px);}
+.modal-overlay.show{display:flex;align-items:flex-start;justify-content:center;}
+.modal{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:100%;max-width:448px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.modal-notice{font-size:13px;color:var(--amber);background:var(--amber-dim);border-radius:6px;padding:8px 10px;margin-bottom:14px;line-height:1.5;}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);cursor:pointer;color:var(--text3);font-size:14px;display:flex;align-items:center;justify-content:center;}
+.form-group{margin-bottom:12px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-label{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:15px;padding:9px 11px;outline:none;transition:all .2s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff;}
+.form-textarea{resize:vertical;min-height:66px;line-height:1.6;}
+.form-select option{background:#fff;}
+.form-hint{font-size:12px;color:var(--text3);margin-top:3px;}
+.modal-actions{display:flex;gap:9px;margin-top:16px;}
+.btn-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:15px;cursor:pointer;}
+.btn-save{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;}
+/* REVIEW MODAL */
+.review-modal{background:var(--surface);border:1.5px solid rgba(74,158,122,.3);border-radius:14px;width:100%;max-width:380px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.review-modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;text-align:center;}
+.review-modal-proc{font-size:14px;color:var(--text2);margin-bottom:6px;text-align:center;font-weight:600;}
+.review-modal-sub{font-size:13px;color:var(--text3);margin-bottom:16px;text-align:center;}
+.reviewer-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.reviewer-btn{padding:12px 16px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;text-align:left;}
+.reviewer-btn.selected{border-color:var(--green);background:var(--green-dim);color:var(--green);font-weight:700;}
+.review-actions{display:flex;gap:8px;}
+.btn-review-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:14px;cursor:pointer;}
+.btn-review-ok{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--green);color:#fff;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;}
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--text);color:#fff;font-size:14px;padding:10px 18px;border-radius:999px;z-index:400;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.c-accent{color:var(--accent2)}.c-green{color:var(--green)}.c-amber{color:var(--amber)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}
+.photo-add-btn{width:100%;padding:11px;border-radius:var(--rs);border:1.5px dashed var(--accent);background:var(--accent-dim);color:var(--accent2);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;}
+.photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border2);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;}
+.photo-del{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(192,70,74,.9);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.fp-photos{display:flex;flex-wrap:wrap;gap:8px;}
+.fp-photo{width:calc(50% - 4px);border-radius:8px;overflow:hidden;border:1.5px solid var(--border2);cursor:pointer;}
+.fp-photo img{width:100%;display:block;}
+.photo-viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;align-items:center;justify-content:center;padding:20px;}
+.photo-viewer.show{display:flex;}
+.photo-viewer img{max-width:100%;max-height:90vh;border-radius:8px;}
+.photo-viewer-close{position:fixed;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;border:none;font-size:24px;cursor:pointer;}
+</style>
+</head>
+<body>
 
-async function saveData(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
-  try {
-    await syncToCloud(DATA);
-    showToast('☁️ 已同步到雲端，其他人可看到');
-  } catch(e) {
-    showToast('⚠️ 雲端同步失敗：' + e.message);
-  }
-}
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">🏥</div>
+  <div class="login-title">手術室手術用物準備手冊</div>
+  <div class="login-sub">輸入姓名登入查詢與編輯<br>修改內容需經各科組長審核後公布</div>
+  <div class="login-field">
+    <label class="login-label">姓名</label>
+    <input class="login-input" id="loginName" type="text" placeholder="請輸入您的中文姓名" maxlength="20">
+  </div>
+  <button class="login-btn" id="loginBtn">登入</button>
+</div>
 
-async function syncToCloud(data) {
-  const res = await fetch(`${FIREBASE_URL}/data.json`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  if(!res.ok) throw new Error('Sync failed: ' + res.status);
-  return true;
-}
-
-async function loadFromCloud() {
-  try {
-    const res = await fetch(`${FIREBASE_URL}/data.json`);
-    if(!res.ok) return null;
-    const json = await res.json();
-    return json || null;
-  } catch(e) { return null; }
-}
-
-// ==================== 3. 權限與登入 ====================
-function isReviewer(name){ return ADMINS.includes(name) || Object.values(DEPT_REVIEWERS).some(a=>a.includes(name)); }
-function canReview(name,dept){ return ADMINS.includes(name)||(DEPT_REVIEWERS[dept]||[]).includes(name); }
-function getUserLabel(name){
-  if(ADMINS.includes(name)) return '全科管理員';
-  const depts=Object.entries(DEPT_REVIEWERS).filter(([d,a])=>a.includes(name)).map(([d])=>d);
-  if(depts.length) return depts.join('、')+' 審核者';
-  return '編輯者';
-}
-
-document.getElementById('loginBtn').addEventListener('click', doLogin);
-document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
-document.getElementById('logoutBtn').addEventListener('click', doLogout);
-
-async function doLogin(){
-  const name = document.getElementById('loginName').value.trim();
-  if(!name){ showToast('請輸入姓名'); return; }
-  currentUser = name;
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('mainApp').style.display = 'block';
-  document.getElementById('userNameDisplay').textContent = name;
-  document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
+<div id="mainApp" style="display:none;">
+  <div class="user-bar">
+    <div>
+      <span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span>
+      <button onclick="triggerTestPending()" style="margin-left:10px; background:#c0464a; color:#fff; border:none; padding:2px 8px; border-radius:4px; font-size:11px; cursor:pointer;">🔧 模擬骨科有人修改</button>
+    </div>
+    <button class="logout-btn" id="logoutBtn">登出</button>
+  </div>
   
-  showToast('⏳ 載入最新雲端資料...');
-  try {
-    const cloudData = await loadFromCloud();
-    if(cloudData && cloudData.length > 0){
-      DATA = cloudData;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-      showToast('✅ 資料已與雲端同步（' + DATA.length + ' 筆）');
-    }
-  } catch(e) {
-    showToast('⚠️ 雲端連線失敗，使用本地備份');
-  }
-  renderAll();
-}
+  <div class="notif-banner hidden" id="notifBanner">
+    <div class="notif-left"><div class="notif-icon">🔔</div>
+      <div><div class="notif-title" id="notifTitle"></div><div class="notif-sub" id="notifSub"></div></div>
+    </div>
+    <div style="font-size:20px;opacity:.8;">›</div>
+  </div>
 
-function doLogout(){
-  currentUser = null;
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('loginName').value = '';
-}
-
-// ==================== 4. 篩選與主要畫面渲染 ====================
-function getFiltered(){
-  return DATA.filter(s=>{
-    const dOk = currentDept==='全部科別'||s.dept===currentDept;
-    const u = s.anesthesia.toUpperCase();
-    const aOk = currentAne==='all'
-      ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
-      ||(currentAne==='la'&&(u.includes('L.A')||u.includes('IVG')||u.includes('LOCAL')));
-    if(!dOk||!aOk) return false;
-    if(!currentSearch) return true;
-    const q = currentSearch.toLowerCase();
-    return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
-  });
-}
-
-function renderAll(){ renderDepts(); renderFilters(); renderCards(); updateNotif(); }
-
-function renderDepts(){
-  const existing = new Set(DATA.map(d=>d.dept));
-  document.getElementById('deptWrap').innerHTML = ALL_DEPTS
-    .filter(d=>d==='全部科別'||existing.has(d))
-    .map(d=>{
-      const color = DEPT_COLORS[d]||'#5b8fa8';
-      const isActive = currentDept===d;
-      const style = d==='全部科別'
-        ? (isActive?'background:var(--teal);border-color:var(--teal);color:#fff;':'')
-        : (isActive?`background:${color};border-color:${color};color:#fff;box-shadow:0 2px 8px ${color}40;`:`border-color:${color}60;color:${color};`);
-      return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
-    }).join('');
-}
-function setDept(d){ currentDept=d; renderDepts(); renderCards(); }
-
-function renderFilters(){
-  document.getElementById('filterWrap').innerHTML = [
-    {k:'all',l:'全部麻醉'},{k:'etga',l:'ETGA 全身麻醉'},{k:'la',l:'L.A / IVGS 局部'}
-  ].map(f=>`<button class="filter-btn ${currentAne===f.k?'active':''}" onclick="setAne('${f.k}')">${f.l}</button>`).join('');
-}
-function setAne(k){ currentAne=k; renderFilters(); renderCards(); }
-
-['nav-all','nav-etga','nav-la'].forEach((id,i)=>{
-  document.getElementById(id).addEventListener('click',()=>{
-    document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    setAne(['all','etga','la'][i]);
-  });
-});
-
-document.getElementById('searchInput').addEventListener('input', e=>{
-  currentSearch = e.target.value;
-  renderCards();
-});
-
-function aneBadge(a){
-  const u=a.toUpperCase();
-  if(u.includes('ETGA')) return `<span class="badge badge-blue">ETGA</span>`;
-  if(u.includes('L.A')||u.includes('IVG')) return `<span class="badge badge-green">L.A/IVG</span>`;
-  return `<span class="badge badge-amber">${a.split(' ')[0]}</span>`;
-}
-function statusBadge(s){
-  return s==='已審核'?'<span class="badge badge-approved">✓ 已審核</span>':'<span class="badge badge-pending">⏳ 待審核</span>';
-}
-function deptBadge(d){
-  const c=DEPT_COLORS[d]||'#5b8fa8';
-  return `<span class="badge" style="background:${c}18;color:${c};border-color:${c}40;font-size:11px;">${d}</span>`;
-}
-
-function renderCards(){
-  const f = getFiltered();
-  const deptCount = currentDept==='全部科別'?DATA.length:DATA.filter(d=>d.dept===currentDept).length;
-  const pendingCount = DATA.filter(d=>d.pending).length;
-  let stats = `<div class="stat-pill">顯示 <strong>${f.length}</strong> 筆</div><div class="stat-pill">本科 <strong>${deptCount}</strong> 筆</div><div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
-  if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
-  document.getElementById('statsBar').innerHTML = stats;
-  const w = document.getElementById('cardsWrap');
-  if(!f.length){ w.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到符合的術式</div></div>'; return; }
-  w.innerHTML = f.map((s,i)=>{
-    const color = DEPT_COLORS[s.dept]||'#5b8fa8';
-    return `<div class="card" id="card-${s.id}" style="animation-delay:${i*.02}s;border-left-color:${color};" onclick="openFp(${s.id})">
-      <div class="card-header">
-        <div class="card-title">${s.procedure}</div>
-        <div class="card-chevron">›</div>
-      </div>
-      <div class="card-meta">
-        ${deptBadge(s.dept)}${aneBadge(s.anesthesia)}
-        <span class="badge badge-pos">📐 ${s.position}</span>
-        ${statusBadge(s.status)}
-        ${s.pending?'<span class="badge" style="background:var(--red-dim);color:var(--red);border-color:var(--red);font-size:11px;">📝 待審版本</span>':''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ==================== 5. 詳細檢視頁面 (包含即時照片上傳) ====================
-function openFp(id){
-  fpId=id; fpMode='full';
-  document.getElementById('fullpage').style.cssText='display:block;';
-  document.getElementById('fullpage').scrollTop=0;
-  renderFp();
-}
-document.getElementById('fpBack').addEventListener('click',()=>{
-  document.getElementById('fullpage').style.display='none';
-  fpId=null;
-});
-document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
-
-function renderFp(){
-  const s=DATA.find(d=>d.id===fpId); if(!s) return;
-  const color=DEPT_COLORS[s.dept]||'#5b8fa8';
-  document.getElementById('fpDept').textContent=s.dept;
-  document.getElementById('fpDept').style.color=color;
-  document.getElementById('fpTitle').textContent=s.procedure;
-  let body='';
-  body+=`<div class="fp-meta">${deptBadge(s.dept)}${aneBadge(s.anesthesia)}<span class="badge badge-pos">📐 ${s.position}</span>${statusBadge(s.status)}</div>`;
-  body+=`<div class="fp-quick">
-    <button class="fp-qbtn ${fpMode==='full'?'active':''}" onclick="setFpMode('full')">📋 完整備料</button>
-    <button class="fp-qbtn ${fpMode==='quick'?'active':''}" onclick="setFpMode('quick')">⚡ 術中快查</button>
-  </div>`;
-  let rec=[];
-  rec.push(`<span>📝 原編著：<strong>${s.author||'—'}</strong></span>`);
-  if(s.editor) rec.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
-  if(s.reviewer) rec.push(`<span>✅ 審核者：<strong>${s.reviewer}</strong>${s.reviewDate?' ('+s.reviewDate+')':''}</span>`);
-  body+=`<div class="fp-record">${rec.join('')}</div>`;
-  
-  if(s.pending){
-    const canRev=canReview(currentUser,s.dept);
-    let diffs='';
-    const fields=[['術式名稱',s.procedure,s.pending.procedure],['麻醉方式',s.anesthesia,s.pending.anesthesia],
-      ['手術姿勢',s.position,s.pending.position],['消毒方式',s.disinfect,s.pending.disinfect],
-      ['工具器械',s.tools,s.pending.tools],['耗材',s.supplies,s.pending.supplies],
-      ['藥物',s.meds,s.pending.meds],['骨材備註',s.implantNotes,s.pending.implantNotes],
-      ['醫生習慣',s.doctorHabits,s.pending.doctorHabits],['注意事項',s.notes,s.pending.notes]];
-    fields.forEach(([label,old,nw])=>{
-      if((old||'')!==(nw||''))
-        diffs+=`<div class="diff-row"><div class="diff-label">${label}</div><div class="diff-old">${old||'（空白）'}</div><div class="diff-new">${nw||'（空白）'}</div></div>`;
-    });
-    body+=`<div class="pending-notice">
-      <div class="pending-title">⏳ 待審核的修改內容</div>
-      <div class="pending-sub">✏️ 修改者：<strong>${s.pending.editor}</strong>（${s.pending.editorDate}）</div>
-      ${diffs||'<div style="font-size:13px;color:var(--text3)">（無欄位變更）</div>'}
-      ${canRev?`<button class="btn-review" onclick="openReview(${s.id})">✅ 審核通過，正式公佈</button>`:'<div style="font-size:12px;color:var(--text3);margin-top:8px;">（需等待本科審核者審核）</div>'}
-    </div>`;
-  }
-  
-  if(fpMode==='quick'){
-    body+=`
-      <div class="fp-section"><div class="fp-label c-amber">麻醉 ／ 姿勢</div><div class="fp-content">${s.anesthesia} ｜ ${s.position}</div></div>
-      <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
-      ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
-    `;
-  }else{
-    body+=`
-      <div class="fp-section"><div class="fp-label c-amber">姿勢</div><div class="fp-content">${s.position||'—'}</div></div>
-      <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
-      ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
-      ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
-      ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
-      ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">骨材備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
-      ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${s.doctorHabits}</div></div>`:''}
-      ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
-      
-      <div class="fp-section">
-        <div class="fp-label c-accent">器械照片</div>
-        <div class="fp-photos" id="fpToolPhotoArea">
-          ${(s.toolPhotos&&s.toolPhotos.length)?s.toolPhotos.map(p=>`<div class="fp-photo" onclick="viewPhoto('${p}')"><img src="${p}"></div>`).join(''):'<div style="font-size:13px;color:var(--text3);padding:4px 0;">尚未上傳器械照片</div>'}
-        </div>
-      </div>
-      <div class="fp-section">
-        <div class="fp-label c-amber">擺位照片</div>
-        <div class="fp-photos" id="fpPosPhotoArea">
-          ${(s.posPhotos&&s.posPhotos.length)?s.posPhotos.map(p=>`<div class="fp-photo" onclick="viewPhoto('${p}')"><img src="${p}"></div>`).join(''):'<div style="font-size:13px;color:var(--text3);padding:4px 0;">尚未上傳擺位照片</div>'}
-        </div>
-      </div>
-
-      <div class="fp-section" style="margin-top:24px; padding:12
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">🏥</div>
+      <div><div class="header-title">手術室手術用物準備手冊</div><div class="header-sub">Surgical Prep · 15 科別</div></div>
+      <button class="btn-add" id="btnAdd">＋ 新增</button>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="搜尋術式、器械、耗材…">
+    </div>
+  </div>
+  <div class="dept-wrap" id="deptWrap"></div>
+  <div class="filter-wrap" id="filterWrap"></div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="cards-wrap" id="cardsWrap"></div>
+  <div class="bottom
