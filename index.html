@@ -232,6 +232,11 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     </div>
   </div>
   <div class="dept-wrap" id="deptWrap"></div>
+  <div id="doctorWrap" style="display:none;padding:8px 14px;gap:6px;overflow-x:auto;scrollbar-width:none;background:#fff3f3;border-bottom:2px solid #c0392b;flex-wrap:nowrap;">
+    <button id="btnDocAll" style="flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid #c0392b;background:#c0392b;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">全部醫師</button>
+    <button id="btnDoc1" style="flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid #c0392b;background:transparent;color:#c0392b;font-size:15px;font-weight:500;cursor:pointer;">🔴 張雲媛</button>
+    <button id="btnDoc2" style="flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid #2980b9;background:transparent;color:#2980b9;font-size:15px;font-weight:500;cursor:pointer;">🔵 陳柏霖</button>
+  </div>
   <div class="filter-wrap" id="filterWrap"></div>
   <div class="stats-bar" id="statsBar"></div>
   <div id="doctorBanner" style="display:none;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:8px 16px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;" ></div>
@@ -249,23 +254,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
   </div>
 </div>
 
-<!-- DOCTOR PAGE -->
-<div id="doctorPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:140;flex-direction:column;overflow-y:auto;padding-bottom:90px;">
-  <div style="background:rgba(250,248,243,0.97);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;">
-    <button onclick="backFromDoctor()" style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;font-size:22px;color:var(--text2);">&#8249;</button>
-    <div style="font-size:18px;font-weight:700;">心臟外科</div>
-  </div>
-  <div style="text-align:center;padding:40px 20px;">
-    <div style="font-size:44px;margin-bottom:12px;">🏥</div>
-    <div style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px;">心臟外科</div>
-    <div style="font-size:15px;color:var(--text3);margin-bottom:32px;">請選擇醫師</div>
-    <div style="display:flex;flex-direction:column;gap:12px;max-width:280px;margin:0 auto;">
-      <button id="btnDoc1" style="padding:18px;border-radius:12px;border:2px solid #c0392b;background:rgba(192,57,43,0.06);color:#c0392b;font-size:18px;font-weight:700;cursor:pointer;width:100%;">🔴 張雲媛 醫師</button>
-      <button id="btnDoc2" style="padding:18px;border-radius:12px;border:2px solid #2980b9;background:rgba(41,128,185,0.06);color:#2980b9;font-size:18px;font-weight:700;cursor:pointer;width:100%;">🔵 陳柏霖 醫師</button>
-      <button id="btnDoc3" style="padding:14px;border-radius:12px;border:2px solid #ccc;background:#fff;color:#888;font-size:16px;cursor:pointer;width:100%;">全部顯示</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- FULLPAGE -->
 <div class="fullpage" id="fullpage">
@@ -400,9 +389,9 @@ function getUserLabel(name){
 
 // LOGIN
 document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('btnDocAll').addEventListener('click', function(){ selectDoctor('all'); });
 document.getElementById('btnDoc1').addEventListener('click', function(){ selectDoctor('張雲媛'); });
 document.getElementById('btnDoc2').addEventListener('click', function(){ selectDoctor('陳柏霖'); });
-document.getElementById('btnDoc3').addEventListener('click', function(){ selectDoctor('all'); });
 document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('logoutBtn').addEventListener('click', doLogout);
 document.getElementById('refreshBtn').addEventListener('click', async ()=>{
@@ -519,66 +508,59 @@ function getFiltered(){
   });
 }
 
-function renderAll(){ renderDepts(); renderFilters(); renderCards(); updateNotif(); }
-
-function renderDoctorPage(){
-  document.getElementById('doctorPage').style.display='flex';
-}
-function backFromDoctor(){
-  showDoctorPage=false;
-  currentDept='全部科別';
-  currentDoctor='all';
-  document.getElementById('doctorPage').style.display='none';
-  document.getElementById('doctorBanner').style.display='none';
+function renderAll(){
   renderDepts();
+  renderFilters();
   renderCards();
+  updateNotif();
+  // 如果目前在心臟外科，確保醫師列顯示
+  const dw = document.getElementById('doctorWrap');
+  if(currentDept==='心臟外科') dw.style.display='flex';
+  else dw.style.display='none';
 }
-function backToDoctor(){
-  // 從術式列表返回選醫師頁
-  currentDoctor='all';
-  document.getElementById('doctorBanner').style.display='none';
-  renderDoctorPage();
+
+function updateDoctorBtns(){
+  const btns = {
+    'all': document.getElementById('btnDocAll'),
+    '張雲媛': document.getElementById('btnDoc1'),
+    '陳柏霖': document.getElementById('btnDoc2')
+  };
+  Object.entries(btns).forEach(([d, btn])=>{
+    if(!btn) return;
+    const isActive = currentDoctor===d;
+    if(d==='all'){
+      btn.style.background = isActive ? '#c0392b' : 'transparent';
+      btn.style.color = isActive ? '#fff' : '#c0392b';
+    } else if(d==='張雲媛'){
+      btn.style.background = isActive ? '#c0392b' : 'transparent';
+      btn.style.color = isActive ? '#fff' : '#c0392b';
+    } else {
+      btn.style.background = isActive ? '#2980b9' : 'transparent';
+      btn.style.color = isActive ? '#fff' : '#2980b9';
+    }
+  });
 }
+
 function selectDoctor(d){
   currentDoctor=d;
-  showDoctorPage=false;
-  document.getElementById('doctorPage').style.display='none';
-  renderDepts();
+  updateDoctorBtns();
   renderCards();
-  // 顯示醫師標示
-  const banner = document.getElementById('doctorBanner');
-  if(d==='all'){
-    banner.style.display='none';
-  } else {
-    banner.style.display='flex';
-    banner.innerHTML = '<span style="font-size:15px;">🏥 心臟外科｜' + d + ' 醫師</span><button onclick="backToDoctor()" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:4px 10px;border-radius:999px;font-size:13px;cursor:pointer;">換醫師</button>';
-  }
 }
 
-function renderDepts(){
-  const existing = new Set(DATA.map(d=>d.dept));
-  document.getElementById('deptWrap').innerHTML = ALL_DEPTS
-    .filter(d=>d==='全部科別'||existing.has(d))
-    .map(d=>{
-      const color = DEPT_COLORS[d]||'#5b8fa8';
-      const isActive = currentDept===d;
-      const style = d==='全部科別'
-        ? (isActive?'background:var(--teal);border-color:var(--teal);color:#fff;':'')
-        : (isActive?`background:${color};border-color:${color};color:#fff;box-shadow:0 2px 8px ${color}40;`:`border-color:${color}60;color:${color};`);
-      return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
-    }).join('');
-}
+
+
+
+
 function setDept(d){
   currentDept=d;
   currentDoctor='all';
+  const dw = document.getElementById('doctorWrap');
   if(d==='心臟外科'){
-    showDoctorPage=true;
-    renderDoctorPage();
-    return;
+    dw.style.display='flex';
+    updateDoctorBtns();
+  } else {
+    dw.style.display='none';
   }
-  showDoctorPage=false;
-  document.getElementById('doctorPage').style.display='none';
-  document.getElementById('doctorBanner').style.display='none';
   renderDepts();
   renderCards();
 }
