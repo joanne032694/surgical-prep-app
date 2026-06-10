@@ -533,6 +533,12 @@ function backFromDoctor(){
   renderDepts();
   renderCards();
 }
+function backToDoctor(){
+  // 從術式列表返回選醫師頁
+  currentDoctor='all';
+  document.getElementById('doctorBanner').style.display='none';
+  renderDoctorPage();
+}
 function selectDoctor(d){
   currentDoctor=d;
   showDoctorPage=false;
@@ -545,7 +551,7 @@ function selectDoctor(d){
     banner.style.display='none';
   } else {
     banner.style.display='flex';
-    banner.innerHTML = `<span>🏥 心臟外科｜${d} 醫師</span><button onclick="selectDoctor('all')" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:4px 10px;border-radius:999px;font-size:13px;cursor:pointer;">顯示全部</button>`;
+    banner.innerHTML = '<span style="font-size:15px;">🏥 心臟外科｜' + d + ' 醫師</span><button onclick="backToDoctor()" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:4px 10px;border-radius:999px;font-size:13px;cursor:pointer;">換醫師</button>';
   }
 }
 
@@ -651,6 +657,13 @@ function openFp(id){
 document.getElementById('fpBack').addEventListener('click',()=>{
   document.getElementById('fullpage').style.display='none';
   fpId=null;
+  // 如果是心臟外科且有選醫師，確保 banner 和科別狀態正確
+  if(currentDept==='心臟外科' && currentDoctor!=='all'){
+    const banner = document.getElementById('doctorBanner');
+    banner.style.display='flex';
+    banner.innerHTML = '<span style="font-size:15px;">🏥 心臟外科｜' + currentDoctor + ' 醫師</span><button onclick="backToDoctor()" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:4px 10px;border-radius:999px;font-size:13px;cursor:pointer;">換醫師</button>';
+  }
+  renderDepts();
 });
 document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
 
