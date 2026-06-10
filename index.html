@@ -425,32 +425,39 @@ async function doLogin(){
   document.getElementById('mainApp').style.display = 'block';
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
-  showToast('⏳ 載入最新資料...');
-  const cloudData = await loadFromCloud();
-  if(cloudData && cloudData.length > 0){
-    // 比對 DEFAULT_DATA，把雲端沒有的新筆數補進去
-    const cloudIds = new Set(cloudData.map(d=>d.id));
-    const missing = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
-    if(missing.length > 0){
-      DATA = [...cloudData, ...missing];
-      await syncToCloud(DATA);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-      showToast('✅ 已補入 ' + missing.length + ' 筆新資料並同步（共 ' + DATA.length + ' 筆）');
-    } else {
-      DATA = cloudData;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-      showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
-    }
-  } else {
-    // 第一次，用 DEFAULT_DATA 初始化雲端
-    DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
-    await syncToCloud(DATA);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-    showToast('✅ 已初始化雲端資料（' + DATA.length + ' 筆）');
-  }
+  // 先用本機資料快速顯示，不等雲端
+  DATA = loadData();
+  if(DATA.length === 0) DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
   renderAll();
-  // 每 30 秒自動從雲端拉取最新資料，確保審核者即時收到待審通知
+  showToast('⏳ 載入中...');
   startPolling();
+  // 背景非同步載入雲端資料
+  loadFromCloud().then(async cloudData => {
+    if(cloudData && cloudData.length > 0){
+      const cloudIds = new Set(cloudData.map(d=>d.id));
+      const missing = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
+      if(missing.length > 0){
+        DATA = [...cloudData, ...missing];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        renderAll();
+        showToast('✅ 已補入 ' + missing.length + ' 筆（共 ' + DATA.length + ' 筆）');
+        // 背景推送，不阻塞 UI
+        syncToCloud(DATA).catch(()=>{});
+      } else {
+        DATA = cloudData;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        renderAll();
+        showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
+      }
+    } else {
+      // 第一次，背景推送 DEFAULT_DATA
+      DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+      renderAll();
+      showToast('✅ 已載入（' + DATA.length + ' 筆）');
+      syncToCloud(DATA).catch(()=>{});
+    }
+  }).catch(()=>{ showToast('⚠️ 離線模式，使用本機資料'); });
 }
 function doLogout(){
   stopPolling();
