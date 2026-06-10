@@ -348,17 +348,15 @@ async function doLogin(){
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
   
-  showToast('⏳ 正在從 Firebase 下載手冊資料...');
+  showToast('⏳ 正在同步 Firebase 雲端資料庫...');
   const cloud = await loadFromCloud();
   if(cloud && cloud.length > 0) {
     DATA = cloud;
     localStorage.setItem('surgical_prep_v5', JSON.stringify(DATA));
-    showToast('✅ 下載成功，共 ' + DATA.length + ' 筆手術資料');
+    showToast('✅ 同步成功！共載入 ' + DATA.length + ' 筆手術資料');
   } else {
     DATA = loadData();
-    if(DATA.length === 0) {
-      showToast('❌ 雲端和本地皆無資料，請確認 Firebase 連線');
-    }
+    if(DATA.length === 0) showToast('❌ 雲端無回應，本地端亦無暫存資料');
   }
   renderAll();
 }
@@ -550,6 +548,7 @@ function renderFp(){
   }
   document.getElementById('fpBody').innerHTML=body;
 }
+// 修正照片直接快速上傳的時序 Bug
 function setFpMode(m){ fpMode=m; renderFp(); }
 
 function triggerDirectUpload(type) {
@@ -704,6 +703,7 @@ document.getElementById('reviewOk').addEventListener('click',async ()=>{
   await saveData(); renderAll(); if(fpId===reviewTargetId) renderFp();
 });
 
+// 修正智慧通知橫幅渲染 Bug
 function updateNotif(){
   const myPending=DATA.filter(s=>s && s.pending && s.pending.editor && canReview(currentUser,s.dept));
   const banner=document.getElementById('notifBanner');
