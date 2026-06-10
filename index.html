@@ -495,7 +495,7 @@ function stopPolling(){
 function getFiltered(){
   return DATA.filter(s=>{
     const dOk = currentDept==='全部科別'||s.dept===currentDept;
-    const docOk = currentDoctor==='all'||s.doctorHabits.includes(currentDoctor);
+    const docOk = currentDoctor==='all'||s.doctorHabits.includes('DR.'+currentDoctor)||s.procedure.includes(currentDoctor);
     const u = s.anesthesia.toUpperCase();
     const aOk = currentAne==='all'
       ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
