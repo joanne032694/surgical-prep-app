@@ -511,16 +511,15 @@ function renderAll(){ renderDepts(); renderFilters(); renderCards(); updateNotif
 
 function renderDoctorPage(){
   document.getElementById('doctorPage').style.display='flex';
-  const d1 = '張雲媛', d2 = '陳柏霖', d3 = 'all';
   document.getElementById('doctorPageContent').innerHTML = 
     '<div style="text-align:center;padding:40px 20px;">'
-    + '<div style="font-size:44px;margin-bottom:12px;">🏥</div>'
-    + '<div style="font-size:20px;font-weight:700;color:#2c2620;margin-bottom:8px;">心臟外科</div>'
-    + '<div style="font-size:15px;color:#888;margin-bottom:32px;">請選擇醫師</div>'
+    + '<div style="font-size:44px;margin-bottom:12px;">&#127973;</div>'
+    + '<div style="font-size:20px;font-weight:700;color:#2c2620;margin-bottom:8px;">&#24515;&#33307;&#22806;&#31185;</div>'
+    + '<div style="font-size:15px;color:#888;margin-bottom:32px;">&#35531;&#36984;&#25321;&#37291;&#24072;</div>'
     + '<div style="display:flex;flex-direction:column;gap:12px;max-width:280px;margin:0 auto;">'
-    + '<button style="padding:18px;border-radius:12px;border:2px solid #c0392b;background:rgba(192,57,43,0.06);color:#c0392b;font-size:18px;font-weight:700;cursor:pointer;" onclick="selectDoctor(d1)">🔴 張雲媛 醫師</button>'
-    + '<button style="padding:18px;border-radius:12px;border:2px solid #2980b9;background:rgba(41,128,185,0.06);color:#2980b9;font-size:18px;font-weight:700;cursor:pointer;" onclick="selectDoctor(d2)">🔵 陳柏霖 醫師</button>'
-    + '<button style="padding:14px;border-radius:12px;border:2px solid #ccc;background:#fff;color:#888;font-size:16px;cursor:pointer;" onclick="selectDoctor(d3)">全部顯示</button>'
+    + '<button style="padding:18px;border-radius:12px;border:2px solid #c0392b;background:rgba(192,57,43,0.06);color:#c0392b;font-size:18px;font-weight:700;cursor:pointer;width:100%;" onclick="selectDoctor(&#39;&#24352;&#38640;&#23500;&#39;)">&#128308; &#24352;&#38640;&#23500; &#37291;&#24072;</button>'
+    + '<button style="padding:18px;border-radius:12px;border:2px solid #2980b9;background:rgba(41,128,185,0.06);color:#2980b9;font-size:18px;font-weight:700;cursor:pointer;width:100%;" onclick="selectDoctor(&#39;&#38515;&#26481;&#38463;&#39;)">&#128309; &#38515;&#26481;&#38463; &#37291;&#24072;</button>'
+    + '<button style="padding:14px;border-radius:12px;border:2px solid #ccc;background:#fff;color:#888;font-size:16px;cursor:pointer;width:100%;" onclick="selectDoctor(&#39;all&#39;)">&#20840;&#37096;&#39562;&#31034;</button>'
     + '</div></div>';
 }
 function backFromDoctor(){
