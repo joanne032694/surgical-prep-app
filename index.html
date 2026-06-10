@@ -64,7 +64,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .search-input:focus{border-color:var(--accent);background:#fff;}
 .search-input::placeholder{color:var(--text3);}
 /* FILTERS */
-.dept-wrap,.filter-wrap{padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dept-wrap,.filter-wrap,.doctor-wrap{padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--surface2);border-bottom:1px solid var(--border);}
 .dept-wrap::-webkit-scrollbar,.filter-wrap::-webkit-scrollbar{display:none;}
 .dept-btn,.filter-btn{flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:var(--sans);font-size:16px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent2);font-weight:600;}
@@ -232,6 +232,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     </div>
   </div>
   <div class="dept-wrap" id="deptWrap"></div>
+  <div class="doctor-wrap hidden" id="doctorWrap"></div>
   <div class="filter-wrap" id="filterWrap"></div>
   <div class="stats-bar" id="statsBar"></div>
   <div class="cards-wrap" id="cardsWrap"></div>
@@ -379,7 +380,7 @@ async function saveData(){
 
 let DATA = loadData();
 let currentUser = null;
-let currentDept = '全部科別', currentAne = 'all', currentSearch = '';
+let currentDept = '全部科別', currentAne = 'all', currentSearch = '', currentDoctor = 'all';
 let fpId = null, fpMode = 'full';
 let editingId = null, reviewTargetId = null, selectedReviewer = null;
 
@@ -494,18 +495,32 @@ function stopPolling(){
 function getFiltered(){
   return DATA.filter(s=>{
     const dOk = currentDept==='全部科別'||s.dept===currentDept;
+    const docOk = currentDoctor==='all'||s.doctorHabits.includes(currentDoctor);
     const u = s.anesthesia.toUpperCase();
     const aOk = currentAne==='all'
       ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
       ||(currentAne==='la'&&(u.includes('L.A')||u.includes('IVG')||u.includes('LOCAL')));
-    if(!dOk||!aOk) return false;
+    if(!dOk||!aOk||!docOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
     return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
   });
 }
 
-function renderAll(){ renderDepts(); renderFilters(); renderCards(); updateNotif(); }
+function renderAll(){ renderDepts(); renderFilters(); renderDoctor(); renderCards(); updateNotif(); }
+
+function renderDoctor(){
+  const wrap = document.getElementById('doctorWrap');
+  // 只有心臟外科才顯示醫師篩選
+  if(currentDept !== '心臟外科'){ wrap.classList.add('hidden'); return; }
+  wrap.classList.remove('hidden');
+  const doctors = ['all','張雲媛','陳柏霖'];
+  const labels = {all:'全部醫師', '張雲媛':'張雲媛', '陳柏霖':'陳柏霖'};
+  wrap.innerHTML = doctors.map(d=>
+    `<button class="filter-btn ${currentDoctor===d?'active':''}" onclick="setDoctor('${d}')">${labels[d]}</button>`
+  ).join('');
+}
+function setDoctor(d){ currentDoctor=d; renderDoctor(); renderCards(); }
 
 function renderDepts(){
   const existing = new Set(DATA.map(d=>d.dept));
@@ -520,7 +535,13 @@ function renderDepts(){
       return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
     }).join('');
 }
-function setDept(d){ currentDept=d; renderDepts(); renderCards(); }
+function setDept(d){ 
+  currentDept=d; 
+  currentDoctor='all';
+  renderDepts(); 
+  renderDoctor();
+  renderCards(); 
+}
 
 function renderFilters(){
   document.getElementById('filterWrap').innerHTML = [
