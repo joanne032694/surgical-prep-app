@@ -186,7 +186,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 <div id="mainApp" style="display:none;">
   <div class="user-bar">
     <div><span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span></div>
-    <button class="logout-btn" id="logoutBtn">登出</button>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="logout-btn" id="refreshBtn" style="border-color:var(--accent);color:var(--accent2);">↻ 同步</button>
+      <button class="logout-btn" id="logoutBtn">登出</button>
+    </div>
   </div>
   <div class="header">
     <div class="notif-banner hidden" id="notifBanner">
@@ -363,6 +366,26 @@ function getUserLabel(name){
 document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('logoutBtn').addEventListener('click', doLogout);
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{
+  if(!currentUser) return;
+  const btn=document.getElementById('refreshBtn');
+  btn.textContent='⏳ 同步中';
+  btn.disabled=true;
+  const cloudData = await loadFromCloud();
+  if(cloudData && cloudData.length > 0){
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    DATA = cloudData;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    if(nowPending > 0) showToast(`🔔 有 ${nowPending} 筆待審核術式`);
+    else showToast('✅ 已是最新資料');
+  } else { showToast('⚠️ 無法取得雲端資料'); }
+  btn.textContent='↻ 同步';
+  btn.disabled=false;
+});
+
+let pollTimer = null;
 
 async function doLogin(){
   const name = document.getElementById('loginName').value.trim();
@@ -386,12 +409,38 @@ async function doLogin(){
     showToast('✅ 已初始化雲端資料（' + DATA.length + ' 筆）');
   }
   renderAll();
+  // 每 30 秒自動從雲端拉取最新資料，確保審核者即時收到待審通知
+  startPolling();
 }
 function doLogout(){
+  stopPolling();
   currentUser = null;
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('mainApp').style.display = 'none';
   document.getElementById('loginName').value = '';
+}
+
+function startPolling(){
+  stopPolling();
+  pollTimer = setInterval(async ()=>{
+    if(!currentUser) return;
+    const cloudData = await loadFromCloud();
+    if(!cloudData || cloudData.length === 0) return;
+    // 偵測是否有新的待審核筆數變化
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    DATA = cloudData;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    renderCards();
+    updateNotif();
+    // 若待審核筆數增加，跳出提示
+    if(nowPending > prevPending){
+      showToast(`🔔 有 ${nowPending} 筆新增待審核術式！`);
+    }
+  }, 30000);
+}
+function stopPolling(){
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
 }
 
 // FILTER
