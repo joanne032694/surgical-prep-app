@@ -232,7 +232,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     </div>
   </div>
   <div class="dept-wrap" id="deptWrap"></div>
-  <div class="doctor-wrap hidden" id="doctorWrap"></div>
+  <div class="doctor-wrap" id="doctorWrap" style="display:none;"></div>
   <div class="filter-wrap" id="filterWrap"></div>
   <div class="stats-bar" id="statsBar"></div>
   <div class="cards-wrap" id="cardsWrap"></div>
@@ -511,11 +511,14 @@ function renderAll(){ renderDepts(); renderFilters(); renderDoctor(); renderCard
 
 function renderDoctor(){
   const wrap = document.getElementById('doctorWrap');
-  // 只有心臟外科才顯示醫師篩選
-  if(currentDept !== '心臟外科'){ wrap.classList.add('hidden'); return; }
-  wrap.classList.remove('hidden');
+  if(currentDept !== '心臟外科'){
+    wrap.style.display='none';
+    currentDoctor='all';
+    return;
+  }
+  wrap.style.display='flex';
   const doctors = ['all','張雲媛','陳柏霖'];
-  const labels = {all:'全部醫師', '張雲媛':'張雲媛', '陳柏霖':'陳柏霖'};
+  const labels = {all:'全部醫師', '張雲媛':'🔵 張雲媛', '陳柏霖':'🟢 陳柏霖'};
   wrap.innerHTML = doctors.map(d=>
     `<button class="filter-btn ${currentDoctor===d?'active':''}" onclick="setDoctor('${d}')">${labels[d]}</button>`
   ).join('');
