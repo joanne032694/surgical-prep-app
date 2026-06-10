@@ -239,7 +239,6 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
   </div>
   <div class="filter-wrap" id="filterWrap"></div>
   <div class="stats-bar" id="statsBar"></div>
-  <div id="doctorBanner" style="display:none;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:8px 16px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;" ></div>
   <div class="cards-wrap" id="cardsWrap"></div>
   <div class="bottom-nav">
     <div class="nav-item active" id="nav-all">
@@ -551,6 +550,22 @@ function selectDoctor(d){
 
 
 
+function renderDepts(){
+  const existing = new Set(DATA.map(d=>d.dept));
+  // 強制加入 DEFAULT_DATA 的科別，避免雲端舊資料讓按鈕消失
+  DEFAULT_DATA.forEach(d=>existing.add(d.dept));
+  document.getElementById('deptWrap').innerHTML = ALL_DEPTS
+    .filter(d=>d==='全部科別'||existing.has(d))
+    .map(d=>{
+      const color = DEPT_COLORS[d]||'#5b8fa8';
+      const isActive = currentDept===d;
+      const style = d==='全部科別'
+        ? (isActive?'background:var(--teal);border-color:var(--teal);color:#fff;':'')
+        : (isActive?`background:${color};border-color:${color};color:#fff;box-shadow:0 2px 8px ${color}40;`:`border-color:${color}60;color:${color};`);
+      return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
+    }).join('');
+}
+
 function setDept(d){
   currentDept=d;
   currentDoctor='all';
@@ -641,7 +656,6 @@ document.getElementById('fpBack').addEventListener('click',()=>{
   fpId=null;
   // 如果是心臟外科且有選醫師，確保 banner 和科別狀態正確
   if(currentDept==='心臟外科' && currentDoctor!=='all'){
-    const banner = document.getElementById('doctorBanner');
     banner.style.display='flex';
     banner.innerHTML = '<span style="font-size:15px;">🏥 心臟外科｜' + currentDoctor + ' 醫師</span><button onclick="backToDoctor()" style="background:rgba(255,255,255,0.25);border:none;color:#fff;padding:4px 10px;border-radius:999px;font-size:13px;cursor:pointer;">換醫師</button>';
   }
