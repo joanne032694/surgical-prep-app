@@ -659,14 +659,7 @@ function renderFp(){
       ${canRev?`<button class="btn-review" onclick="openReview(${s.id})">✅ 審核通過，正式公佈</button>`:'<div style="font-size:12px;color:var(--text3);margin-top:8px;">（需等待本科審核者審核）</div>'}
     </div>`;
   }
-  if(fpMode==='quick'){
-    body+=`
-      <div class="fp-section"><div class="fp-label c-amber">麻醉 ／ 姿勢</div><div class="fp-content">${s.anesthesia} ｜ ${s.position}</div></div>
-      <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
-      ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
-    `;
-  }else{
-    body+=`
+  body+=`
       <div class="fp-section"><div class="fp-label c-amber">姿勢</div><div class="fp-content">${s.position||'—'}</div></div>
       <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
       ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
@@ -676,7 +669,6 @@ function renderFp(){
       ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${s.doctorHabits}</div></div>`:''}
       ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
     `;
-  }
   document.getElementById('fpBody').innerHTML=body;
 }
 
