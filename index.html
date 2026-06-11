@@ -471,7 +471,7 @@ function getFiltered(){
     const aOk = currentAne==='all'
       ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
       ||(currentAne==='la'&&(u.includes('L.A')||u.includes('IVG')||u.includes('LOCAL')));
-    if(!dOk||!aOk||!docOk) return false;
+    if(!dOk||!aOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
     return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
