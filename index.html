@@ -98,9 +98,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .fp-edit{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;}
 .fp-body{padding:16px;max-width:480px;margin:0 auto;}
 .fp-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
-.fp-quick{display:flex;gap:8px;margin-bottom:16px;}
-.fp-qbtn{flex:1;padding:10px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--surface);color:var(--text3);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
-.fp-qbtn.active{border-color:var(--accent);color:var(--accent2);background:var(--accent-dim);font-weight:700;}
+
+
+
 .fp-record{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:5px 14px;}
 .fp-record span{font-size:15px;color:var(--text3);}
 .fp-record strong{color:var(--text2);font-weight:600;}
@@ -377,7 +377,7 @@ async function saveData(){
 let DATA = loadData();
 let currentUser = null;
 let currentDept = '', currentAne = 'all', currentSearch = '', currentDoctor = 'all';
-let fpId = null, fpMode = 'full';
+let fpId = null;
 let editingId = null, reviewTargetId = null, selectedReviewer = null;
 
 function isReviewer(name){ return ADMINS.includes(name) || Object.values(DEPT_REVIEWERS).some(a=>a.includes(name)); }
@@ -614,7 +614,7 @@ function renderCards(){
 
 // FULLPAGE
 function openFp(id){
-  fpId=id; fpMode='full';
+  fpId=id;
   document.getElementById('fullpage').style.cssText='display:block;';
   document.getElementById('fullpage').scrollTop=0;
   renderFp();
@@ -634,10 +634,7 @@ function renderFp(){
   document.getElementById('fpTitle').textContent=s.procedure;
   let body='';
   body+=`<div class="fp-meta">${deptBadge(s.dept)}${aneBadge(s.anesthesia)}<span class="badge badge-pos">📐 ${s.position}</span>${statusBadge(s.status)}</div>`;
-  body+=`<div class="fp-quick">
-    <button class="fp-qbtn ${fpMode==='full'?'active':''}" onclick="setFpMode('full')">📋 完整備料</button>
-    <button class="fp-qbtn ${fpMode==='quick'?'active':''}" onclick="setFpMode('quick')">⚡ 術中快查</button>
-  </div>`;
+ 
   let rec=[];
   rec.push(`<span>📝 原編著：<strong>${s.author||'—'}</strong></span>`);
   if(s.editor) rec.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
@@ -682,7 +679,7 @@ function renderFp(){
   }
   document.getElementById('fpBody').innerHTML=body;
 }
-function setFpMode(m){ fpMode=m; renderFp(); }
+
 
 // MODAL
 document.getElementById('btnAdd').addEventListener('click',()=>openModal(null));
