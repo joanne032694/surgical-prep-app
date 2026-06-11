@@ -423,42 +423,15 @@ async function doLogin(){
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
   // 先用本機資料快速顯示，不等雲端
-  DATA = loadData();
-  if(DATA.length === 0) DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  // 以 DEFAULT_DATA 為主，合併 localStorage 裡使用者新增的資料
+  const localData = loadData();
+  const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
+  const userAdded = localData.filter(d=>!defaultIds.has(d.id));
+  DATA = userAdded.length > 0 ? [...DEFAULT_DATA, ...userAdded] : JSON.parse(JSON.stringify(DEFAULT_DATA));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderAll();
-  showToast('⏳ 載入中...');
+  showToast('✅ 已載入（' + DATA.length + ' 筆）');
   startPolling();
-  // 背景非同步載入雲端資料
-  loadFromCloud().then(async cloudData => {
-    if(cloudData && cloudData.length > 0){
-      // 雲端有資料，補入 DEFAULT_DATA 中缺少的筆數
-      const cloudIds = new Set(cloudData.map(d=>d.id));
-      const missing = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
-      if(missing.length > 0){
-        DATA = [...cloudData, ...missing];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-        renderAll();
-        showToast('✅ 已補入 ' + missing.length + ' 筆（共 ' + DATA.length + ' 筆）');
-        syncToCloud(DATA).catch(()=>{});
-      } else if(cloudData.length >= DEFAULT_DATA.length){
-        // 雲端資料比 DEFAULT_DATA 多或相同，以雲端為準（包含使用者新增的資料）
-        DATA = cloudData;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-        renderAll();
-        showToast('✅ 資料已同步（' + DATA.length + ' 筆）');
-      } else {
-        // 雲端資料比 DEFAULT_DATA 少，以本機為準並推送
-        showToast('✅ 使用本機資料（' + DATA.length + ' 筆）');
-        syncToCloud(DATA).catch(()=>{});
-      }
-    } else {
-      // 雲端是空的，推送本機資料
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-      renderAll();
-      showToast('✅ 已載入（' + DATA.length + ' 筆）');
-      syncToCloud(DATA).catch(()=>{});
-    }
-  }).catch(()=>{ showToast('⚠️ 離線模式，使用本機資料'); });
 }
 function doLogout(){
   stopPolling();
