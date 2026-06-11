@@ -623,7 +623,7 @@ function renderCards(){
     ? DATA.length
     : DATA.filter(d=>d.dept===currentDept).length;
   const pendingCount = DATA.filter(d=>d.pending).length;
-  let stats = `<div class="stat-pill">顯示 <strong>${f.length}</strong> 筆</div><div class="stat-pill">本科 <strong>${deptCount}</strong> 筆</div><div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
+  let stats = `<div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
   if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
   document.getElementById('statsBar').innerHTML = stats;
   const w = document.getElementById('cardsWrap');
