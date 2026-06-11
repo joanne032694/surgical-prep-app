@@ -413,11 +413,19 @@ async function doLogin(){
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
   // 先用本機資料快速顯示，不等雲端
-  // 以 DEFAULT_DATA 為主，合併 localStorage 裡使用者新增的資料
+  // 以 DEFAULT_DATA 為主，但保留 localStorage 裡的 pending/status/editor 狀態
   const localData = loadData();
+  const localMap = new Map(localData.map(d=>[d.id, d]));
   const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
+  // 合併：DEFAULT_DATA 的內容 + localStorage 的審核狀態
+  DATA = DEFAULT_DATA.map(d=>{
+    const local = localMap.get(d.id);
+    if(local) return {...d, pending: local.pending, status: local.status, editor: local.editor, editorDate: local.editorDate, reviewer: local.reviewer, reviewDate: local.reviewDate};
+    return JSON.parse(JSON.stringify(d));
+  });
+  // 加入使用者自己新增的資料（id 不在 DEFAULT_DATA 裡）
   const userAdded = localData.filter(d=>!defaultIds.has(d.id));
-  DATA = userAdded.length > 0 ? [...DEFAULT_DATA, ...userAdded] : JSON.parse(JSON.stringify(DEFAULT_DATA));
+  if(userAdded.length > 0) DATA = [...DATA, ...userAdded];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderAll();
   showToast('✅ 已載入（' + DATA.length + ' 筆）');
