@@ -447,15 +447,24 @@ function startPolling(){
     if(!currentUser) return;
     const cloudData = await loadFromCloud();
     if(!cloudData || cloudData.length === 0) return;
-    // 偵測是否有新的待審核筆數變化
+    // 只取雲端的 pending 狀態，不覆蓋 DATA
     const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
-    DATA = cloudData;
+    // 合併雲端的 pending 狀態到現有 DATA
+    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    DATA = DATA.map(d=>{
+      const cloud = cloudMap.get(d.id);
+      if(cloud) return {...d, pending: cloud.pending, status: cloud.status};
+      return d;
+    });
+    // 加入雲端有但本機沒有的新資料（使用者新增的）
+    const localIds = new Set(DATA.map(d=>d.id));
+    const newItems = cloudData.filter(d=>!localIds.has(d.id) && !new Set(DEFAULT_DATA.map(x=>x.id)).has(d.id));
+    if(newItems.length > 0) DATA = [...DATA, ...newItems];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
-    renderCards();
     updateNotif();
-    // 若待審核筆數增加，跳出提示
     if(nowPending > prevPending){
+      renderCards();
       showToast(`🔔 有 ${nowPending} 筆新增待審核術式！`);
     }
   }, 30000);
