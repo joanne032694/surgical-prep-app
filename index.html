@@ -287,7 +287,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <div class="form-group"><label class="form-label">工具 / 器械</label><textarea class="form-textarea" id="f_tools"></textarea><div class="form-hint">用「/」分隔</div></div>
     <div class="form-group"><label class="form-label">耗材</label><textarea class="form-textarea" id="f_supplies"></textarea><div class="form-hint">用「/」分隔</div></div>
     <div class="form-group"><label class="form-label">藥物</label><input class="form-input" id="f_meds" type="text"></div>
-    <div class="form-group"><label class="form-label">骨材備註</label><textarea class="form-textarea" id="f_implantNotes"></textarea></div>
+    <div class="form-group"><label class="form-label">備註</label><textarea class="form-textarea" id="f_implantNotes"></textarea></div>
     <div class="form-group"><label class="form-label">醫生習慣</label><textarea class="form-textarea" id="f_doctorHabits"></textarea></div>
     <div class="form-group"><label class="form-label">注意事項</label><textarea class="form-textarea" id="f_notes"></textarea></div>
     
@@ -314,42 +314,55 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'surgical_prep_v5';
-const JSONBIN_ID = '6a268b12da38895dfe98c3e3';
-const JSONBIN_KEY = '$2a$10$7fHIqfHAhyGUWet8qM4hze3yUwYgugTZNCLe9tBljpkp.XiSiBdFO';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+const STORAGE_KEY = 'surgical_prep_v6';
+const SUPA_URL = 'https://xdetokspjjobiugcgwxt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkZXRva3NwampvYml1Z2Nnd3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjEwODAsImV4cCI6MjA5NjczNzA4MH0.-cuhO_h9daFKmz4Km9ISHgmds-9p7h2_7B3MSAmj80I';
+const SUPA_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY
+};
 
 async function syncToCloud(data) {
-  // 只同步審核狀態，減少資料量
-  const stateOnly = data.map(d=>({
-    id: d.id,
-    status: d.status,
-    pending: d.pending || null,
-    editor: d.editor || '',
-    editorDate: d.editorDate || '',
-    reviewer: d.reviewer || '',
-    reviewDate: d.reviewDate || ''
-  }));
-  const res = await fetch(JSONBIN_URL, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': JSONBIN_KEY
-    },
-    body: JSON.stringify(stateOnly)
-  });
-  if(!res.ok) throw new Error('Sync failed: ' + res.status);
+  // 只更新審核狀態欄位
+  const updates = data.filter(d => d.pending || d.status !== '已審核' || d.editor || d.reviewer);
+  if(updates.length === 0) return true;
+  for(const d of updates) {
+    await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+      method: 'PATCH',
+      headers: SUPA_HEADERS,
+      body: JSON.stringify({
+        status: d.status,
+        pending: d.pending || null,
+        editor: d.editor || '',
+        editorDate: d.editorDate || '',
+        reviewer: d.reviewer || '',
+        reviewDate: d.reviewDate || ''
+      })
+    });
+  }
   return true;
 }
 
 async function loadFromCloud() {
   try {
-    const res = await fetch(JSONBIN_URL + '/latest', {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=id,status,pending,editor,editorDate,reviewer,reviewDate&order=id',
+      { headers: SUPA_HEADERS }
+    );
     if(!res.ok) return null;
-    const json = await res.json();
-    return json?.record || null;
+    return await res.json();
+  } catch(e) { return null; }
+}
+
+async function loadAllFromCloud() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
+      { headers: SUPA_HEADERS }
+    );
+    if(!res.ok) return null;
+    return await res.json();
   } catch(e) { return null; }
 }
 const ALL_DEPTS = ["全部科別", "眼科", "一般外科", "直腸外科", "胸腔外科", "乳房外科", "小兒外科", "神經外科", "整形外科", "骨科", "泌尿科", "耳鼻喉科", "心臟外科", "口腔外科", "達文西手術", "婦產科"];
@@ -368,9 +381,9 @@ async function saveData(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
   try {
     await syncToCloud(DATA);
-    showToast('☁️ 已同步到雲端，其他人可看到');
+    showToast('☁️ 已同步，其他人可看到');
   } catch(e) {
-    showToast('⚠️ 雲端同步失敗：' + e.message);
+    showToast('⚠️ 雲端同步失敗');
   }
 }
 
@@ -423,48 +436,26 @@ async function doLogin(){
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
   // 先用本機資料快速顯示，不等雲端
-  // 以 DEFAULT_DATA 為主，但保留 localStorage 裡的 pending/status/editor 狀態
-  const localData = loadData();
-  const localMap = new Map(localData.map(d=>[d.id, d]));
-  const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
-  // 合併：DEFAULT_DATA 的內容 + localStorage 的審核狀態
-  DATA = DEFAULT_DATA.map(d=>{
-    const local = localMap.get(d.id);
-    if(local) return {...d, pending: local.pending, status: local.status, editor: local.editor, editorDate: local.editorDate, reviewer: local.reviewer, reviewDate: local.reviewDate};
-    return JSON.parse(JSON.stringify(d));
-  });
-  // 加入使用者自己新增的資料（id 不在 DEFAULT_DATA 裡）
-  const userAdded = localData.filter(d=>!defaultIds.has(d.id));
-  if(userAdded.length > 0) DATA = [...DATA, ...userAdded];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  // 先用 DEFAULT_DATA 快速顯示
+  DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
   renderAll();
-  showToast('✅ 已載入（' + DATA.length + ' 筆）');
+  showToast('⏳ 從雲端載入資料...');
   startPolling();
-  // 登入後從雲端拉最新審核狀態，但只更新有 pending 的筆數
-  loadFromCloud().then(cloudData => {
-    if(!cloudData || cloudData.length === 0) return;
-    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
-    let changed = false;
+  // 從 Supabase 載入最新審核狀態
+  loadFromCloud().then(cloudStates => {
+    if(!cloudStates || cloudStates.length === 0) return;
+    const cloudMap = new Map(cloudStates.map(d=>[d.id, d]));
     DATA = DATA.map(d=>{
       const cloud = cloudMap.get(d.id);
       if(!cloud) return d;
-      // 只有雲端有 pending 才更新，避免清掉本機的 pending
-      if(cloud.pending){
-        changed = true;
-        return {...d, pending: cloud.pending, status: cloud.status, editor: cloud.editor||'', editorDate: cloud.editorDate||'', reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
-      }
-      // 雲端已審核（status 改變）才更新
-      if(cloud.status !== d.status && cloud.status === '已審核'){
-        changed = true;
-        return {...d, status: cloud.status, reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||'', pending: null};
-      }
-      return d;
+      return {...d, status: cloud.status||d.status, pending: cloud.pending||null,
+        editor: cloud.editor||'', editorDate: cloud.editorDate||'',
+        reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
     });
-    if(changed){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
-      renderAll();
-    }
-  }).catch(()=>{});
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    showToast('✅ 已載入（' + DATA.length + ' 筆）');
+  }).catch(()=>{ showToast('✅ 已載入（' + DATA.length + ' 筆）'); });
 }
 function doLogout(){
   stopPolling();
@@ -486,9 +477,9 @@ function startPolling(){
     DATA = DATA.map(d=>{
       const cloud = cloudMap.get(d.id);
       if(!cloud) return d;
-      if(cloud.pending) return {...d, pending: cloud.pending, status: cloud.status, editor: cloud.editor||'', editorDate: cloud.editorDate||'', reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
-      if(cloud.status === '已審核' && d.status !== '已審核') return {...d, status: cloud.status, reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||'', pending: null};
-      return d;
+      return {...d, status: cloud.status||d.status, pending: cloud.pending||null,
+        editor: cloud.editor||'', editorDate: cloud.editorDate||'',
+        reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
@@ -646,7 +637,7 @@ function renderFp(){
     const fields=[['術式名稱',s.procedure,s.pending.procedure],['麻醉方式',s.anesthesia,s.pending.anesthesia],
       ['手術姿勢',s.position,s.pending.position],['消毒方式',s.disinfect,s.pending.disinfect],
       ['工具器械',s.tools,s.pending.tools],['耗材',s.supplies,s.pending.supplies],
-      ['藥物',s.meds,s.pending.meds],['骨材備註',s.implantNotes,s.pending.implantNotes],
+      ['藥物',s.meds,s.pending.meds],['備註',s.implantNotes,s.pending.implantNotes],
       ['醫生習慣',s.doctorHabits,s.pending.doctorHabits],['注意事項',s.notes,s.pending.notes]];
     fields.forEach(([label,old,nw])=>{
       if((old||'')!==(nw||''))
@@ -665,7 +656,7 @@ function renderFp(){
       ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
       ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
       ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
-      ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">骨材備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
+      ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
       ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${s.doctorHabits}</div></div>`:''}
       ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
     `;
