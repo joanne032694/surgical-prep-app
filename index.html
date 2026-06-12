@@ -324,14 +324,24 @@ const SUPA_HEADERS = {
 };
 
 async function syncToCloud(data) {
-  // 只更新審核狀態欄位
-  const updates = data.filter(d => d.pending || d.status !== '已審核' || d.editor || d.reviewer);
+  // 同步所有有變動的資料（pending、editor、reviewer 有值，或 status 改變）
+  const updates = data.filter(d => d.pending || d.editor || d.reviewer || d.status !== '已審核');
   if(updates.length === 0) return true;
   for(const d of updates) {
     await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
       method: 'PATCH',
       headers: SUPA_HEADERS,
       body: JSON.stringify({
+        procedure: d.procedure,
+        anesthesia: d.anesthesia,
+        position: d.position,
+        disinfect: d.disinfect,
+        tools: d.tools || '',
+        supplies: d.supplies || '',
+        meds: d.meds || '',
+        implantNotes: d.implantNotes || '',
+        doctorHabits: d.doctorHabits || '',
+        notes: d.notes || '',
         status: d.status,
         pending: d.pending || null,
         editor: d.editor || '',
@@ -344,10 +354,36 @@ async function syncToCloud(data) {
   return true;
 }
 
+async function syncOneToCloud(d) {
+  // 單筆完整同步（審核通過時用）
+  await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+    method: 'PATCH',
+    headers: SUPA_HEADERS,
+    body: JSON.stringify({
+      procedure: d.procedure,
+      anesthesia: d.anesthesia,
+      position: d.position,
+      disinfect: d.disinfect,
+      tools: d.tools || '',
+      supplies: d.supplies || '',
+      meds: d.meds || '',
+      implantNotes: d.implantNotes || '',
+      doctorHabits: d.doctorHabits || '',
+      notes: d.notes || '',
+      status: d.status,
+      pending: null,
+      editor: d.editor || '',
+      editorDate: d.editorDate || '',
+      reviewer: d.reviewer || '',
+      reviewDate: d.reviewDate || ''
+    })
+  });
+}
+
 async function loadFromCloud() {
   try {
     const res = await fetch(
-      SUPA_URL + '/rest/v1/surgical_data?select=id,status,pending,editor,editorDate,reviewer,reviewDate&order=id',
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
       { headers: SUPA_HEADERS }
     );
     if(!res.ok) return null;
@@ -441,20 +477,23 @@ async function doLogin(){
   renderAll();
   showToast('⏳ 從雲端載入資料...');
   startPolling();
-  // 從 Supabase 載入最新審核狀態
-  loadFromCloud().then(cloudStates => {
-    if(!cloudStates || cloudStates.length === 0) return;
-    const cloudMap = new Map(cloudStates.map(d=>[d.id, d]));
-    DATA = DATA.map(d=>{
-      const cloud = cloudMap.get(d.id);
-      if(!cloud) return d;
-      return {...d, status: cloud.status||d.status, pending: cloud.pending||null,
-        editor: cloud.editor||'', editorDate: cloud.editorDate||'',
-        reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
-    });
+  // 從 Supabase 載入完整最新資料
+  loadFromCloud().then(cloudData => {
+    if(!cloudData || cloudData.length === 0){
+      showToast('✅ 已載入（' + DATA.length + ' 筆）');
+      return;
+    }
+    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    // 用雲端資料為主，補入 DEFAULT_DATA 中雲端沒有的新筆數
+    const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
+    const cloudIds = new Set(cloudData.map(d=>d.id));
+    const newItems = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
+    DATA = [...cloudData, ...newItems];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     renderAll();
     showToast('✅ 已載入（' + DATA.length + ' 筆）');
+    // 若有新增筆數，推送到雲端
+    if(newItems.length > 0) syncToCloud(newItems).catch(()=>{});
   }).catch(()=>{ showToast('✅ 已載入（' + DATA.length + ' 筆）'); });
 }
 function doLogout(){
