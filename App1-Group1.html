@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="手術用物手冊·第一組">
+<meta name="theme-color" content="#27ae60">
+<link rel="manifest" href="">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%2327ae60%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2254%25%22%20font-size%3D%22300%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22sans-serif%22%3E%F0%9F%8F%A5%3C/text%3E%3C/svg%3E">
+<title>手術用物手冊·第一組 🟢</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f3;--bg2:#f5f2eb;--surface:#fff;--surface2:#fdf9f2;
+  --border:#e8e2d6;--border2:#d4cbbe;
+  --accent:#27ae60;--accent2:#1e8449;--accent-dim:rgba(39,174,96,0.12);
+  --green:#4a9e7a;--green-dim:rgba(74,158,122,0.1);
+  --amber:#c8813a;--amber-dim:rgba(200,129,58,0.12);
+  --red:#c0464a;--red-dim:rgba(192,70,74,0.1);
+  --teal:#3a9090;--teal-dim:rgba(58,144,144,0.1);
+  --text:#2c2620;--text2:#6b5f54;--text3:#a8998c;
+  --sans:"Noto Sans TC",sans-serif;--r:12px;--rs:8px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 2px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:90px;}
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 28px;max-width:480px;margin:0 auto;}
+.login-screen.hidden{display:none;}
+.login-logo{font-size:62px;margin-bottom:16px;}
+.login-title{font-size:26px;font-weight:700;color:var(--text);margin-bottom:6px;text-align:center;}
+.login-sub{font-size:18px;color:var(--text3);margin-bottom:32px;text-align:center;line-height:1.6;}
+.login-field{width:100%;max-width:320px;margin-bottom:12px;}
+.login-label{font-size:14px;font-weight:700;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.login-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:22px;padding:13px 14px;outline:none;transition:all .2s;}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.login-btn{width:100%;max-width:320px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:21px;font-weight:700;padding:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(91,143,168,0.35);}
+.login-btn:active{transform:scale(.98);}
+/* USER BAR */
+.user-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;}
+.user-name{font-size:18px;font-weight:700;color:var(--accent2);}
+.user-role{font-size:16px;color:var(--text3);margin-left:6px;}
+.logout-btn{font-size:16px;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:999px;padding:4px 12px;cursor:pointer;}
+/* NOTIF */
+.notif-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;border-radius:var(--rs);margin-bottom:10px;box-shadow:0 2px 12px rgba(192,57,43,0.4);animation:notifPulse 1.5s ease-in-out infinite;}
+@keyframes notifPulse{0%,100%{opacity:1}50%{opacity:0.85}}
+.notif-banner.hidden{display:none;}
+.notif-left{display:flex;align-items:center;gap:10px;}
+.notif-icon{font-size:24px;}
+.notif-title{font-size:19px;font-weight:700;}
+.notif-sub{font-size:16px;opacity:.9;margin-top:1px;}
+/* HEADER */
+.header{background:rgba(250,248,243,0.97);border-bottom:1px solid var(--border);padding:14px 16px 12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.header-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,#e8f0f5,#d4e6f0);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.header-title{font-size:22px;font-weight:700;color:var(--text);}
+.header-sub{font-size:16px;color:var(--text3);margin-top:1px;}
+.btn-add{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.search-wrap{position:relative;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.search-input{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:20px;padding:11px 12px 11px 38px;outline:none;}
+.search-input:focus{border-color:var(--accent);background:#fff;}
+.search-input::placeholder{color:var(--text3);}
+/* FILTERS */
+.dept-wrap{padding:6px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;background:var(--surface2);border-bottom:1px solid var(--border);}.dept-btn{width:100%;}.filter-wrap{padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dept-wrap::-webkit-scrollbar,.filter-wrap::-webkit-scrollbar{display:none;}
+.dept-btn,.filter-btn{flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:var(--sans);font-size:18px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent2);font-weight:600;}
+/* STATS */
+.stats-bar{padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg2);border-bottom:1px solid var(--border);}
+.stat-pill{font-size:17px;color:var(--text3);padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:999px;}
+.stat-pill strong{color:var(--accent2);font-weight:700;}
+/* CARDS */
+.cards-wrap{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:2px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);animation:fadeUp .25s ease both;cursor:pointer;border-left-width:5px;}
+.card-header{padding:14px 14px 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-title{font-size:21px;font-weight:700;line-height:1.4;color:var(--text);flex:1;}
+.card-chevron{color:var(--text3);flex-shrink:0;font-size:22px;}
+.card-meta{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:5px;}
+.badge{font-size:16px;padding:4px 10px;border-radius:5px;font-weight:600;border:1px solid transparent;}
+.badge-blue{background:rgba(91,143,168,0.12);color:var(--accent2);border-color:rgba(91,143,168,0.2);}
+.badge-green{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.2);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.2);}
+.badge-pos{background:rgba(168,153,140,0.1);color:var(--text2);border-color:var(--border);font-size:14px;}
+.badge-pending{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.3);font-size:13px;}
+.badge-approved{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.3);font-size:13px;}
+.card-action-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);}
+/* FULLPAGE */
+.fullpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;overflow-y:auto;padding-bottom:90px;}
+.fp-header{background:rgba(250,248,243,0.97);border-bottom:2px solid var(--border2);padding:12px 16px;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;max-width:480px;margin:0 auto;}
+.fp-back{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:24px;flex-shrink:0;}
+.fp-info{flex:1;min-width:0;}
+.fp-dept{font-size:17px;color:var(--text3);margin-bottom:2px;}
+.fp-title{font-size:22px;font-weight:700;color:var(--text);line-height:1.3;}
+.fp-edit{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;}
+.fp-body{padding:16px;max-width:480px;margin:0 auto;}
+.fp-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+
+
+
+.fp-record{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:5px 14px;}
+.fp-record span{font-size:17px;color:var(--text3);}
+.fp-record strong{color:var(--text2);font-weight:600;}
+.fp-section{margin-bottom:14px;}.fp-label{font-size:17px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.fp-label::before{content:"";width:4px;height:14px;border-radius:2px;background:currentColor;opacity:.6;flex-shrink:0;}
+.fp-content{font-size:20px;color:var(--text2);line-height:1.85;background:var(--surface);border-radius:var(--rs);padding:12px 14px;border:1.5px solid var(--border);}
+.fp-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.fp-tag{font-size:18px;padding:6px 12px;border-radius:var(--rs);background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);}
+.pending-notice{background:rgba(200,129,58,0.08);border:1px solid rgba(200,129,58,0.3);border-radius:var(--rs);padding:12px;margin-bottom:14px;}
+.pending-title{font-size:17px;font-weight:700;color:var(--amber);margin-bottom:5px;}
+.pending-sub{font-size:17px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.btn-review{background:var(--green);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;padding:8px 16px;cursor:pointer;}
+.diff-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;margin-bottom:7px;}
+.diff-label{font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;color:var(--text3);}
+.diff-old{font-size:17px;color:var(--text3);padding:5px 8px;background:rgba(168,153,140,0.08);border-radius:4px;text-decoration:line-through;opacity:.7;margin-bottom:4px;}
+.diff-new{font-size:18px;color:var(--red);padding:5px 8px;background:rgba(192,70,74,0.06);border-radius:4px;border-left:3px solid var(--red);font-weight:600;}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(250,248,243,0.97);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:100;backdrop-filter:blur(20px);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:15px;font-weight:500;transition:color .15s;}
+.nav-item.active{color:var(--accent);}
+.nav-item svg{width:22px;height:22px;}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-icon{font-size:46px;margin-bottom:12px;opacity:.4;}
+.empty-text{font-size:17px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(44,38,32,.5);z-index:400;overflow-y:auto;padding:20px 14px;backdrop-filter:blur(6px);}
+.modal-overlay.show{display:flex;align-items:flex-start;justify-content:center;}
+.modal{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:100%;max-width:448px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.modal-title{font-size:21px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.modal-notice{font-size:17px;color:var(--amber);background:var(--amber-dim);border-radius:6px;padding:8px 10px;margin-bottom:14px;line-height:1.5;}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;}
+.form-group{margin-bottom:12px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-label{font-size:16px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:19px;padding:9px 11px;outline:none;transition:all .2s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff;}
+.form-textarea{resize:vertical;min-height:66px;line-height:1.6;}
+.form-select option{background:#fff;}
+.form-hint{font-size:16px;color:var(--text3);margin-top:3px;}
+.modal-actions{display:flex;gap:9px;margin-top:16px;}
+.btn-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:19px;cursor:pointer;}
+.btn-save{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-size:19px;font-weight:700;cursor:pointer;}
+/* REVIEW MODAL */
+.review-modal{background:var(--surface);border:1.5px solid rgba(74,158,122,.3);border-radius:14px;width:100%;max-width:380px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.review-modal-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px;text-align:center;}
+.review-modal-proc{font-size:16px;color:var(--text2);margin-bottom:6px;text-align:center;font-weight:600;}
+.review-modal-sub{font-size:15px;color:var(--text3);margin-bottom:16px;text-align:center;}
+.reviewer-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.reviewer-btn{padding:12px 16px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--sans);font-size:19px;font-weight:500;cursor:pointer;text-align:left;}
+.reviewer-btn.selected{border-color:var(--green);background:var(--green-dim);color:var(--green);font-weight:700;}
+.review-actions{display:flex;gap:8px;}
+.btn-review-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:16px;cursor:pointer;}
+.btn-review-ok{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--green);color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;}
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--text);color:#fff;font-size:18px;padding:10px 18px;border-radius:999px;z-index:400;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.c-accent{color:var(--accent2)}.c-green{color:var(--green)}.c-amber{color:var(--amber)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<script>
+// 動態注冊 PWA manifest
+const manifestData = {
+  "name": "手術室手術用物準備手冊",
+  "short_name": "手術用物手冊",
+  "description": "手術室手術用物準備手冊",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#faf8f3",
+  "theme_color": "#1abc9c",
+  "icons": [
+    {"src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%2327ae60%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2254%25%22%20font-size%3D%22300%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22sans-serif%22%3E%F0%9F%8F%A5%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/png"},
+    {"src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22512%22%20height%3D%22512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%2327ae60%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2254%25%22%20font-size%3D%22300%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%23fff%22%20font-family%3D%22sans-serif%22%3E%F0%9F%8F%A5%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/png"}
+  ]
+};
+const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+const manifestURL = URL.createObjectURL(blob);
+document.querySelector('link[rel="manifest"]').href = manifestURL;
+</script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">🏥</div>
+  <div class="login-title">手術室手術用物準備手冊</div>
+  <div class="login-sub">輸入姓名登入查詢與編輯<br>修改內容需經各科組長審核後公布</div>
+  <div class="login-field">
+    <label class="login-label">姓名</label>
+    <input class="login-input" id="loginName" type="text" placeholder="請輸入您的中文姓名" maxlength="20">
+  </div>
+  <button class="login-btn" id="loginBtn">登入</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none;">
+  <div class="user-bar">
+    <div><span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span></div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="logout-btn" id="refreshBtn" style="border-color:var(--accent);color:var(--accent2);">↻ 同步</button>
+      <button class="logout-btn" id="logoutBtn">登出</button>
+    </div>
+  </div>
+  <div class="header">
+    <div class="notif-banner hidden" id="notifBanner">
+      <div class="notif-left"><div class="notif-icon">🔔</div>
+        <div><div class="notif-title" id="notifTitle"></div><div class="notif-sub" id="notifSub"></div></div>
+      </div>
+      <div style="font-size:22px;opacity:.8;">›</div>
+    </div>
+    <div class="header-top">
+      <div class="logo">🏥</div>
+      <div><div class="header-title">手術用物手冊 🟢第1組</div><div class="header-sub">Surgical Prep · 🟢綠色 3科</div></div>
+      <button class="btn-add" id="btnAdd">＋ 新增</button>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="搜尋術式、器械、耗材…">
+    </div>
+  </div>
+  <div class="dept-wrap" id="deptWrap"></div>
+  <div class="filter-wrap" id="filterWrap"></div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="cards-wrap" id="cardsWrap"></div>
+  <div class="bottom-nav" id="bottomNav" style="display:none;">
+    <div class="nav-item active" id="nav-back" style="flex:1;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>回上一頁
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FULLPAGE -->
+<div class="fullpage" id="fullpage">
+  <div class="fp-header">
+    <button class="fp-back" id="fpBack">‹</button>
+    <div class="fp-info"><div class="fp-dept" id="fpDept"></div><div class="fp-title" id="fpTitle"></div></div>
+    <button class="fp-edit" id="fpEdit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
+  <div class="fp-body" id="fpBody"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title"><span id="modalTitle">新增術式</span><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="modal-notice">📋 修改後將進入待審核狀態，審核者確認後才會正式公佈</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">科別 *</label>
+        <select class="form-select" id="f_dept"><option>眼科</option><option>耳鼻喉科</option><option>口腔外科</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">修改者</label><input class="form-input" id="f_editor" type="text" readonly></div>
+    </div>
+    <div class="form-group"><label class="form-label">術式名稱 *</label><input class="form-input" id="f_procedure" type="text"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">麻醉方式 *</label><input class="form-input" id="f_anesthesia" type="text"></div>
+      <div class="form-group"><label class="form-label">手術姿勢</label><input class="form-input" id="f_position" type="text"></div>
+    </div>
+    <div class="form-group"><label class="form-label">消毒方式</label><input class="form-input" id="f_disinfect" type="text"></div>
+    <div class="form-group"><label class="form-label">工具 / 器械</label><textarea class="form-textarea" id="f_tools"></textarea><div class="form-hint">用「/」分隔</div></div>
+    <div class="form-group"><label class="form-label">耗材</label><textarea class="form-textarea" id="f_supplies"></textarea><div class="form-hint">用「/」分隔</div></div>
+    <div class="form-group"><label class="form-label">藥物</label><input class="form-input" id="f_meds" type="text"></div>
+    <div class="form-group"><label class="form-label">備註</label><textarea class="form-textarea" id="f_implantNotes"></textarea></div>
+    <div class="form-group"><label class="form-label">醫生習慣</label><textarea class="form-textarea" id="f_doctorHabits"></textarea></div>
+    <div class="form-group"><label class="form-label">注意事項</label><textarea class="form-textarea" id="f_notes"></textarea></div>
+    
+    
+    <div class="modal-actions"><button class="btn-cancel" id="modalCancel">取消</button><button class="btn-save" id="modalSave">送出審核</button></div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="reviewOverlay">
+  <div class="review-modal">
+    <div style="font-size:38px;text-align:center;margin-bottom:10px;">✅</div>
+    <div class="review-modal-title">審核確認</div>
+    <div class="review-modal-proc" id="reviewProcName"></div>
+    <div class="review-modal-sub">選擇審核者姓名，確認後新版內容將正式公佈</div>
+    <div class="reviewer-list" id="reviewerList"></div>
+    <div class="review-actions">
+      <button class="btn-review-cancel" id="reviewCancel">取消</button>
+      <button class="btn-review-ok" id="reviewOk">審核通過，正式公佈</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'surgical_prep_g1';
+const SUPA_URL = 'https://xdetokspjjobiugcgwxt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkZXRva3NwampvYml1Z2Nnd3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjEwODAsImV4cCI6MjA5NjczNzA4MH0.-cuhO_h9daFKmz4Km9ISHgmds-9p7h2_7B3MSAmj80I';
+const SUPA_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY
+};
+
+async function syncToCloud(data) {
+  // 同步所有有變動的資料（pending、editor、reviewer 有值，或 status 改變）
+  const updates = data.filter(d => d.pending || d.editor || d.reviewer || d.status !== '已審核');
+  if(updates.length === 0) return true;
+  for(const d of updates) {
+    await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+      method: 'PATCH',
+      headers: SUPA_HEADERS,
+      body: JSON.stringify({
+        procedure: d.procedure,
+        anesthesia: d.anesthesia,
+        position: d.position,
+        disinfect: d.disinfect,
+        tools: d.tools || '',
+        supplies: d.supplies || '',
+        meds: d.meds || '',
+        implantNotes: d.implantNotes || '',
+        doctorHabits: d.doctorHabits || '',
+        notes: d.notes || '',
+        status: d.status,
+        pending: d.pending || null,
+        editor: d.editor || '',
+        editorDate: d.editorDate || '',
+        reviewer: d.reviewer || '',
+        reviewDate: d.reviewDate || ''
+      })
+    });
+  }
+  return true;
+}
+
+async function syncOneToCloud(d) {
+  // 單筆完整同步（審核通過時用）
+  await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+    method: 'PATCH',
+    headers: SUPA_HEADERS,
+    body: JSON.stringify({
+      procedure: d.procedure,
+      anesthesia: d.anesthesia,
+      position: d.position,
+      disinfect: d.disinfect,
+      tools: d.tools || '',
+      supplies: d.supplies || '',
+      meds: d.meds || '',
+      implantNotes: d.implantNotes || '',
+      doctorHabits: d.doctorHabits || '',
+      notes: d.notes || '',
+      status: d.status,
+      pending: null,
+      editor: d.editor || '',
+      editorDate: d.editorDate || '',
+      reviewer: d.reviewer || '',
+      reviewDate: d.reviewDate || ''
+    })
+  });
+}
+
+async function loadFromCloud() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
+      { headers: SUPA_HEADERS }
+    );
+    if(!res.ok) return null;
+    const _j = await res.json();
+    return Array.isArray(_j) ? _j.filter(d=>GROUP_DEPT_SET.has(d.dept)) : _j;
+  } catch(e) { return null; }
+}
+
+async function loadAllFromCloud() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
+      { headers: SUPA_HEADERS }
+    );
+    if(!res.ok) return null;
+    const _j = await res.json();
+    return Array.isArray(_j) ? _j.filter(d=>GROUP_DEPT_SET.has(d.dept)) : _j;
+  } catch(e) { return null; }
+}
+const ALL_DEPTS = ["全部科別", "眼科", "耳鼻喉科", "口腔外科"];
+const GROUP_DEPTS = ["眼科", "耳鼻喉科", "口腔外科"];
+const GROUP_DEPT_SET = new Set(GROUP_DEPTS);
+
+const DEPT_REVIEWERS = {"眼科": ["王嘉羚", "張佩琪", "蕭帆妤", "王婷婷"], "耳鼻喉科": ["洪怡婷", "蕭帆妤", "王婷婷"], "口腔外科": ["林昕澄", "謝佩芳", "蕭帆妤", "王婷婷"]};
+const ADMINS = ["王婷婷", "蕭帆妤"];
+const DEPT_COLORS = {
+  "骨科":       "#1a5276",
+  "胸腔外科":   "#e67e22",
+  "耳鼻喉科":   "#d4ac0d",
+  "心臟外科":   "#c0392b",
+  "神經外科":   "#7c5fd4",
+  "達文西手術": "#1abc9c",
+  "婦產科":     "#e056a0",
+  "一般外科":   "#e86b2a",
+  "直腸外科":   "#c0392b",
+  "乳房外科":   "#c0478a",
+  "小兒外科":   "#27ae8f",
+  "整形外科":   "#e0903a",
+  "泌尿科":     "#16a085",
+  "眼科":       "#8e44ad",
+  "口腔外科":   "#7d6608",
+  "心臟外科(張)": "#c0392b",
+  "心臟外科(陳)": "#c0392b"
+};
+const DEFAULT_DATA = [{"id": 116, "dept": "耳鼻喉科", "procedure": "Sinoscopy", "anesthesia": "LA", "position": "半坐臥或平躺", "disinfect": "Nil", "tools": "PEN11A / 頭燈 / PEN11(prn) / *0度及30度scope / *光源線+轉接頭", "supplies": "止血棉", "meds": "2%Lidocaine+E止血棉nasal Packing", "implantNotes": "病人為CPS術後，通常清傷口3次，第一次回OR，第二三次約回門診", "doctorHabits": "Dr.何：30度鏡 / Dr.陳：0度鏡 / Dr.郭：0度鏡 / Dr.許：0度鏡", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 117, "dept": "耳鼻喉科", "procedure": "Nasal Laser", "anesthesia": "LA", "position": "半坐臥或平躺", "disinfect": "Nil", "tools": "PEN03或PEN11A / BSEN01-鼻電燒(備用) / BNS01-Bipolar(郭) / 備大人0度scopy(陳郭許) / 備小兒30度scopy(何) / *頭燈 / *光源線+轉接頭", "supplies": "5ml/1ml/3ml空針 / 30G針頭 / 23G spinel needle / 止血棉", "meds": "2%Xylocaine+E止血棉nasal Packing", "implantNotes": "laser機器放置陽光室 / 泡消：laser fiber 400、手持筆、鼻子用tip / 泡消laser fiber時請檢視tip有無剝皮好再泡消，使用後前端黑色端切割完再剝皮；手持筆及tip管腔要吸乾", "doctorHabits": "Dr.郭：1ml×2+30G和23G spinel needle，術中prn用bipolar / Dr.許：3ml+23G spinel needle，術中會用止血棉 / Dr.何：不需打local，術前2%Xylocaine+E止血棉nasal Packing / Dr.陳：不需打local，台上2%Xylocaine+E止血棉nasal Packing", "notes": "laser機器放置陽光室 / 泡消前檢視tip有無剝皮", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 118, "dept": "耳鼻喉科", "procedure": "Nasal Biopsy / NP Biopsy", "anesthesia": "LA", "position": "半坐臥或平躺", "disinfect": "Nil", "tools": "PEN14-鼻咽切片 / BSEN01-鼻電燒(nasal) / 備大人0度scopy(陳郭許) / 備小兒30度scopy(何) / *頭燈 / *光源線+轉接頭", "supplies": "3ml/1ml空針 / 27G/30G針頭 / 23G spinel needle / 導電片 / 濾紙", "meds": "2%Xylocaine+E止血棉nasal Packing / 外用0.1%Bosmine(8R)", "implantNotes": "", "doctorHabits": "Dr.郭：Nasal biopsy上1ml+30G×2組；NP biopsy上1ml+23G spinel needle不用鼻電燒要上ENT棉棒 / Dr.陳何許：3ml+27G(prn)", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 119, "dept": "耳鼻喉科", "procedure": "Oral Biopsy / Oral Laser", "anesthesia": "LA", "position": "半坐臥或平躺", "disinfect": "陳何許：N/S / 郭：AQ-BI:N/S稀釋", "tools": "PEN17-口舌切片包 / *雷射機(陽光室)", "supplies": "1ml/3ml空針 / 27G針頭 / 15號刀片 / 導電片 / 尖電燒頭(郭) / 平電燒+電燒保護套 / 濾紙", "meds": "口舌雷射術後傷口以口內膏塗抹 / 郭術前先使用10%xylocaine噴劑(12房玻璃櫃)", "implantNotes": "tongue tie加備代消鐵製壓舌板(8R麻機後抽屜)及短平電燒線 / 泡消：laser fiber 600、手持筆、口腔用tip", "doctorHabits": "Dr.郭：術前用10%xylocaine噴劑", "notes": "泡消laser fiber前檢視tip有無剝皮", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 120, "dept": "耳鼻喉科", "procedure": "Aurical Pseudocyst (郭)", "anesthesia": "LA", "position": "平躺", "disinfect": "2%CHG、術前拍照、穿手術衣", "tools": "PEN02 / BNS01 / K0008S", "supplies": "1ml空針+27G×2組 / 10ml空針沖水用 / 清潔片 / 15號刀片 / 導電片 / 記號筆 / 尖電燒頭 / 2-0 prolene / Framycin / 5-0 Nylon / 6mm penrose / suction", "meds": "Framycin / 2%xylocaine+E / tetracyclin", "implantNotes": "2-0 prolene剪一頭針 / Framycin對半剪摺成2塊小正方形 / 傷口：Framycin+tetracyclin+白紗+3M", "doctorHabits": "Dr.郭：2-0 prolene剪一頭針，Framycin對半剪", "notes": "傷口：Framycin+tetracyclin+白紗+3M", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 121, "dept": "耳鼻喉科", "procedure": "Laryngomicrosurgery (LMS)", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "Nil", "tools": "PEN04 / 短平頭電燒頭(prn) / *頭燈+光源線 / *光纖導管+喉頭鏡 / *喉頭架", "supplies": "濾紙 / Suction tube / Jelly / 長棉棒(陳郭) / 12Fr拋棄式尿管 / 棉球(何) / 導電片(何)", "meds": "0.1% Bosmine外用不用稀釋 / 10%xylocaine噴劑(借麻醉科)-何", "implantNotes": "光纖導管、喉頭鏡請by order準備大或小(通常先用小的) / 術前術後要照相", "doctorHabits": "Dr.何：會厭囊腫要上電燒止血，12號單導管套在PEN04內suction tip當保護套，三角刀接手柄尾端不要留長度，棉球捏成約綠豆大小10顆並計數 / Dr.陳郭：會厭囊腫不需電燒，使用細長棉棒，三角刀接手柄尾端要留一個小指節長度 / Dr.郭：顯微鏡手把用無菌手套包住", "notes": "術前術後要照相 / 光纖導管喉頭鏡先用小的", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 122, "dept": "耳鼻喉科", "procedure": "Adenoidectomy (陳)", "anesthesia": "GA", "position": "轉床平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG；洗嘴巴：N/S", "tools": "PEN07 / 長平電燒頭+保護套(prn) / IEN05電動刨刀 / 光源線+轉接頭 / *70度scope", "supplies": "8號拋棄式尿管×2 / 導電片 / 10ml空針 / 鏡頭保護套 / 20ml空針 / N/S 500ml / *腺樣體刨刀+灌注套管 / Suction tube×2", "meds": "H2O2(不用稀釋)", "implantNotes": "台下不用nasal packing(從口腔入) / 腺樣體刨刀+灌注套管(自費) / 台上止血請備H2O2及3×3紗布捲成蝸牛狀要計數 / 準備影像系統及(大人或小兒)70度內視鏡", "doctorHabits": "Dr.陳：台下不用nasal packing；腺樣體刨刀+灌注套管(自費)", "notes": "台下不用nasal packing / 3×3紗布捲蝸牛狀要計數", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 123, "dept": "耳鼻喉科", "procedure": "Adenoidectomy (郭、何、許)", "anesthesia": "GA", "position": "轉床平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN07 / IEN05電動刨刀 / BSEN01(何許) / PEN03(何許) / PEN14/IEN02(prn) / 大人/小兒30度scopy(何) / 大人/小兒0度scopy(郭許) / 光源線+轉接頭", "supplies": "8號拋棄式尿管×2(郭) / 導電片 / 2-0silk(郭) / 10ml空針 / 鏡頭保護套 / 20ml空針 / 止血棉 / *腺樣體刨刀+灌注套管 / Suction tube×2", "meds": "2%Lidocaine+E止血棉台下nasal packing(何許)", "implantNotes": "台上不需打Local / Dr.郭：台上止血棉兩片綁在一起，silk綁止血棉1/3處，打完結silk線不要剪短；電視擺病人腳旁 / Dr.何許：電視擺病人頭部", "doctorHabits": "Dr.郭：台下不用nasal packing；腺樣體刨刀+灌注套管(自費) / Dr.何許：台下要nasal packing；舊式0度FESS刨刀(自費)", "notes": "台上不需打Local / 確認電視擺放位置", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 124, "dept": "耳鼻喉科", "procedure": "UPPP", "anesthesia": "GA", "position": "轉床平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "陳：N/S洗嘴巴 / 郭：AQ-BI:N/S洗嘴巴", "tools": "PEN07 / BNS01(郭) / 長平電燒頭+保護套 / 長尖電燒頭(郭) / *頭燈", "supplies": "10ml螺旋空針 / 清潔片 / 18G針頭 / 20ml空針 / 導電片 / 3-0或4-0 polysorb(UL203/UL204) / 2-0vicryl(小針) / 無菌棉球 / 3-0 vicryl", "meds": "2%Lidocaine+E / H2O2", "implantNotes": "無菌棉球皆為30顆/包，無菌棉球沾H2O2使用 / 檢體：左右扁桃腺一盒，懸壅垂一盒 / 麻醉科：oral RAE", "doctorHabits": "Dr.陳：4-0 polysorb / Dr.何：3-0 POLYSORB(UL-204) / Dr.郭：2-0vicryl(小針)、3-0 vicryl(線要泡水)", "notes": "棉球計數 / 麻醉科用oral RAE", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 125, "dept": "耳鼻喉科", "procedure": "Tonsillectomy", "anesthesia": "GA", "position": "轉床平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "陳：N/S洗嘴巴 / 郭：AQ-BI:N/S洗嘴巴", "tools": "PEN07 / *頭燈 / BNS01(郭) / 長平電燒頭+保護套 / 長尖電燒頭(郭)", "supplies": "10ml螺旋空針×1 / 無菌棉球 / 20ml空針 / 導電片 / 清潔片 / 18G針頭", "meds": "2%Lidocaine+E / H2O2 / 口內膏", "implantNotes": "計數紗條及棉球 / 無菌棉球30顆/包沾H2O2使用 / 檢體左右扁桃腺放一盒 / 檢體要放在綠布單上拍照；郭醫師檢體要放比例尺拍照 / 麻醉科：oral RAE", "doctorHabits": "Dr.何：3×3紗條塞喉嚨 / Dr.郭：不用打Local，沖洗口腔用20ml空針+18G針頭(針尖剪掉折彎) / Dr.陳何：台上要打local", "notes": "計數紗條及棉球 / 麻醉科用oral RAE", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 126, "dept": "耳鼻喉科", "procedure": "Grommet Insertion", "anesthesia": "MGA/LA", "position": "平躺", "disinfect": "Nil", "tools": "PEN15 / S0001(prn)", "supplies": "5ml空針 / Suction tube / 23G針頭 / Grommet", "meds": "2%Lidocaine+E / Tarivid / Dr.郭：10%xylocaine噴劑噴耳朵(12房)", "implantNotes": "台上先用最粗micro suction tip吸積水，第三粗suction tip接5ml空針沖水(N/S+Tarivid幾滴)，LA病人不會沖水！ / Grommet常用廠牌Grace，size分1.14mm、1.27mm / 8R玻璃櫃另備有廠牌Grace三角管，size分1.35mm、0.76mm", "doctorHabits": "Dr.陳何：準備彎盆放綠布單，將Grommet倒在綠布單上 / Dr.郭：將整盒Grommet給醫師自己打開", "notes": "LA病人沖水會頭暈不要沖水 / 正確計價並確認Grommet院內碼", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 127, "dept": "耳鼻喉科", "procedure": "FESS (Functional Endoscopic Sinus Surgery)", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN11/FESS包 / PEN03/鼻麻包 / BSEN01/鼻電燒(何郭) / IEN05/電動刨刀 / DSEN01(許) / KEN13/Backbite(prn) / IEN02/小兒FESS器械(prn) / KEN07/向上大香菇(何) / KEN09A/110度切片鉗(何) / KEN09/110度切片鉗(陳) / SEN01/細彎抽吸器 / Dr陳郭許：0、30、70度內視鏡 / Dr何：30、70度內視鏡 / *光源線+轉接頭", "supplies": "10ml螺旋空針/空針×1 / 導電片 / 鏡頭保護套 / 16G IC cath / 22G/23G/25G腰椎穿針 / 1ml空針×2 / Suction tube×2 / 止血棉 / Nasopore或PosisepX / Merocel(無管) / 電動刨刀依自費同意書", "meds": "2%Lidocaine+E / 0.9%N/S 500ml軟袋(配合電動刨刀) / tetracyclin藥膏", "implantNotes": "術中需要看CT，要將電腦移至電視旁 / 若使用nasoport不用塗藥膏；若使用posisep請準備打水", "doctorHabits": "Dr.陳：10ml螺旋+25G spinal needle不用折針；台下packing止血棉單雙側皆5片；台上不管單雙側10片 / Dr.何：10ml螺旋+22G spinal needle打Local要折針；台下packing單側5片雙側10片；台上10片；大人30、70度內視鏡一定要用過醋酸消毒；prn用16 IC cath沖洗鼻子 / Dr.郭：1ml空針+23G spinal needle不用折針；刨刀12度鼻竇刀片+灌注套管；台下不用packing / Dr.許：10ml螺旋+22G spinal needle不用折針；台下packing止血棉單雙側皆5片", "notes": "台上不管單雙側皆10片止血棉 / 術中電腦移至電視旁看CT", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 128, "dept": "耳鼻喉科", "procedure": "FESS 導航", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN11/FESS包 / PEN03/鼻麻包 / BSEN01/鼻電燒(何郭) / IEN05/電動刨刀 / DSEN01(許) / IEN001(導航器械) / KEN13/Backbite(prn) / IEN02/小兒FESS器械(prn) / KEN07/向上大香菇(何) / KEN09A/110度切片鉗(何) / KEN09/110度切片鉗(陳) / SEN01/細彎抽吸器 / 0、30、70度內視鏡(陳郭許) / 30、70度內視鏡(何) / *光源線+轉接頭", "supplies": "10ml螺旋空針/空針×1 / 導電片 / 鏡頭保護套 / 16G IC cath / 22G/23G/25G腰椎穿針 / 1ml空針×2 / Suction tube×2 / 止血棉 / 病人端追蹤器(健保) / 器械追蹤器(健保)/額頭貼片 / Nasopore或PosisepX / Merocel(無管) / 電動刨刀依自費同意書", "meds": "2%Lidocaine+E / 0.9%N/S 500ml軟袋(配合電動刨刀) / tetracyclin藥膏", "implantNotes": "鋪單：小單×1、中單×1，不需ENT包(大洞巾) / 導航機器放置12R對面 / 上導航時只有何醫師需要看CT", "doctorHabits": "同FESS各醫師習慣 / Dr.何另需看CT", "notes": "導航機器放置12R對面 / 鋪單用小單+中單不需ENT大洞巾", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 129, "dept": "耳鼻喉科", "procedure": "R+T、SMR、SMT (陳、何)", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN05 / IEN05 / BSEN01 / PEN03", "supplies": "10ml空針 / Suction tube×2 / 螺旋10ml / 4-0polysorb(UL203) / 23G針頭 / 鏡頭保護套 / 導電片 / 15號刀片 / 特材：Nasopore / Merocel(無管)(prn) / 刨刀：9901700 4.0舊式FESS 0度", "meds": "2%Lidocaine+E / tetracyclin藥膏", "implantNotes": "", "doctorHabits": "Dr.陳：大人0度內視鏡；要準備頭燈；縫線對半剪夾正針 / Dr.何：大人30度內視鏡；pad放小碗裝水擦拭內視鏡；縫線對半剪夾月亮針", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 130, "dept": "耳鼻喉科", "procedure": "R+T、SMR、SMT (郭哲麟)", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN05 / BSEN01 / *0度Scope / DSEN01 / IEN05 / *光源線+轉接頭", "supplies": "1ml空針×2 / Suction tube×2 / 鏡頭保護套 / 導電片 / 5×7.5 surgicel / 15號刀片 / 23G針頭×2", "meds": "2%Lidocaine+E / tetracyclin藥膏", "implantNotes": "台下不用packing / Pad放小碗裝水擦拭內視鏡 / 5×7.5 surgicel剪小塊約1×1cm放nasoport前用 / 電動刨刀頭型號：下鼻甲切削管刀(院內碼9901719)，需醫師確認才可拆 / 不用縫線 / 若加做鼻整形：術前要拍照、加備BNSO1/KEN081/F0001/R0001/REN03/頭燈/記號筆", "doctorHabits": "Dr.郭：台下不用packing，不用縫線，5×7.5 surgicel剪1×1cm", "notes": "不用縫線 / 台下不用packing", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 131, "dept": "耳鼻喉科", "procedure": "R+T、SMR、SMT (許志宏)", "anesthesia": "GA", "position": "平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG", "tools": "PEN05 / BSEN01 / *0度Scope / DSEN01 / IEN05 / *光源線+轉接頭", "supplies": "10ml空針×1 / 10ml螺旋×1 / 22G spine needle / 導電片 / Suction tube×2 / 15號刀片 / 鏡套", "meds": "2%Lidocaine+E / tetracyclin藥膏", "implantNotes": "台下要packing / 不用縫線 / 電動刨刀頭型號：by自費同意書，經許醫師同意才能拆 / 使用自費nasoport或健保Merocel(8R玻璃櫃)，使用時要塗tetracyclin", "doctorHabits": "Dr.許：台下要packing，不用縫線，刨刀by自費同意書", "notes": "不用縫線 / 刨刀需許醫師確認才能拆", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 132, "dept": "耳鼻喉科", "procedure": "Tympanoplasty / Mastoidectomy / Myringoplasty", "anesthesia": "GA", "position": "平躺轉床患側在外", "disinfect": "2%CHG(陳) / Alc B-I(何)", "tools": "PEN09/中耳炎包 / *顯微鏡 / IEN01/人工聽小骨置換物量尺(prn) / 烤燈(跟7R借) / KEN08/左右彎鐙骨剪(prn) / PEN16/ENT氣鑽(prn)", "supplies": "5ml/10ml空針各1 / ENT止血棉 / C-Arm套 / 20ml空針×2 / 4-0polysorb(UL203) / Gelfoam(20×7×0.5cm) / 25G needle×1(陳) / 5-0 Nylon / 8cm自黏彈紗(自費) / 23G needle×1(何) / Framycin gauze / 無菌壓舌板(prn) / 10號/15號刀片 / 短電燒保護套 / 18G needle×2", "meds": "2%Lidocaine+E / 外用0.1%Bosmine / Tarivid", "implantNotes": "止血棉剪1×1cm、0.5×0.5cm、0.3×0.3cm正方型沾0.1%Bosmine / Gelfoam剪成0.5×0.5cm、0.3×0.3cm、0.1×0.1cm正方型，放彎盆保持乾燥，待order加N/S加Tarivid / 人工聽小骨(8R特材鐵櫃)：鈦合金TORP和PORP，正確計價並註明尺寸 / 傷口：8-10塊散紗+自黏彈紗cover", "doctorHabits": "Dr.何：放Fascia時suction壓力調至100mmHg；local台下打；Framycin gauze一半對折覆蓋耳後傷口一半做adaptor塞耳內；珍珠瘤備小兒30度70度內視鏡 / Dr.陳：local台上打；Framycin gauze折三折覆蓋傷口一半做adaptor塞耳內 / myringoplasty：不用止血棉，local台上使用，取下fat不用烤燈，5-0 Nylon縫合", "notes": "Gelfoam保持乾燥 / 人工聽小骨正確計價", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 133, "dept": "耳鼻喉科", "procedure": "Tympanoplasty (郭哲麟)", "anesthesia": "GA", "position": "平躺轉床患側在外", "disinfect": "2%CHG / AQ-BI(台上用ENT棉棒消耳道)", "tools": "PEN09/中耳炎包 / BNS01-bipolar / R0001小兩爪 / 烤燈(跟7R借) / 頭燈", "supplies": "1ml+27G×2組-local / 止血棉 / 凡士林紗布×2 / 20ml+18G沖水用 / Gelfoam(厚) / 1ml空針×1 / 內視鏡套 / 美容膠1/4 / 3-0 vicryl角針 / 15號刀片 / 尖電燒保護套 / Suction / ENT棉棒", "meds": "2%Lidocaine+E / cefazoline", "implantNotes": "使用內視鏡做，需備電視，專師帶耳用內視鏡來，泡消時先將轉接頭拔下才能接8R光源線 / Gelfoam(厚)壓最扁，剪0.3×0.3cm、0.2×0.2cm、0.1×0.1cm正方型，放彎盆保持乾燥，流動會倒入Cefa粉保持乾燥不用加水 / 止血棉剪1×1cm、0.5×0.5cm、0.3×0.3cm正方型沾0.1%Bosmine / 凡士林紗布把凡士林刮下裝入1ml空針內，並剪一塊凡士林紗布對半長條對摺摺3摺捲起來塞耳道 / 傷口：美容膠+白紗+3M，耳道塞一顆棉球", "doctorHabits": "Dr.郭：使用內視鏡做", "notes": "Gelfoam保持乾燥 / 耳道塞棉球", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 134, "dept": "耳鼻喉科", "procedure": "Tracheostomy (ENT)", "anesthesia": "LA請麻醉科Standby 或 GA", "position": "平躺", "disinfect": "Alc B-I", "tools": "PEN12 / *頭燈 / KEN05/氣管軟骨刀 / 平電燒頭+保護套", "supplies": "5ml/10ml空針各1 / 導電片 / 25G needle / Tracheostomy tube / 15號刀片 / Jelly(2-3包)", "meds": "2%Lidocaine+E", "implantNotes": "打Local：5ml空針+25G針抽2%Lidocaine+E / Tracheostomy tube請先以10ml空針筒test cuff / Y紗上Y形部份請沾打剩的Local或外用0.1%Bosmine / 不用縫線固定 / 病人全部移到OR床手術", "doctorHabits": "病人全部移到OR床手術", "notes": "Tracheostomy tube先test cuff / 不用縫線固定", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 135, "dept": "耳鼻喉科", "procedure": "Neck Mass / Sialolithiasis", "anesthesia": "LA 或 GA", "position": "平躺 / GA：轉床患側在外 / LA：頭睡床尾", "disinfect": "Alc. B-I / 2%CHG", "tools": "PEN02 / *頭燈 / R0002 / REN03 / 電燒保護套", "supplies": "15號刀片 / Penrose 6mm(prn) / 5ml/10ml空針 / 2-0silk/3-0silk / 25G Needle / 4-0polysorb(UL203) / 記號筆 / 5-0Nylon(1756-41) / 導電片 / 5-0Dexon / 美容膠1/4吋", "meds": "2%Lidocaine+E", "implantNotes": "打Local：5ml空針+25G針抽2%Lidocaine+E / Sialolithiasis：請病人半坐臥 / 台上使用濕散紗", "doctorHabits": "", "notes": "Sialolithiasis：病人半坐臥 / 台上使用濕散紗", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 136, "dept": "耳鼻喉科", "procedure": "Parotid Tumor / Submandibular Mass / Thyroid Cyst", "anesthesia": "GA", "position": "平躺轉床患側在外", "disinfect": "2%CHG / Alc.B-I", "tools": "PEN01 / KEN01(Elevators) / REN03(豬八戒鈎) / KOR11A(Elevators) / S0004(suction) / *頭燈 / C0003S(pean) / R0002(baby鈎) / BNS01 / H0001S(持針器) / R0004(肌鈎)", "supplies": "10號/15號刀片 / 平電燒頭+保護套 / 2-0 SILK(prn) / 5ml/10ml空針各1 / 美容膠1/4吋 / 3-0 SILK(prn) / 25G Needle / Penrose 6mm(prn) / 4-0polysorb(UL203) / 記號筆 / 5-0Nylon(1756-41) / 清潔片 / 導電片", "meds": "2%Lidocaine+E", "implantNotes": "打Local：5ml空針+23G針抽2%Lidocaine+E / 傷口以美容膠or tetracyclin藥膏+白紗+3M / 自費：顏面神經監測，要先通知廠商帶機器及耗材(97T0503-皮對皮下電極4頻道、97T0502-圓頭探針)", "doctorHabits": "", "notes": "自費顏面神經監測需通知廠商", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 137, "dept": "耳鼻喉科", "procedure": "Pre-Auricular Cyst / Fistula", "anesthesia": "GA/LA", "position": "平躺轉床患側在外", "disinfect": "Alc.B-I / 2%CHG", "tools": "PEN02 / 平電燒頭+保護套 / R0002/baby鈎 / *頭燈 / K0008S/小刮匙 / 尖電燒(郭) / REN03/豬八戒鈎", "supplies": "5ml/10ml空針各1 / Marking pen / 導電片 / 25G Needle / 清潔片 / Penrose 6mm(prn) / 15號刀片 / 5-0Nylon(1756-31) / 3ml空針+24G IC cath", "meds": "2%Lidocaine+E / Tetracycline oint.", "implantNotes": "打Local：5ml空針+25G針抽2%Lidocaine+E / 若為耳前Fistula請備3ml空針抽marking pen筆芯墨水+24G IC Cath / 傷口覆蓋：眼藥膏塗抹or優碘棉花+白紗or散紗+3M or宜拉膠or自黏彈紗", "doctorHabits": "", "notes": "Fistula備3ml空針抽marking pen墨水+24G IC Cath", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 138, "dept": "耳鼻喉科", "procedure": "Reconstruction Nasal Bone Fx. (Close)", "anesthesia": "LA", "position": "平躺/半坐臥", "disinfect": "2%CHG", "tools": "PEN03 / IEN03/鼻骨整復夾 / K0005(prn) / *頭燈", "supplies": "5ml空針 / 凡士林紗(prn) / 25G Needle", "meds": "2%Xylocaine+E / Tetracycline oint.", "implantNotes": "台下Packing+打Local / 術前術後要照相 / 視情況Reduction後塞不帶線凡士林紗左右各1條 / 術後在鼻子塗Alc B-I貼3M固定", "doctorHabits": "", "notes": "術前術後要照相 / 術後鼻子塗Alc B-I貼3M固定", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 139, "dept": "耳鼻喉科", "procedure": "Oral Cancer / Tongue Cancer", "anesthesia": "GA", "position": "平躺轉床患側在外", "disinfect": "Alc B-I / ATK", "tools": "PEN01/ENT基本包 / PEN12/氣切包 / C0003M/中pean / KEN05/氣管軟骨刀 / C0006S/L/Allis / C0008M/中直角鉗 / R0002/3/4肌鈎 / R0006/7肌鈎 / REN03/豬八戒鈎 / RNS01+橡皮筋/魚鈎 / RNS01A/魚鈎 / IPL09/10(R saw) / KOR01/骨鑿 / KOR10/骨膜剝離器 / KOR12/磨骨器 / 長平電燒頭+保護套 / Lapa包 / 4×4顯影紗8包 / *頭燈", "supplies": "10號/15號刀片 / 12Fr拋棄式尿管 / 1/8 Hemovac / 10ml/20ml空針各2 / 16Fr N-G tube / 7/10mm CWV drain / 18G×2/25G×1針頭 / 小腿尿袋/灌食空針 / CWV bottle / 電燒片/清潔片 / 2-0/3-0silk / 記號筆 / 4-0polysorb(UL203) / 14或16 Foley/尿袋 / 5-0Nylon(1756-41)", "meds": "2%Xylocaine+E / Tetracycline oint.", "implantNotes": "Tongue cancer：牙科借拔牙器械 / 術中使用顯影紗要計數", "doctorHabits": "", "notes": "術中顯影紗要計數 / Tongue cancer需借牙科拔牙器械", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}, {"id": 140, "dept": "耳鼻喉科", "procedure": "UP-flap", "anesthesia": "GA", "position": "轉床平躺（頭尾顛倒、腳靠寫字台）", "disinfect": "2%CHG / ATK", "tools": "PEN07 / 長平電燒頭+保護套 / *頭燈", "supplies": "10ml螺旋空針 / 清潔片 / 20ml空針 / 導電片 / 3-0或4-0 polysorb(UL203/UL204) / 15#刀 / 止血棉", "meds": "2%Lidocaine+E / 外用bosmin(不用稀釋)", "implantNotes": "台上請備3×3溼紗(塞喉嚨用) / 止血棉 / 檢體：懸壅垂一盒", "doctorHabits": "Dr.陳：4-0 polysorb / Dr.何：3-0 POLYSORB(UL-204)", "notes": "台上備3×3溼紗塞喉嚨用 / 檢體懸壅垂一盒", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "", "pending": null}];
+function loadData(){
+  try{
+    const s = localStorage.getItem(STORAGE_KEY);
+    if(s) return JSON.parse(s);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+async function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
+  try {
+    await syncToCloud(DATA);
+    showToast('☁️ 已同步，其他人可看到');
+  } catch(e) {
+    showToast('⚠️ 雲端同步失敗');
+  }
+}
+
+let DATA = loadData();
+let currentUser = null;
+let currentDept = '', currentAne = 'all', currentSearch = '', currentDoctor = 'all';
+let fpId = null;
+let editingId = null, reviewTargetId = null, selectedReviewer = null;
+
+function isReviewer(name){ return ADMINS.includes(name) || Object.values(DEPT_REVIEWERS).some(a=>a.includes(name)); }
+function canReview(name,dept){ return ADMINS.includes(name)||(DEPT_REVIEWERS[dept]||[]).includes(name); }
+function getUserLabel(name){
+  if(ADMINS.includes(name)) return '全科管理員';
+  const depts=Object.entries(DEPT_REVIEWERS).filter(([d,a])=>a.includes(name)).map(([d])=>d);
+  if(depts.length) return depts.join('、')+' 審核者';
+  return '編輯者';
+}
+
+// LOGIN
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('logoutBtn').addEventListener('click', doLogout);
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{
+  if(!currentUser) return;
+  const btn=document.getElementById('refreshBtn');
+  btn.textContent='⏳ 同步中';
+  btn.disabled=true;
+  const cloudData = await loadFromCloud();
+  if(cloudData && cloudData.length > 0){
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    DATA = cloudData;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    if(nowPending > 0) showToast(`🔔 有 ${nowPending} 筆待審核術式`);
+    else showToast('✅ 已是最新資料');
+  } else { showToast('⚠️ 無法取得雲端資料'); }
+  btn.textContent='↻ 同步';
+  btn.disabled=false;
+});
+
+let pollTimer = null;
+
+async function doLogin(){
+  const name = document.getElementById('loginName').value.trim();
+  if(!name){ showToast('請輸入姓名'); return; }
+  currentUser = name;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userNameDisplay').textContent = name;
+  document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
+  // 先用本機資料快速顯示，不等雲端
+  // 先用 DEFAULT_DATA 快速顯示
+  DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  renderAll();
+  showToast('⏳ 從雲端載入資料...');
+  startPolling();
+  // 從 Supabase 載入完整最新資料
+  loadFromCloud().then(cloudData => {
+    if(!cloudData || cloudData.length === 0){
+      showToast('✅ 已載入（' + DATA.length + ' 筆）');
+      return;
+    }
+    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    // 用雲端資料為主，補入 DEFAULT_DATA 中雲端沒有的新筆數
+    const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
+    const cloudIds = new Set(cloudData.map(d=>d.id));
+    const newItems = DEFAULT_DATA.filter(d=>!cloudIds.has(d.id));
+    DATA = [...cloudData, ...newItems];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    showToast('✅ 已載入（' + DATA.length + ' 筆）');
+    // 若有新增筆數，推送到雲端
+    if(newItems.length > 0) syncToCloud(newItems).catch(()=>{});
+  }).catch(()=>{ showToast('✅ 已載入（' + DATA.length + ' 筆）'); });
+}
+function doLogout(){
+  stopPolling();
+  currentUser = null;
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginName').value = '';
+}
+
+function startPolling(){
+  stopPolling();
+  pollTimer = setInterval(async ()=>{
+    if(!currentUser) return;
+    const cloudData = await loadFromCloud();
+    if(!cloudData || cloudData.length === 0) return;
+    // 雲端只存審核狀態，合併回 DATA
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    DATA = DATA.map(d=>{
+      const cloud = cloudMap.get(d.id);
+      if(!cloud) return d;
+      return {...d, status: cloud.status||d.status, pending: cloud.pending||null,
+        editor: cloud.editor||'', editorDate: cloud.editorDate||'',
+        reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    updateNotif();
+    if(nowPending > prevPending){
+      renderCards();
+      showToast('🔔 有 ' + nowPending + ' 筆新增待審核術式！');
+    }
+  }, 30000);
+}
+function stopPolling(){
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+}
+
+// FILTER
+function getFiltered(){
+  return DATA.filter(s=>{
+    const dOk = currentDept===''||s.dept===currentDept;
+    const u = s.anesthesia.toUpperCase();
+    const aOk = currentAne==='all'
+      ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
+      ||(currentAne==='la'&&(u.includes('L.A')||u.includes('IVG')||u.includes('LOCAL')));
+    if(!dOk||!aOk) return false;
+    if(!currentSearch) return true;
+    const q = currentSearch.toLowerCase();
+    return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
+  });
+}
+
+function renderAll(){
+  renderDepts();
+  renderFilters();
+  renderCards();
+  updateNotif();
+}
+
+
+
+
+
+
+
+
+function renderDepts(){
+  const existing = new Set(DATA.map(d=>d.dept));
+  // 強制加入 DEFAULT_DATA 的科別，避免雲端舊資料讓按鈕消失
+  DEFAULT_DATA.forEach(d=>existing.add(d.dept));
+  document.getElementById('deptWrap').innerHTML = ALL_DEPTS
+    .filter(d=>d!=='全部科別'&&existing.has(d))
+    .map(d=>{
+      const color = DEPT_COLORS[d]||'#5b8fa8';
+      const isActive = currentDept===d;
+      const style = d==='全部科別'
+        ? (isActive?'background:var(--teal);border-color:var(--teal);color:#fff;':'')
+        : (isActive?`background:${color};border-color:${color};color:#fff;box-shadow:0 2px 8px ${color}40;`:`border-color:${color}60;color:${color};`);
+      return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
+    }).join('');
+}
+
+function setDept(d){ currentDept=d; renderDepts(); renderCards(); }
+
+function renderFilters(){
+  document.getElementById('filterWrap').innerHTML = [
+    {k:'all',l:'全部麻醉'},{k:'etga',l:'ETGA 全身麻醉'},{k:'la',l:'L.A / IVGS 局部'}
+  ].map(f=>`<button class="filter-btn ${currentAne===f.k?'active':''}" onclick="setAne('${f.k}')">${f.l}</button>`).join('');
+}
+function setAne(k){ currentAne=k; renderFilters(); renderCards(); }
+
+document.getElementById('nav-back').addEventListener('click',()=>{
+  document.getElementById('fpBack').click();
+});
+
+document.getElementById('searchInput').addEventListener('input', e=>{
+  currentSearch = e.target.value;
+  renderCards();
+});
+
+function aneBadge(a){
+  const u=a.toUpperCase();
+  if(u.includes('ETGA')) return `<span class="badge badge-blue">ETGA</span>`;
+  if(u.includes('L.A')||u.includes('IVG')) return `<span class="badge badge-green">L.A/IVG</span>`;
+  return `<span class="badge badge-amber">${a.split(' ')[0]}</span>`;
+}
+function statusBadge(s){
+  return s==='已審核'?'<span class="badge badge-approved">✓ 已審核</span>':'<span class="badge badge-pending">⏳ 待審核</span>';
+}
+function deptBadge(d){
+  const c=DEPT_COLORS[d]||'#5b8fa8';
+  return `<span class="badge" style="background:${c}18;color:${c};border-color:${c}40;font-size:13px;">${d}</span>`;
+}
+
+function renderCards(){
+  const f = getFiltered();
+  const deptCount = currentDept===''
+    ? DATA.length
+    : DATA.filter(d=>d.dept===currentDept).length;
+  const pendingCount = DATA.filter(d=>d.pending).length;
+  let stats = `<div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
+  if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
+  document.getElementById('statsBar').innerHTML = stats;
+  const w = document.getElementById('cardsWrap');
+  if(!f.length){ w.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到符合的術式</div></div>'; return; }
+  w.innerHTML = f.map((s,i)=>{
+    const color = DEPT_COLORS[s.dept]||'#5b8fa8';
+    return `<div class="card" id="card-${s.id}" style="animation-delay:${i*.02}s;border-left-color:${color};" onclick="openFp(${s.id})">
+      <div class="card-header">
+        <div class="card-title">${s.procedure}</div>
+        <div class="card-chevron">›</div>
+      </div>
+      <div class="card-meta">
+        ${deptBadge(s.dept)}${aneBadge(s.anesthesia)}
+        <span class="badge badge-pos">📐 ${s.position}</span>
+        ${statusBadge(s.status)}
+        ${s.pending?'<span class="badge" style="background:var(--red-dim);color:var(--red);border-color:var(--red);font-size:13px;">📝 待審版本</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// FULLPAGE
+function openFp(id){
+  fpId=id;
+  document.getElementById('fullpage').style.cssText='display:block;';
+  document.getElementById('bottomNav').style.display='flex';
+  document.getElementById('fullpage').scrollTop=0;
+  renderFp();
+}
+document.getElementById('fpBack').addEventListener('click',()=>{
+  document.getElementById('fullpage').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  fpId=null;
+  renderDepts();
+});
+document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
+
+function renderFp(){
+  const s=DATA.find(d=>d.id===fpId); if(!s) return;
+  const color=DEPT_COLORS[s.dept]||'#5b8fa8';
+  document.getElementById('fpDept').textContent=s.dept;
+  document.getElementById('fpDept').style.color=color;
+  document.getElementById('fpTitle').textContent=s.procedure;
+  let body='';
+  body+=`<div class="fp-meta">${deptBadge(s.dept)}${aneBadge(s.anesthesia)}<span class="badge badge-pos">📐 ${s.position}</span>${statusBadge(s.status)}</div>`;
+ 
+  let rec=[];
+  rec.push(`<span>📝 原編著：<strong>${s.author||'—'}</strong></span>`);
+  if(s.editor) rec.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
+  if(s.reviewer) rec.push(`<span>✅ 審核者：<strong>${s.reviewer}</strong>${s.reviewDate?' ('+s.reviewDate+')':''}</span>`);
+  body+=`<div class="fp-record">${rec.join('')}</div>`;
+  if(s.pending){
+    const canRev=canReview(currentUser,s.dept);
+    let diffs='';
+    const fields=[['術式名稱',s.procedure,s.pending.procedure],['麻醉方式',s.anesthesia,s.pending.anesthesia],
+      ['手術姿勢',s.position,s.pending.position],['消毒方式',s.disinfect,s.pending.disinfect],
+      ['工具器械',s.tools,s.pending.tools],['耗材',s.supplies,s.pending.supplies],
+      ['藥物',s.meds,s.pending.meds],['備註',s.implantNotes,s.pending.implantNotes],
+      ['醫生習慣',s.doctorHabits,s.pending.doctorHabits],['注意事項',s.notes,s.pending.notes]];
+    fields.forEach(([label,old,nw])=>{
+      if((old||'')!==(nw||''))
+        diffs+=`<div class="diff-row"><div class="diff-label">${label}</div><div class="diff-old">${old||'（空白）'}</div><div class="diff-new">${nw||'（空白）'}</div></div>`;
+    });
+    body+=`<div class="pending-notice">
+      <div class="pending-title">⏳ 待審核的修改內容</div>
+      <div class="pending-sub">✏️ 修改者：<strong>${s.pending.editor}</strong>（${s.pending.editorDate}）</div>
+      ${diffs||'<div style="font-size:15px;color:var(--text3)">（無欄位變更）</div>'}
+      ${canRev?`<button class="btn-review" onclick="openReview(${s.id})">✅ 審核通過，正式公佈</button>`:'<div style="font-size:14px;color:var(--text3);margin-top:8px;">（需等待本科審核者審核）</div>'}
+    </div>`;
+  }
+  body+=`
+      <div class="fp-section"><div class="fp-label c-amber">姿勢</div><div class="fp-content">${s.position||'—'}</div></div>
+      <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
+      ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
+      ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.split('/').map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
+      ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
+      ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
+      ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${s.doctorHabits}</div></div>`:''}
+      ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
+    `;
+  document.getElementById('fpBody').innerHTML=body;
+}
+
+
+// MODAL
+document.getElementById('btnAdd').addEventListener('click',()=>openModal(null));
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.getElementById('modalCancel').addEventListener('click',closeModal);
+document.getElementById('modalSave').addEventListener('click',saveRecord);
+document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('modalOverlay')) closeModal(); });
+
+function openModal(id){
+  editingId=id;
+  const r=id?DATA.find(d=>d.id===id):null;
+  document.getElementById('modalTitle').textContent=id?'編輯術式':'新增術式';
+  document.getElementById('f_editor').value=currentUser||'';
+  document.getElementById('f_dept').value=r?.dept||'骨科';
+  document.getElementById('f_procedure').value=r?.procedure||'';
+  document.getElementById('f_anesthesia').value=r?.anesthesia||'';
+  document.getElementById('f_position').value=r?.position||'';
+  document.getElementById('f_disinfect').value=r?.disinfect||'';
+  document.getElementById('f_tools').value=r?.tools||'';
+  document.getElementById('f_supplies').value=r?.supplies||'';
+  document.getElementById('f_meds').value=r?.meds||'';
+  document.getElementById('f_implantNotes').value=r?.implantNotes||'';
+  document.getElementById('f_doctorHabits').value=r?.doctorHabits||'';
+  document.getElementById('f_notes').value=r?.notes||'';
+  renderPhotoPreviews();
+  const mo = document.getElementById('modalOverlay');
+  mo.classList.add('show');
+  mo.style.zIndex = '400';
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); editingId=null; }
+
+// PHOTO HANDLING
+
+
+function compressImage(file, maxW){
+  return new Promise((resolve)=>{
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > maxW){ h = h * maxW / w; w = maxW; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function renderPhotoPreviews(){}
+
+
+
+async function saveRecord(){
+  const p=document.getElementById('f_procedure').value.trim();
+  const a=document.getElementById('f_anesthesia').value.trim();
+  if(!p||!a){ showToast('⚠️ 術式名稱和麻醉方式為必填'); return; }
+  const today=new Date().toLocaleDateString('zh-TW');
+  if(editingId){
+    const idx=DATA.findIndex(d=>d.id===editingId);
+    DATA[idx].pending={
+      procedure:p, anesthesia:a,
+      position:document.getElementById('f_position').value.trim(),
+      disinfect:document.getElementById('f_disinfect').value.trim(),
+      tools:document.getElementById('f_tools').value.trim(),
+      supplies:document.getElementById('f_supplies').value.trim(),
+      meds:document.getElementById('f_meds').value.trim(),
+      implantNotes:document.getElementById('f_implantNotes').value.trim(),
+      doctorHabits:document.getElementById('f_doctorHabits').value.trim(),
+      notes:document.getElementById('f_notes').value.trim(),
+      
+      editor:currentUser, editorDate:today
+    };
+  }else{
+    const newId=Math.max(0,...DATA.map(d=>d.id))+1;
+    DATA.push({
+      id:newId, dept:document.getElementById('f_dept').value,
+      procedure:p, anesthesia:a,
+      position:document.getElementById('f_position').value.trim(),
+      disinfect:document.getElementById('f_disinfect').value.trim(),
+      tools:document.getElementById('f_tools').value.trim(),
+      supplies:document.getElementById('f_supplies').value.trim(),
+      meds:document.getElementById('f_meds').value.trim(),
+      implantNotes:document.getElementById('f_implantNotes').value.trim(),
+      doctorHabits:document.getElementById('f_doctorHabits').value.trim(),
+      notes:document.getElementById('f_notes').value.trim(),
+      
+      status:'待審核', author:currentUser,
+      editor:'', editorDate:'', reviewer:'', reviewDate:'', pending:null
+    });
+  }
+  closeModal();
+  await saveData();
+  renderAll();
+  if(fpId) renderFp();
+}
+
+// REVIEW
+function openReview(id){
+  reviewTargetId=id; selectedReviewer=null;
+  const s=DATA.find(d=>d.id===id);
+  const list=[...new Set([...(DEPT_REVIEWERS[s.dept]||[]),...ADMINS])];
+  document.getElementById('reviewProcName').textContent=`「${s.pending?.procedure||s.procedure}」`;
+  document.getElementById('reviewerList').innerHTML=list.map(r=>
+    `<button class="reviewer-btn" onclick="selectReviewer('${r}',this)">${r}</button>`
+  ).join('');
+  document.getElementById('reviewOverlay').classList.add('show');
+}
+function selectReviewer(name,btn){
+  selectedReviewer=name;
+  document.querySelectorAll('.reviewer-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+document.getElementById('reviewCancel').addEventListener('click',()=>{ document.getElementById('reviewOverlay').classList.remove('show'); });
+document.getElementById('reviewOk').addEventListener('click',async ()=>{
+  if(!selectedReviewer){ showToast('請選擇審核者姓名'); return; }
+  const idx=DATA.findIndex(d=>d.id===reviewTargetId);
+  if(idx<0) return;
+  const today=new Date().toLocaleDateString('zh-TW');
+  const draft=DATA[idx].pending;
+  Object.assign(DATA[idx],draft);
+  DATA[idx].status='已審核';
+  DATA[idx].reviewer=selectedReviewer;
+  DATA[idx].reviewDate=today;
+  DATA[idx].pending=null;
+  document.getElementById('reviewOverlay').classList.remove('show');
+  await saveData();
+  renderAll();
+  if(fpId===reviewTargetId) renderFp();
+});
+document.getElementById('reviewOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('reviewOverlay')) document.getElementById('reviewOverlay').classList.remove('show'); });
+
+// NOTIF
+function updateNotif(){
+  const myPending=DATA.filter(s=>s.pending && s.pending.editor && canReview(currentUser,s.dept));
+  const banner=document.getElementById('notifBanner');
+  if(myPending.length>0){
+    banner.classList.remove('hidden');
+    document.getElementById('notifTitle').textContent=`🔴 你有 ${myPending.length} 筆術式待審核`;
+    document.getElementById('notifSub').textContent=[...new Set(myPending.map(s=>s.dept))].join('、')+' → 點此查看';
+  }else{ banner.classList.add('hidden'); }
+}
+document.getElementById('notifBanner').addEventListener('click',()=>{
+  const myPending=DATA.filter(s=>s.pending&&canReview(currentUser,s.dept));
+  if(myPending.length>0) openFp(myPending[0].id);
+});
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
