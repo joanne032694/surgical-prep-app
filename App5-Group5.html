@@ -210,6 +210,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
   <div class="user-bar">
     <div><span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span></div>
     <div style="display:flex;gap:6px;align-items:center;">
+      <button class="logout-btn" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
       <button class="logout-btn" id="refreshBtn" style="border-color:var(--accent);color:var(--accent2);">↻ 同步</button>
       <button class="logout-btn" id="logoutBtn">登出</button>
     </div>
@@ -232,7 +233,6 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     </div>
   </div>
   <div class="dept-wrap" id="deptWrap"></div>
-  <div class="filter-wrap" id="filterWrap"></div>
   <div class="stats-bar" id="statsBar"></div>
   <div class="cards-wrap" id="cardsWrap"></div>
   <div class="bottom-nav" id="bottomNav" style="display:none;">
@@ -549,11 +549,7 @@ function stopPolling(){
 function getFiltered(){
   return DATA.filter(s=>{
     const dOk = currentDept===''||s.dept===currentDept;
-    const u = s.anesthesia.toUpperCase();
-    const aOk = currentAne==='all'
-      ||(currentAne==='etga'&&(u.includes('ETGA')||u.includes('SPINAL')||u.includes('SA')||u.includes('MASK')))
-      ||(currentAne==='la'&&(u.includes('L.A')||u.includes('IVG')||u.includes('LOCAL')));
-    if(!dOk||!aOk) return false;
+    if(!dOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
     return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
@@ -562,7 +558,6 @@ function getFiltered(){
 
 function renderAll(){
   renderDepts();
-  renderFilters();
   renderCards();
   updateNotif();
 }
@@ -592,11 +587,7 @@ function renderDepts(){
 
 function setDept(d){ currentDept=d; renderDepts(); renderCards(); }
 
-function renderFilters(){
-  document.getElementById('filterWrap').innerHTML = [
-    {k:'all',l:'全部麻醉'},{k:'etga',l:'ETGA 全身麻醉'},{k:'la',l:'L.A / IVGS 局部'}
-  ].map(f=>`<button class="filter-btn ${currentAne===f.k?'active':''}" onclick="setAne('${f.k}')">${f.l}</button>`).join('');
-}
+function renderFilters(){ /* 麻醉篩選已移除 */ }
 function setAne(k){ currentAne=k; renderFilters(); renderCards(); }
 
 document.getElementById('nav-back').addEventListener('click',()=>{
