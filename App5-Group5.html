@@ -712,7 +712,7 @@ document.getElementById('fpPrint').addEventListener('click',()=>{
   </style></head><body>
   <div class="dept">${s.dept}</div>
   <h1>${s.procedure}</h1>
-  <div class="ver">${verTxt}　編著：${s.author||''}${s.reviewer?'　審核：'+s.reviewer:''}</div>
+  <div class="ver">${verTxt}${s.reviewer?'　審核：'+s.reviewer:''}</div>
   <table>
     ${row('麻醉方式',s.anesthesia)}
     ${row('姿勢',s.position)}
@@ -744,7 +744,6 @@ function renderFp(){
   body+=`<div class="fp-meta">${verLabel(s)}</div>`;
  
   let rec=[];
-  rec.push(`<span>📝 原編著：<strong>${s.author||'—'}</strong></span>`);
   if(s.editor) rec.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
   if(s.reviewer) rec.push(`<span>✅ 審核者：<strong>${s.reviewer}</strong>${s.reviewDate?' ('+s.reviewDate+')':''}</span>`);
   body+=`<div class="fp-record">${rec.join('')}</div>`;
