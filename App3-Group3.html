@@ -179,6 +179,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .fullpage{background:linear-gradient(180deg,var(--accent-dim) 0%,var(--bg) 180px,var(--bg) 100%) !important;}
 .app-body, body{background-attachment:fixed;}
 
+
+.btn-tinted{background:var(--accent-dim) !important;border-color:var(--accent) !important;color:var(--accent2) !important;font-weight:600;}
+.btn-sync{background:var(--accent) !important;border:none !important;color:#fff !important;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.btn-logout{background:#f0ebe2 !important;border-color:var(--border2) !important;color:var(--text2) !important;font-weight:600;}
+
 </style>
 <script>
 // 動態注冊 PWA manifest
@@ -220,9 +225,9 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
   <div class="user-bar">
     <div><span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span></div>
     <div style="display:flex;gap:6px;align-items:center;">
-      <button class="logout-btn" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
-      <button class="logout-btn" id="refreshBtn" style="border-color:var(--accent);color:var(--accent2);">↻ 同步</button>
-      <button class="logout-btn" id="logoutBtn">登出</button>
+      <button class="logout-btn btn-tinted" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
+      <button class="logout-btn btn-sync" id="refreshBtn">↻ 同步</button>
+      <button class="logout-btn btn-logout" id="logoutBtn">登出</button>
     </div>
   </div>
   <div class="header">
@@ -259,7 +264,8 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
   <div class="fp-header">
     <button class="fp-back" id="fpBack">‹</button>
     <div class="fp-info"><div class="fp-dept" id="fpDept"></div><div class="fp-title" id="fpTitle"></div></div>
-    <button class="fp-edit" id="fpEdit">
+    <button class="fp-edit" id="fpPrint" title="列印此術式" style="margin-right:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+        <button class="fp-edit" id="fpEdit">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     </button>
   </div>
@@ -647,14 +653,8 @@ function renderCards(){
     const color = DEPT_COLORS[s.dept]||'#5b8fa8';
     return `<div class="card" id="card-${s.id}" style="animation-delay:${i*.02}s;border-left-color:${color};" onclick="openFp(${s.id})">
       <div class="card-header">
-        <div class="card-title">${s.procedure}</div>
+        <div class="card-title">${s.procedure}${s.pending?' <span style="color:var(--red);font-size:14px;font-weight:700;">●待審</span>':''}</div>
         <div class="card-chevron">›</div>
-      </div>
-      <div class="card-meta">
-        ${deptBadge(s.dept)}${aneBadge(s.anesthesia)}
-        <span class="badge badge-pos">📐 ${s.position}</span>
-        ${statusBadge(s.status)}
-        ${s.pending?'<span class="badge" style="background:var(--red-dim);color:var(--red);border-color:var(--red);font-size:13px;">📝 待審版本</span>':''}
       </div>
     </div>`;
   }).join('');
@@ -690,7 +690,49 @@ document.getElementById('fpBack').addEventListener('click',()=>{
   fpId=null;
   renderDepts();
 });
+
+document.getElementById('fpPrint').addEventListener('click',()=>{
+  if(!fpId) return;
+  const s = DATA.find(d=>d.id===fpId);
+  if(!s) return;
+  const row=(label,val)=> val? `<tr><th>${label}</th><td>${String(val).replace(/ \/ /g,'<br>')}</td></tr>`:'';
+  const verTxt = (s.reviewDate? (/^\d+\.\d/.test(s.reviewDate)? s.reviewDate : toROC(s.reviewDate)) : toROC(new Date()))+'　V'+(s.version||1);
+  const html = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>${s.procedure}</title>
+  <style>
+    *{font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;}
+    body{padding:24px 28px;color:#222;}
+    h1{font-size:22px;margin:0 0 2px;}
+    .dept{color:#666;font-size:14px;margin-bottom:2px;}
+    .ver{color:#888;font-size:13px;margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;vertical-align:top;font-size:14px;line-height:1.6;}
+    th{background:#f2f2f2;width:90px;white-space:nowrap;font-weight:700;}
+    .foot{margin-top:18px;font-size:12px;color:#999;text-align:right;}
+    @media print{body{padding:0;}}
+  </style></head><body>
+  <div class="dept">${s.dept}</div>
+  <h1>${s.procedure}</h1>
+  <div class="ver">${verTxt}　編著：${s.author||''}${s.reviewer?'　審核：'+s.reviewer:''}</div>
+  <table>
+    ${row('麻醉方式',s.anesthesia)}
+    ${row('姿勢',s.position)}
+    ${row('消毒方式',s.disinfect)}
+    ${row('工具/器械',s.tools)}
+    ${row('耗材',s.supplies)}
+    ${row('藥物',s.meds)}
+    ${row('植入物/代消',s.implantNotes)}
+    ${row('醫師習慣',s.doctorHabits)}
+    ${row('備註',s.notes)}
+  </table>
+  <div class="foot">手術室手術用物準備手冊　列印日期 ${toROC(new Date())}</div>
+  <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else { showToast('請允許彈出視窗以列印'); }
+});
 document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
+
 
 function renderFp(){
   const s=DATA.find(d=>d.id===fpId); if(!s) return;
