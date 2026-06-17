@@ -224,7 +224,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     </div>
     <div class="header-top">
       <div class="logo">🏥</div>
-      <div><div class="header-title">手術用物手冊 🟢第1組</div><div class="header-sub">Surgical Prep · 🟢綠色 3科</div></div>
+      <div><div class="header-title" id="hdrTitle">手術用物準備手冊</div><div class="header-sub" id="hdrSub">Surgical Prep</div></div>
       <button class="btn-add" id="btnAdd">＋ 新增</button>
     </div>
     <div class="search-wrap">
@@ -438,6 +438,7 @@ async function saveData(){
 let DATA = loadData();
 let currentUser = null;
 let currentDept = '', currentAne = 'all', currentSearch = '', currentDoctor = 'all';
+let lockedDept = '';
 let fpId = null;
 let editingId = null, reviewTargetId = null, selectedReviewer = null;
 
@@ -486,7 +487,7 @@ async function doLogin(){
   // 先用本機資料快速顯示，不等雲端
   // 先用 DEFAULT_DATA 快速顯示
   DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  try{ const _p=new URLSearchParams(location.search).get('dept'); if(_p && GROUP_DEPT_SET.has(_p)) currentDept=_p; }catch(e){}
+  try{ const _p=new URLSearchParams(location.search).get('dept'); if(_p && GROUP_DEPT_SET.has(_p)){ currentDept=_p; lockedDept=_p; const _t=document.getElementById('hdrTitle'); if(_t)_t.textContent=_p; const _su=document.getElementById('hdrSub'); if(_su)_su.textContent='手術用物準備手冊'; } }catch(e){}
   renderAll();
   showToast('⏳ 從雲端載入資料...');
   startPolling();
@@ -549,7 +550,7 @@ function stopPolling(){
 // FILTER
 function getFiltered(){
   return DATA.filter(s=>{
-    const dOk = currentDept===''||s.dept===currentDept;
+    const dOk = lockedDept ? s.dept===lockedDept : (currentDept===''||s.dept===currentDept);
     if(!dOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
@@ -574,6 +575,7 @@ function renderDepts(){
   const existing = new Set(DATA.map(d=>d.dept));
   // 強制加入 DEFAULT_DATA 的科別，避免雲端舊資料讓按鈕消失
   DEFAULT_DATA.forEach(d=>existing.add(d.dept));
+  if(lockedDept){ document.getElementById('deptWrap').style.display='none'; document.getElementById('deptWrap').innerHTML=''; return; }
   document.getElementById('deptWrap').innerHTML = ALL_DEPTS
     .filter(d=>d!=='全部科別'&&existing.has(d))
     .map(d=>{
@@ -620,7 +622,7 @@ function renderCards(){
     ? DATA.length
     : DATA.filter(d=>d.dept===currentDept).length;
   const pendingCount = DATA.filter(d=>d.pending).length;
-  let stats = `<div class="stat-pill">總計 <strong>${DATA.length}</strong> 筆</div>`;
+  let stats = `<div class="stat-pill">總計 <strong>${lockedDept?DATA.filter(d=>d.dept===lockedDept).length:DATA.length}</strong> 筆</div>`;
   if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
   document.getElementById('statsBar').innerHTML = stats;
   const w = document.getElementById('cardsWrap');

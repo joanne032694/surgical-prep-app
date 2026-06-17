@@ -6,102 +6,134 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="手術用物手冊">
-<meta name="theme-color" content="#2c2620">
+<meta name="theme-color" content="#1f6b5c">
 <title>手術室手術用物準備手冊 · 選擇科別</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#faf8f3; --surface:#fff; --text:#2c2620; --text2:#6b5f54; --text3:#a8998c;
-  --border:#e8e2d6; --border2:#d9d0c2; --sans:"Noto Sans TC",sans-serif; --rs:13px;
+  --bg:#f3f1ea; --surface:#ffffff; --ink:#23211c; --ink2:#6f675b; --ink3:#a59c8c;
+  --line:#e4ded1; --line2:#d7cfbe; --teal:#1f6b5c; --teal-soft:#e8f0ed;
+  --sans:"Noto Sans TC",system-ui,sans-serif; --r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:var(--sans); background:var(--bg); color:var(--text);
-  min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:34px 18px 48px;}
-.wrap{width:100%; max-width:460px;}
-.head{text-align:center; margin-bottom:6px;}
-.logo{font-size:44px; line-height:1; margin-bottom:10px;}
-.title{font-size:22px; font-weight:700; letter-spacing:.02em;}
-.sub{font-size:15px; color:var(--text3); margin-top:6px;}
-.hint{font-size:14px; color:var(--text3); text-align:center; margin:16px 0 20px;}
-.grid{display:flex; flex-direction:column; gap:10px;}
-.dept-btn{display:flex; align-items:center; justify-content:space-between;
-  background:var(--surface); border:1.5px solid var(--border); border-radius:var(--rs);
-  padding:17px 18px; cursor:pointer; text-decoration:none; color:var(--text);
-  transition:transform .12s, box-shadow .12s, border-color .12s;
-  box-shadow:0 1px 2px rgba(44,38,32,.04);}
-.dept-btn:active{transform:scale(.985);}
-.dept-btn:hover{box-shadow:0 4px 14px rgba(44,38,32,.09); border-color:var(--border2);}
-.dept-name{font-size:18px; font-weight:700;}
-.chev{font-size:22px; color:var(--text3);}
-.foot{text-align:center; font-size:13px; color:var(--text3); margin-top:26px; line-height:1.6;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;
+  padding:max(28px,env(safe-area-inset-top)) 16px 40px;}
+.wrap{width:100%;max-width:440px;margin:0 auto;}
+
+/* header */
+.masthead{text-align:center;padding:14px 0 22px;position:relative;}
+.crest{width:54px;height:54px;border-radius:15px;background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:27px;margin:0 auto 14px;
+  box-shadow:0 6px 18px rgba(31,107,92,.28);}
+.h-title{font-size:21px;font-weight:900;letter-spacing:.04em;line-height:1.3;}
+.h-rule{width:34px;height:3px;background:var(--teal);border-radius:2px;margin:12px auto 10px;}
+.h-sub{font-size:13px;color:var(--ink3);letter-spacing:.18em;text-transform:uppercase;font-weight:500;}
+.h-hint{font-size:14px;color:var(--ink2);margin-top:14px;}
+
+/* list */
+.list{display:flex;flex-direction:column;gap:9px;margin-top:6px;}
+.card{display:flex;align-items:center;gap:14px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;
+  text-decoration:none;color:var(--ink);
+  transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease;
+  box-shadow:0 1px 1px rgba(35,33,28,.03);
+  animation:rise .4s ease both;animation-delay:calc(var(--i)*.035s);}
+@keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.card:hover{box-shadow:0 8px 22px rgba(35,33,28,.10);border-color:var(--line2);transform:translateY(-1px);}
+.card:active{transform:scale(.99);}
+.mark{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:var(--teal-soft);
+  color:var(--teal);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.name{font-size:17px;font-weight:700;letter-spacing:.01em;}
+.en{font-size:11px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;font-weight:500;}
+.arr{width:18px;height:18px;color:var(--line2);flex-shrink:0;transition:transform .14s,color .14s;}
+.card:hover .arr{color:var(--teal);transform:translateX(2px);}
+
+.foot{text-align:center;font-size:12px;color:var(--ink3);margin-top:24px;line-height:1.7;letter-spacing:.02em;}
+@media (prefers-reduced-motion:reduce){.card{animation:none;}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="head">
-    <div class="logo">🏥</div>
-    <div class="title">手術室手術用物準備手冊</div>
-    <div class="sub">請選擇科別</div>
-  </div>
-  <div class="hint">點選科別進入查詢與編輯</div>
-  <div class="grid">
-    <a class="dept-btn" href="App1-Group1.html?dept=%E7%9C%BC%E7%A7%91">
-      <span class="dept-name">眼科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App1-Group1.html?dept=%E8%80%B3%E9%BC%BB%E5%96%89%E7%A7%91">
-      <span class="dept-name">耳鼻喉科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App1-Group1.html?dept=%E5%8F%A3%E8%85%94%E5%A4%96%E7%A7%91">
-      <span class="dept-name">口腔外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App2-Group2.html?dept=%E4%B8%80%E8%88%AC%E5%A4%96%E7%A7%91">
-      <span class="dept-name">一般外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App2-Group2.html?dept=%E5%B0%8F%E5%85%92%E5%A4%96%E7%A7%91">
-      <span class="dept-name">小兒外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App2-Group2.html?dept=%E8%83%B8%E8%85%94%E5%A4%96%E7%A7%91">
-      <span class="dept-name">胸腔外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App2-Group2.html?dept=%E7%9B%B4%E8%85%B8%E5%A4%96%E7%A7%91">
-      <span class="dept-name">直腸外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App2-Group2.html?dept=%E5%A9%A6%E7%94%A2%E7%A7%91">
-      <span class="dept-name">婦產科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App3-Group3.html?dept=%E7%A5%9E%E7%B6%93%E5%A4%96%E7%A7%91">
-      <span class="dept-name">神經外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App3-Group3.html?dept=%E6%95%B4%E5%BD%A2%E5%A4%96%E7%A7%91">
-      <span class="dept-name">整形外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App3-Group3.html?dept=%E5%BF%83%E8%87%9F%E5%A4%96%E7%A7%91">
-      <span class="dept-name">心臟外科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App4-Group4.html?dept=%E9%AA%A8%E7%A7%91">
-      <span class="dept-name">骨科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App5-Group5.html?dept=%E6%B3%8C%E5%B0%BF%E7%A7%91">
-      <span class="dept-name">泌尿科</span>
-      <span class="chev">›</span>
-    </a>
-    <a class="dept-btn" href="App5-Group5.html?dept=%E9%81%94%E6%96%87%E8%A5%BF%E6%89%8B%E8%A1%93">
-      <span class="dept-name">達文西手術</span>
-      <span class="chev">›</span>
-    </a>
-  </div>
+  <header class="masthead">
+    <div class="crest">🏥</div>
+    <div class="h-title">手術室手術用物準備手冊</div>
+    <div class="h-rule"></div>
+    <div class="h-sub">Surgical Prep Manual</div>
+    <div class="h-hint">請選擇科別</div>
+  </header>
+  <nav class="list">
+      <a class="card" href="App1-Group1.html?dept=%E7%9C%BC%E7%A7%91" style="--i:0">
+        <span class="mark">眼</span>
+        <span class="meta"><span class="name">眼科</span><span class="en">Ophthalmology</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App1-Group1.html?dept=%E8%80%B3%E9%BC%BB%E5%96%89%E7%A7%91" style="--i:1">
+        <span class="mark">耳</span>
+        <span class="meta"><span class="name">耳鼻喉科</span><span class="en">ENT</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App1-Group1.html?dept=%E5%8F%A3%E8%85%94%E5%A4%96%E7%A7%91" style="--i:2">
+        <span class="mark">口</span>
+        <span class="meta"><span class="name">口腔外科</span><span class="en">Oral</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App2-Group2.html?dept=%E4%B8%80%E8%88%AC%E5%A4%96%E7%A7%91" style="--i:3">
+        <span class="mark">一</span>
+        <span class="meta"><span class="name">一般外科</span><span class="en">General</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App2-Group2.html?dept=%E5%B0%8F%E5%85%92%E5%A4%96%E7%A7%91" style="--i:4">
+        <span class="mark">兒</span>
+        <span class="meta"><span class="name">小兒外科</span><span class="en">Pediatric</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App2-Group2.html?dept=%E8%83%B8%E8%85%94%E5%A4%96%E7%A7%91" style="--i:5">
+        <span class="mark">胸</span>
+        <span class="meta"><span class="name">胸腔外科</span><span class="en">Thoracic</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App2-Group2.html?dept=%E7%9B%B4%E8%85%B8%E5%A4%96%E7%A7%91" style="--i:6">
+        <span class="mark">直</span>
+        <span class="meta"><span class="name">直腸外科</span><span class="en">Colorectal</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App2-Group2.html?dept=%E5%A9%A6%E7%94%A2%E7%A7%91" style="--i:7">
+        <span class="mark">婦</span>
+        <span class="meta"><span class="name">婦產科</span><span class="en">OB-GYN</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App3-Group3.html?dept=%E7%A5%9E%E7%B6%93%E5%A4%96%E7%A7%91" style="--i:8">
+        <span class="mark">神</span>
+        <span class="meta"><span class="name">神經外科</span><span class="en">Neurosurgery</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App3-Group3.html?dept=%E6%95%B4%E5%BD%A2%E5%A4%96%E7%A7%91" style="--i:9">
+        <span class="mark">整</span>
+        <span class="meta"><span class="name">整形外科</span><span class="en">Plastic</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App3-Group3.html?dept=%E5%BF%83%E8%87%9F%E5%A4%96%E7%A7%91" style="--i:10">
+        <span class="mark">心</span>
+        <span class="meta"><span class="name">心臟外科</span><span class="en">Cardiac</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App4-Group4.html?dept=%E9%AA%A8%E7%A7%91" style="--i:11">
+        <span class="mark">骨</span>
+        <span class="meta"><span class="name">骨科</span><span class="en">Orthopedic</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App5-Group5.html?dept=%E6%B3%8C%E5%B0%BF%E7%A7%91" style="--i:12">
+        <span class="mark">泌</span>
+        <span class="meta"><span class="name">泌尿科</span><span class="en">Urology</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="card" href="App5-Group5.html?dept=%E9%81%94%E6%96%87%E8%A5%BF%E6%89%8B%E8%A1%93" style="--i:13">
+        <span class="mark">達</span>
+        <span class="meta"><span class="name">達文西手術</span><span class="en">Da Vinci</span></span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+  </nav>
   <div class="foot">修訂內容需經各科組長審核後公布</div>
 </div>
 </body>
