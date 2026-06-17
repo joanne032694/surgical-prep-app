@@ -273,7 +273,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <div class="modal-notice">📋 修改後將進入待審核狀態，審核者確認後才會正式公佈</div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">科別 *</label>
-        <select class="form-select" id="f_dept"><option>一般外科</option><option>小兒外科</option><option>胸腔外科</option><option>直腸外科</option><option>婦產科</option></select>
+        <select class="form-select" id="f_dept"><option>一般外科</option><option>小兒外科</option><option>胸腔外科</option><option>婦產科</option></select>
       </div>
       <div class="form-group"><label class="form-label">修改者</label><input class="form-input" id="f_editor" type="text" readonly></div>
     </div>
@@ -402,11 +402,11 @@ async function loadAllFromCloud() {
     return Array.isArray(_j) ? _j.filter(d=>GROUP_DEPT_SET.has(d.dept)) : _j;
   } catch(e) { return null; }
 }
-const ALL_DEPTS = ["全部科別", "一般外科", "小兒外科", "胸腔外科", "直腸外科", "婦產科"];
-const GROUP_DEPTS = ["一般外科", "小兒外科", "胸腔外科", "直腸外科", "婦產科"];
+const ALL_DEPTS = ["全部科別", "一般外科", "小兒外科", "胸腔外科", "婦產科"];
+const GROUP_DEPTS = ["一般外科", "小兒外科", "胸腔外科", "婦產科"];
 const GROUP_DEPT_SET = new Set(GROUP_DEPTS);
 
-const DEPT_REVIEWERS = {"一般外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "胸腔外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "小兒外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "婦產科": ["楊衣甄", "蕭帆妤", "王婷婷"], "直腸外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"]};
+const DEPT_REVIEWERS = {"一般外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "胸腔外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "小兒外科": ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"], "婦產科": ["楊衣甄", "蕭帆妤", "王婷婷"], };
 const ADMINS = ["蕭帆妤", "王婷婷"];
 const STAFF = ["何尚謙", "余宗芸", "劉祐呈", "卓湘晴", "吳婉菁", "周芳怡", "張佩琪", "張瑋恩", "張芸甄", "徐禾沐", "曾雅筠", "朱庭宜", "李佳容", "李宜諮", "李宜鵑", "李靜怡", "林奕辰", "林峙廷", "林昕澄", "林靜子", "楊衣甄", "江嘉琪", "汪瑄柔", "洪怡婷", "王嘉羚", "王婷婷", "王婷玉", "王玉仙", "盧貞君", "程郁淳", "簡晏欣", "羅秀如", "蕭帆妤", "蕭睬容", "蘇奕臻", "謝佩芳", "辜嬿潔", "郭妍伶", "鄒昀珊", "鄒芮宸", "陳明瑄", "陳柏宇", "陳玉茹", "陳玥汝", "陳筠心", "陳金燕", "高靖緹", "黃予婕", "黃佩琪", "黃品喆", "黃怡婷", "黃沂晨", "黃淑嬅", "黃玉秀"];
 const STAFF_SET = new Set(STAFF);
@@ -566,8 +566,7 @@ function stopPolling(){
 // FILTER
 function getFiltered(){
   return DATA.filter(s=>{
-    const _merge = (lockedDept==='一般外科') ? (s.dept==='一般外科'||s.dept==='直腸外科') : s.dept===lockedDept;
-    const dOk = lockedDept ? _merge : (currentDept===''||s.dept===currentDept);
+    const dOk = lockedDept ? s.dept===lockedDept : (currentDept===''||s.dept===currentDept);
     if(!dOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
@@ -639,7 +638,7 @@ function renderCards(){
     ? DATA.length
     : DATA.filter(d=>d.dept===currentDept).length;
   const pendingCount = DATA.filter(d=>d.pending).length;
-  let stats = `<div class="stat-pill">總計 <strong>${lockedDept?DATA.filter(d=>lockedDept==='一般外科'?(d.dept==='一般外科'||d.dept==='直腸外科'):d.dept===lockedDept).length:DATA.length}</strong> 筆</div>`;
+  let stats = `<div class="stat-pill">總計 <strong>${lockedDept?DATA.filter(d=>d.dept===lockedDept).length:DATA.length}</strong> 筆</div>`;
   if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
   document.getElementById('statsBar').innerHTML = stats;
   const w = document.getElementById('cardsWrap');
