@@ -515,7 +515,9 @@ document.getElementById('refreshBtn').addEventListener('click', async ()=>{
   if(cloudData && cloudData.length > 0){
     const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
     const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
-    const keptCloud = cloudData.filter(d=> !defaultIds.has(d.id) );
+    // 已從本科移除的婦產科舊 id，強制排除
+    const obsoleteIds = new Set([181, 182, 187, 191, 192]);
+    const keptCloud = cloudData.filter(d=> !defaultIds.has(d.id) && !obsoleteIds.has(d.id) );
     DATA = [...keptCloud, ...DEFAULT_DATA];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     renderAll();
@@ -555,7 +557,9 @@ async function doLogin(){
     const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
     // 本檔負責的科別：一律以本檔(DEFAULT_DATA)為準覆蓋雲端；本檔沒有的id保留雲端
     const defaultIds = new Set(DEFAULT_DATA.map(d=>d.id));
-    const keptCloud = cloudData.filter(d=> !defaultIds.has(d.id) );
+    // 已從本科移除的婦產科舊 id，強制排除
+    const obsoleteIds = new Set([181, 182, 187, 191, 192]);
+    const keptCloud = cloudData.filter(d=> !defaultIds.has(d.id) && !obsoleteIds.has(d.id) );
     DATA = [...keptCloud, ...DEFAULT_DATA];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
     renderAll();
@@ -583,6 +587,8 @@ function startPolling(){
     // 雲端只存審核狀態，合併回 DATA
     const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
     const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    // 排除已廢棄的 id
+    DATA = DATA.filter(d => ![181,182,187,191,192].includes(d.id));
     DATA = DATA.map(d=>{
       const cloud = cloudMap.get(d.id);
       if(!cloud) return d;
