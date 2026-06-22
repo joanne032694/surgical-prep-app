@@ -347,6 +347,19 @@ const SUPA_HEADERS = {
   'Authorization': 'Bearer ' + SUPA_KEY
 };
 
+async function deleteObsoleteFromCloud() {
+  // 婦產科已移除的舊 id，需從雲端刪除
+  const obsoleteIds = [181, 182, 187, 191, 192];
+  for(const id of obsoleteIds) {
+    try {
+      await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + id, {
+        method: 'DELETE',
+        headers: SUPA_HEADERS
+      });
+    } catch(e) {}
+  }
+}
+
 async function syncToCloud(data) {
   // 同步所有有變動的資料（pending、editor、reviewer 有值，或 status 改變）
   const updates = data.filter(d => d.pending || d.editor || d.reviewer || d.status !== '已審核');
@@ -549,6 +562,7 @@ async function doLogin(){
     showToast('✅ 已載入（' + DATA.length + ' 筆）');
     // 把本檔資料推回雲端，讓所有人看到最新版
     syncToCloud(DEFAULT_DATA).catch(()=>{});
+    deleteObsoleteFromCloud().catch(()=>{});
   }).catch(()=>{ showToast('✅ 已載入（' + DATA.length + ' 筆）'); });
 }
 function doLogout(){
