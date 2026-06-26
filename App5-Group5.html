@@ -136,9 +136,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .form-group{margin-bottom:12px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .form-label{font-size:16px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block;}
-.form-input,.form-textarea,.form-select{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:19px;padding:9px 11px;outline:none;transition:all .2s;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:22px;padding:12px 13px;outline:none;transition:all .2s;}
 .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff;}
-.form-textarea{resize:vertical;min-height:66px;line-height:1.6;}
+.form-textarea{resize:vertical;min-height:140px;line-height:1.75;overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+.form-input{white-space:normal;}
 .form-select option{background:#fff;}
 .form-hint{font-size:16px;color:var(--text3);margin-top:3px;}
 .modal-actions{display:flex;gap:9px;margin-top:16px;}
@@ -299,12 +300,12 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <div class="form-group"><label class="form-label">術式名稱 *</label><input class="form-input" id="f_procedure" type="text"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">麻醉方式 *</label><input class="form-input" id="f_anesthesia" type="text"></div>
-      <div class="form-group"><label class="form-label">手術姿勢</label><input class="form-input" id="f_position" type="text"></div>
+      <div class="form-group"><label class="form-label">手術姿勢</label><textarea class="form-textarea" id="f_position"></textarea></div>
     </div>
-    <div class="form-group"><label class="form-label">消毒方式</label><input class="form-input" id="f_disinfect" type="text"></div>
+    <div class="form-group"><label class="form-label">消毒方式</label><textarea class="form-textarea" id="f_disinfect"></textarea></div>
     <div class="form-group"><label class="form-label">工具 / 器械</label><textarea class="form-textarea" id="f_tools"></textarea><div class="form-hint">用「/」分隔</div></div>
     <div class="form-group"><label class="form-label">耗材</label><textarea class="form-textarea" id="f_supplies"></textarea><div class="form-hint">用「/」分隔</div></div>
-    <div class="form-group"><label class="form-label">藥物</label><input class="form-input" id="f_meds" type="text"></div>
+    <div class="form-group"><label class="form-label">藥物</label><textarea class="form-textarea" id="f_meds"></textarea></div>
     <div class="form-group"><label class="form-label">備註</label><textarea class="form-textarea" id="f_implantNotes"></textarea></div>
     <div class="form-group"><label class="form-label">醫生習慣</label><textarea class="form-textarea" id="f_doctorHabits"></textarea></div>
     <div class="form-group"><label class="form-label">注意事項</label><textarea class="form-textarea" id="f_notes"></textarea></div>
@@ -802,6 +803,20 @@ document.getElementById('modalCancel').addEventListener('click',closeModal);
 document.getElementById('modalSave').addEventListener('click',saveRecord);
 document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('modalOverlay')) closeModal(); });
 
+
+// === 編輯框自動長高 ===
+function autoGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+function bindAutoGrow(){
+  document.querySelectorAll('#modalOverlay textarea').forEach(t=>{
+    if(t._agBound) return;
+    t._agBound=true;
+    t.addEventListener('input',()=>autoGrow(t));
+  });
+}
+function growAllTextareas(){
+  document.querySelectorAll('#modalOverlay textarea').forEach(t=>autoGrow(t));
+}
+
 function openModal(id){
   editingId=id;
   const r=id?DATA.find(d=>d.id===id):null;
@@ -822,6 +837,8 @@ function openModal(id){
   const mo = document.getElementById('modalOverlay');
   mo.classList.add('show');
   mo.style.zIndex = '400';
+  bindAutoGrow();
+  setTimeout(growAllTextareas, 30);
 }
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); editingId=null; }
 
