@@ -475,14 +475,17 @@ function loadData(){
   return JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
 async function saveData(){
+  // 先存本機，確保不會白改
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
+  showToast('✅ 已送出（本機已存）');
+  // 雲端在背景同步，成功或失敗都不卡畫面
   try {
     const ok = await syncToCloud(DATA);
-    if(ok) showToast('☁️ 已送出並儲存，其他人可看到');
-    else showToast('⚠️ 雲端儲存失敗，請再按一次送出');
+    if(ok) showToast('☁️ 已同步雲端，其他人可看到');
+    else showToast('⚠️ 雲端同步未完成，稍後會自動重試');
     return ok;
   } catch(e) {
-    showToast('⚠️ 雲端儲存失敗，請檢查網路後再送出一次');
+    showToast('⚠️ 雲端暫時無法連線，資料已存本機');
     return false;
   }
 }
@@ -924,11 +927,11 @@ async function saveRecord(){
       editor:'', editorDate:'', reviewer:'', reviewDate:'', pending:null
     });
   }
-  // 先存雲端，成功才關閉視窗；失敗保留視窗讓使用者重試
-  const ok = await saveData();
+  // 先關閉視窗（不卡住），資料已存本機；雲端在背景同步
+  closeModal();
   renderAll();
   if(fpId) renderFp();
-  if(ok) closeModal();
+  saveData();
 }
 
 // REVIEW
