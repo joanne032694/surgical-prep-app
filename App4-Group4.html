@@ -350,22 +350,23 @@ async function syncToCloud(data) {
   if(updates.length === 0) return true;
   let allOk = true;
   for(const d of updates) {
-    const body = {
-      id: d.id, dept: d.dept,
+    // 更新用的欄位（與原始資料表一致，不含可能不存在的 version/author）
+    const updBody = {
       procedure: d.procedure, anesthesia: d.anesthesia, position: d.position,
       disinfect: d.disinfect, tools: d.tools || '', supplies: d.supplies || '',
       meds: d.meds || '', implantNotes: d.implantNotes || '', doctorHabits: d.doctorHabits || '',
       notes: d.notes || '', status: d.status, pending: d.pending || null,
       editor: d.editor || '', editorDate: d.editorDate || '',
-      reviewer: d.reviewer || '', reviewDate: d.reviewDate || '',
-      version: d.version || 1, author: d.author || ''
+      reviewer: d.reviewer || '', reviewDate: d.reviewDate || ''
     };
+    // 新增用的欄位（POST 需要 id 與 dept）
+    const insBody = { id: d.id, dept: d.dept, ...updBody };
     try {
       // 先嘗試更新（PATCH）；若雲端沒有該筆，PATCH 影響 0 列，再用 POST 新增
       const patchRes = await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
         method: 'PATCH',
         headers: {...SUPA_HEADERS, 'Prefer':'return=representation'},
-        body: JSON.stringify(body)
+        body: JSON.stringify(updBody)
       });
       let patched = [];
       try { patched = await patchRes.json(); } catch(e){ patched = []; }
@@ -375,7 +376,7 @@ async function syncToCloud(data) {
         const postRes = await fetch(SUPA_URL + '/rest/v1/surgical_data', {
           method: 'POST',
           headers: {...SUPA_HEADERS, 'Prefer':'return=minimal'},
-          body: JSON.stringify(body)
+          body: JSON.stringify(insBody)
         });
         if(!postRes.ok) allOk = false;
       }
