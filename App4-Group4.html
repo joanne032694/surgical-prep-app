@@ -207,8 +207,17 @@ function hlDr(text){
 // 醫師習慣：每位醫師之間空一行，方便閱讀
 function spaceDoctors(text){
   if(!text) return text;
-  // 在「 / 」分隔處換成換行+空行（僅當後面接 Dr. 或中文醫師名時）
-  let out = String(text).replace(/\s*\/\s*(?=Dr\.|Ｄr|[\u4e00-\u9fff]{2,4}\s*[：:])/g, '\n\n');
+  let out = String(text);
+  // 斷點名單：螢光筆醫師名 + 常見通用詞（其餘醫師等）
+  let names = (typeof DR_NAMES!=='undefined') ? DR_NAMES.slice() : [];
+  names = names.concat(['其餘醫師','其他醫師','其它醫師','所有醫師','各醫師']);
+  names.sort((a,b)=>b.length-a.length);
+  names.forEach(n=>{
+    const re = new RegExp('(?:Dr\\.?\\s*)?'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'g');
+    out = out.replace(re, m=>'\u0001'+m);
+  });
+  // 清掉殘留的分隔斜線（醫師段落結尾的 " / "）
+  out = out.split('\u0001').map(s=>s.replace(/\s*\/\s*$/,'').trim()).filter(s=>s).join('\n\n');
   return out;
 }
 
