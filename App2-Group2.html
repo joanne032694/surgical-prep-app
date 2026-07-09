@@ -106,7 +106,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .fp-record strong{color:var(--text2);font-weight:600;}
 .fp-section{margin-bottom:14px;}.fp-label{font-size:17px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
 .fp-label::before{content:"";width:4px;height:14px;border-radius:2px;background:currentColor;opacity:.6;flex-shrink:0;}
-.fp-content{font-size:23px;font-weight:700;color:var(--text2);line-height:1.9;background:var(--surface);border-radius:var(--rs);padding:14px 16px;border:1.5px solid var(--border);}
+.fp-content{font-size:23px;font-weight:700;color:var(--text2);line-height:1.9;white-space:pre-wrap;background:var(--surface);border-radius:var(--rs);padding:14px 16px;border:1.5px solid var(--border);}
 .fp-tags{display:flex;flex-wrap:wrap;gap:6px;}
 .fp-tag{font-size:20px;font-weight:700;padding:7px 13px;border-radius:var(--rs);background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);}
 .pending-notice{background:rgba(200,129,58,0.08);border:1px solid rgba(200,129,58,0.3);border-radius:var(--rs);padding:12px;margin-bottom:14px;}
@@ -206,6 +206,15 @@ function hlDr(text){
   out = out.split("\u0001").join("<span class=\"dr-hl\">").split("\u0002").join("</span>");
   return out;
 }
+
+// 醫師習慣：每位醫師之間空一行，方便閱讀
+function spaceDoctors(text){
+  if(!text) return text;
+  // 在「 / 」分隔處換成換行+空行（僅當後面接 Dr. 或中文醫師名時）
+  let out = String(text).replace(/\s*\/\s*(?=Dr\.|Ｄr|[\u4e00-\u9fff]{2,4}\s*[：:])/g, '\n\n');
+  return out;
+}
+
 const DEFAULT_REVIEW_DATE = '115.06.17';
 const manifestData = {
   "name": "手術室手術用物準備手冊",
@@ -810,7 +819,7 @@ function renderFp(){
       ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.split(/ \/ /).map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
       ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
       ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
-      ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${hlDr(s.doctorHabits)}</div></div>`:''}
+      ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${hlDr(spaceDoctors(s.doctorHabits))}</div></div>`:''}
       ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
     `;
   document.getElementById('fpBody').innerHTML=body;
