@@ -1,1 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="手術用物手冊·第五組">
+<meta name="theme-color" content="#c0392b">
+<link rel="manifest" href="">
+<link rel="apple-touch-icon" href="icon-192.png?v=4">
+<title>手術用物手冊·第五組 🔴</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f3;--bg2:#f5f2eb;--surface:#fff;--surface2:#fdf9f2;
+  --border:#e8e2d6;--border2:#d4cbbe;
+  --accent:#c0392b;--accent2:#922b21;--accent-dim:rgba(192,57,43,0.12);
+  --green:#4a9e7a;--green-dim:rgba(74,158,122,0.1);
+  --amber:#c8813a;--amber-dim:rgba(200,129,58,0.12);
+  --red:#c0464a;--red-dim:rgba(192,70,74,0.1);
+  --teal:#3a9090;--teal-dim:rgba(58,144,144,0.1);
+  --text:#2c2620;--text2:#6b5f54;--text3:#a8998c;
+  --sans:"Noto Sans TC",sans-serif;--r:12px;--rs:8px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 2px 12px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:90px;}
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 28px;max-width:480px;margin:0 auto;}
+.login-screen.hidden{display:none;}
+.login-logo{font-size:62px;margin-bottom:16px;}
+.login-title{font-size:26px;font-weight:700;color:var(--text);margin-bottom:6px;text-align:center;}
+.login-sub{font-size:18px;color:var(--text3);margin-bottom:32px;text-align:center;line-height:1.6;}
+.login-field{width:100%;max-width:320px;margin-bottom:12px;}
+.login-label{font-size:14px;font-weight:700;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.login-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:22px;padding:13px 14px;outline:none;transition:all .2s;}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.login-btn{width:100%;max-width:320px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:21px;font-weight:700;padding:14px;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(192,57,43,0.4);}
+.login-btn:active{transform:scale(.98);}
+/* USER BAR */
+.user-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;}
+.user-name{font-size:18px;font-weight:700;color:var(--accent2);}
+.user-role{font-size:16px;color:var(--text3);margin-left:6px;}
+.logout-btn{font-size:19px;font-weight:700;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:999px;padding:9px 20px;cursor:pointer;}
+/* NOTIF */
+.notif-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;border-radius:var(--rs);margin-bottom:10px;box-shadow:0 2px 12px rgba(192,57,43,0.4);animation:notifPulse 1.5s ease-in-out infinite;}
+@keyframes notifPulse{0%,100%{opacity:1}50%{opacity:0.85}}
+.notif-banner.hidden{display:none;}
+.notif-left{display:flex;align-items:center;gap:10px;}
+.notif-icon{font-size:24px;}
+.notif-title{font-size:19px;font-weight:700;}
+.notif-sub{font-size:16px;opacity:.9;margin-top:1px;}
+/* HEADER */
+.header{background:rgba(250,248,243,0.97);border-bottom:1px solid var(--border);padding:14px 16px 12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.header-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,#e8f0f5,#d4e6f0);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.header-title{font-size:22px;font-weight:700;color:var(--text);}
+.header-sub{font-size:16px;color:var(--text3);margin-top:1px;}
+.btn-add{background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.search-wrap{position:relative;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.search-input{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:20px;padding:11px 12px 11px 38px;outline:none;}
+.search-input:focus{border-color:var(--accent);background:#fff;}
+.search-input::placeholder{color:var(--text3);}
+/* FILTERS */
+.dept-wrap{padding:6px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;background:var(--surface2);border-bottom:1px solid var(--border);}.dept-btn{width:100%;}.filter-wrap{padding:8px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;background:var(--surface2);border-bottom:1px solid var(--border);}
+.dept-wrap::-webkit-scrollbar,.filter-wrap::-webkit-scrollbar{display:none;}
+.dept-btn,.filter-btn{flex-shrink:0;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:var(--sans);font-size:18px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent2);font-weight:600;}
+/* STATS */
+.stats-bar{padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg2);border-bottom:1px solid var(--border);}
+.stat-pill{font-size:17px;color:var(--text3);padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:999px;}
+.stat-pill strong{color:var(--accent2);font-weight:700;}
+/* CARDS */
+.cards-wrap{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:2px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);animation:fadeUp .25s ease both;cursor:pointer;border-left-width:5px;}
+.card-header{padding:14px 14px 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-title{font-size:21px;font-weight:700;line-height:1.4;color:var(--text);flex:1;}
+.card-chevron{color:var(--text3);flex-shrink:0;font-size:22px;}
+.card-meta{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:5px;}
+.badge{font-size:16px;padding:4px 10px;border-radius:5px;font-weight:600;border:1px solid transparent;}
+.badge-blue{background:rgba(91,143,168,0.12);color:var(--accent2);border-color:rgba(91,143,168,0.2);}
+.badge-green{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.2);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.2);}
+.badge-pos{background:rgba(168,153,140,0.1);color:var(--text2);border-color:var(--border);font-size:14px;}
+.badge-pending{background:var(--amber-dim);color:var(--amber);border-color:rgba(200,129,58,0.3);font-size:13px;}
+.badge-approved{background:var(--green-dim);color:var(--green);border-color:rgba(74,158,122,0.3);font-size:13px;}
+.card-action-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);}
+/* FULLPAGE */
+.fullpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;overflow-y:auto;padding-bottom:90px;}
+.fp-header{background:rgba(250,248,243,0.97);border-bottom:2px solid var(--border2);padding:12px 16px;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);display:flex;align-items:center;gap:12px;max-width:480px;margin:0 auto;}
+.fp-back{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:24px;flex-shrink:0;}
+.fp-info{flex:1;min-width:0;}
+.fp-dept{font-size:17px;color:var(--text3);margin-bottom:2px;}
+.fp-title{font-size:22px;font-weight:700;color:var(--text);line-height:1.3;}
+.fp-edit{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;}
+.fp-body{padding:16px;max-width:480px;margin:0 auto;}
+.fp-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
 
+
+
+.fp-record{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:5px 14px;}
+.fp-record span{font-size:17px;color:var(--text3);}
+.fp-record strong{color:var(--text2);font-weight:600;}
+.fp-section{margin-bottom:14px;}.fp-label{font-size:17px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.fp-label::before{content:"";width:4px;height:14px;border-radius:2px;background:currentColor;opacity:.6;flex-shrink:0;}
+.fp-content{font-size:23px;font-weight:700;color:var(--text2);line-height:1.9;white-space:pre-wrap;background:var(--surface);border-radius:var(--rs);padding:14px 16px;border:1.5px solid var(--border);}
+.fp-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.fp-tag{font-size:20px;font-weight:700;padding:7px 13px;border-radius:var(--rs);background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);}
+.pending-notice{background:rgba(200,129,58,0.08);border:1px solid rgba(200,129,58,0.3);border-radius:var(--rs);padding:12px;margin-bottom:14px;}
+.pending-title{font-size:17px;font-weight:700;color:var(--amber);margin-bottom:5px;}
+.pending-sub{font-size:17px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.btn-review{background:var(--green);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;padding:8px 16px;cursor:pointer;}
+.diff-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;margin-bottom:7px;}
+.diff-label{font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;color:var(--text3);}
+.diff-old{font-size:17px;color:var(--text3);padding:5px 8px;background:rgba(168,153,140,0.08);border-radius:4px;text-decoration:line-through;opacity:.7;margin-bottom:4px;}
+.diff-new{font-size:18px;color:var(--red);padding:5px 8px;background:rgba(192,70,74,0.06);border-radius:4px;border-left:3px solid var(--red);font-weight:600;}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(250,248,243,0.97);border-top:1px solid var(--border);display:flex;padding:12px 16px 22px;z-index:100;backdrop-filter:blur(20px);}
+.nav-item{flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#fff;background:var(--accent);font-size:20px;font-weight:700;padding:14px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.15);transition:transform .12s,opacity .12s;}
+.nav-item.active{color:#fff;}
+.nav-item svg{width:26px;height:26px;}
+.nav-item:active{transform:scale(.97);opacity:.9;}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-icon{font-size:46px;margin-bottom:12px;opacity:.4;}
+.empty-text{font-size:17px;}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(44,38,32,.5);z-index:400;overflow-y:auto;padding:20px 14px;backdrop-filter:blur(6px);}
+.modal-overlay.show{display:flex;align-items:flex-start;justify-content:center;}
+.modal{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;width:100%;max-width:448px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.modal-title{font-size:21px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.modal-notice{font-size:17px;color:var(--amber);background:var(--amber-dim);border-radius:6px;padding:8px 10px;margin-bottom:14px;line-height:1.5;}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;}
+.form-group{margin-bottom:12px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-label{font-size:16px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:22px;padding:12px 13px;outline:none;transition:all .2s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff;}
+.form-textarea{resize:vertical;min-height:140px;line-height:1.75;overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+.form-input{white-space:normal;}
+.form-select option{background:#fff;}
+.form-hint{font-size:16px;color:var(--text3);margin-top:3px;}
+.modal-actions{display:flex;gap:9px;margin-top:16px;}
+.btn-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:19px;cursor:pointer;}
+.btn-save{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-size:19px;font-weight:700;cursor:pointer;}
+/* REVIEW MODAL */
+.review-modal{background:var(--surface);border:1.5px solid rgba(74,158,122,.3);border-radius:14px;width:100%;max-width:380px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.review-modal-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px;text-align:center;}
+.review-modal-proc{font-size:16px;color:var(--text2);margin-bottom:6px;text-align:center;font-weight:600;}
+.review-modal-sub{font-size:15px;color:var(--text3);margin-bottom:16px;text-align:center;}
+.reviewer-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.reviewer-btn{padding:12px 16px;border-radius:var(--rs);border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:var(--sans);font-size:19px;font-weight:500;cursor:pointer;text-align:left;}
+.reviewer-btn.selected{border-color:var(--green);background:var(--green-dim);color:var(--green);font-weight:700;}
+.review-actions{display:flex;gap:8px;}
+.btn-review-cancel{flex:1;padding:11px;border-radius:var(--rs);border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--sans);font-size:16px;cursor:pointer;}
+.btn-review-ok{flex:2;padding:11px;border-radius:var(--rs);border:none;background:var(--green);color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;}
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--text);color:#fff;font-size:18px;padding:10px 18px;border-radius:999px;z-index:400;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.c-accent{color:var(--accent2)}.c-green{color:var(--green)}.c-amber{color:var(--amber)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.badge-ver{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-weight:700;letter-spacing:.04em;padding:5px 14px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.12);}
+.signature{position:fixed;right:16px;bottom:12px;text-align:right;pointer-events:none;z-index:5;}
+.signature .by{font-family:'Great Vibes',cursive;font-size:24px;line-height:1;color:#2e7d5b;opacity:.7;}
+.signature .role{font-size:10px;color:var(--text3);letter-spacing:.25em;margin-top:1px;opacity:.8;}
+.login-screen{background:linear-gradient(160deg,#e3f0e8 0%,#eef4ec 38%,var(--bg) 100%) !important;}
+.fullpage{background:linear-gradient(180deg,var(--accent-dim) 0%,var(--bg) 180px,var(--bg) 100%) !important;}
+.app-body, body{background-attachment:fixed;}
+
+
+.btn-tinted{background:var(--accent-dim) !important;border-color:var(--accent) !important;color:var(--accent2) !important;font-weight:600;}
+.btn-sync{background:var(--accent) !important;border:none !important;color:#fff !important;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.btn-logout{background:#f0ebe2 !important;border-color:var(--border2) !important;color:var(--text2) !important;font-weight:600;}
+
+/* 醫師名字螢光筆標示 */
+.dr-hl{background:linear-gradient(transparent 35%, #fff3a0 35%, #ffe95c 90%, transparent 90%);border-radius:3px;padding:0 3px;font-weight:700;color:#3a2f00;}
+</style>
+<script>
+// 動態注冊 PWA manifest
+// 醫師名字螢光筆標示用（達文西醫師）
+const DR_NAMES = ['徐宇辰','熊副','龔晏萱','徐靖','柯智羣','陳柏誠','莊德彥','吳東琰','王炯珵','陳建志','陳建華','柯智群','吳昀叡','高銘鴻'];
+function hlDr(text){
+  if(!text) return text;
+  let out = String(text);
+  DR_NAMES.forEach(n=>{ out = out.split(n).join('<span class="dr-hl">'+n+'</span>'); });
+  return out;
+}
+
+// 醫師習慣：每位醫師之間空一行，方便閱讀
+function spaceDoctors(text){
+  if(!text) return text;
+  // 在「 / 」分隔處換成換行+空行（僅當後面接 Dr. 或中文醫師名時）
+  let out = String(text).replace(/\s*\/\s*(?=Dr\.|Ｄr|[\u4e00-\u9fff]{2,4}\s*[：:])/g, '\n\n');
+  return out;
+}
+
+// 鎖定的預設審核日期（民國年）。日後整體要改版時，只改這一行即可
+const DEFAULT_REVIEW_DATE = '115.06.17';
+const manifestData = {
+  "name": "手術室手術用物準備手冊",
+  "short_name": "手術用物手冊",
+  "description": "手術室手術用物準備手冊",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#faf8f3",
+  "theme_color": "#1abc9c",
+  "icons": [
+    {"src": "icon-192.png?v=4", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png?v=4", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+};
+const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+const manifestURL = URL.createObjectURL(blob);
+document.querySelector('link[rel="manifest"]').href = manifestURL;
+</script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="signature"><div class="by">Joanne</div><div class="role">製作</div></div>
+  <div class="login-logo">🏥</div>
+  <div class="login-title">手術室手術用物準備手冊</div>
+  <div class="login-sub">輸入姓名登入查詢與編輯<br>修改內容需經各科組長審核後公布</div>
+  <div class="login-field">
+    <label class="login-label">姓名</label>
+    <input class="login-input" id="loginName" type="text" placeholder="請輸入您的中文姓名" maxlength="20">
+  </div>
+  <button class="login-btn" id="loginBtn">登入</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none;">
+  <div class="user-bar">
+    <div><span class="user-name" id="userNameDisplay"></span><span class="user-role" id="userRoleDisplay"></span></div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="logout-btn btn-tinted" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
+      <button class="logout-btn btn-sync" id="refreshBtn">↻ 同步</button>
+      <button class="logout-btn btn-logout" id="logoutBtn">登出</button>
+    </div>
+  </div>
+  <div class="header">
+    <div class="notif-banner hidden" id="notifBanner">
+      <div class="notif-left"><div class="notif-icon">🔔</div>
+        <div><div class="notif-title" id="notifTitle"></div><div class="notif-sub" id="notifSub"></div></div>
+      </div>
+      <div style="font-size:22px;opacity:.8;">›</div>
+    </div>
+    <div class="header-top">
+      <div class="logo">🏥</div>
+      <div><div class="header-title" id="hdrTitle">手術用物準備手冊</div><div class="header-sub" id="hdrSub">Surgical Prep</div></div>
+      <button class="btn-add" id="btnAdd">＋ 新增</button>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="搜尋術式、器械、耗材…">
+    </div>
+  </div>
+  <div class="dept-wrap" id="deptWrap"></div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="cards-wrap" id="cardsWrap"></div>
+  <div class="bottom-nav" id="bottomNav" style="display:none;">
+    <div class="nav-item active" id="nav-back" style="flex:1;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>回上一頁
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FULLPAGE -->
+<div class="fullpage" id="fullpage">
+  <div class="fp-header">
+    <button class="fp-back" id="fpBack">‹</button>
+    <div class="fp-info"><div class="fp-dept" id="fpDept"></div><div class="fp-title" id="fpTitle"></div></div>
+    <button class="fp-edit" id="fpPrint" title="列印此術式" style="margin-right:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+        <button class="fp-edit" id="fpEdit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
+  <div class="fp-body" id="fpBody"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title"><span id="modalTitle">新增術式</span><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="modal-notice">📋 修改後將進入待審核狀態，審核者確認後才會正式公佈</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">科別 *</label>
+        <select class="form-select" id="f_dept"><option>泌尿科</option><option>達文西手術</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">修改者</label><input class="form-input" id="f_editor" type="text" readonly></div>
+    </div>
+    <div class="form-group"><label class="form-label">術式名稱 *</label><input class="form-input" id="f_procedure" type="text"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">麻醉方式 *</label><input class="form-input" id="f_anesthesia" type="text"></div>
+      <div class="form-group"><label class="form-label">手術姿勢</label><textarea class="form-textarea" id="f_position"></textarea></div>
+    </div>
+    <div class="form-group"><label class="form-label">消毒方式</label><textarea class="form-textarea" id="f_disinfect"></textarea></div>
+    <div class="form-group"><label class="form-label">工具 / 器械</label><textarea class="form-textarea" id="f_tools"></textarea><div class="form-hint">用「/」分隔</div></div>
+    <div class="form-group"><label class="form-label">耗材</label><textarea class="form-textarea" id="f_supplies"></textarea><div class="form-hint">用「/」分隔</div></div>
+    <div class="form-group"><label class="form-label">藥物</label><textarea class="form-textarea" id="f_meds"></textarea></div>
+    <div class="form-group"><label class="form-label">備註</label><textarea class="form-textarea" id="f_implantNotes"></textarea></div>
+    <div class="form-group"><label class="form-label">醫生習慣</label><textarea class="form-textarea" id="f_doctorHabits"></textarea></div>
+    <div class="form-group"><label class="form-label">注意事項</label><textarea class="form-textarea" id="f_notes"></textarea></div>
+    
+    
+    <div class="modal-actions"><button class="btn-cancel" id="modalCancel">取消</button><button class="btn-save" id="modalSave">送出審核</button></div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="reviewOverlay">
+  <div class="review-modal">
+    <div style="font-size:38px;text-align:center;margin-bottom:10px;">✅</div>
+    <div class="review-modal-title">審核確認</div>
+    <div class="review-modal-proc" id="reviewProcName"></div>
+    <div class="review-modal-sub">選擇審核者姓名，確認後新版內容將正式公佈</div>
+    <div class="reviewer-list" id="reviewerList"></div>
+    <div class="review-actions">
+      <button class="btn-review-cancel" id="reviewCancel">取消</button>
+      <button class="btn-review-ok" id="reviewOk">審核通過，正式公佈</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'surgical_prep_g5';
+const SUPA_URL = 'https://xdetokspjjobiugcgwxt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkZXRva3NwampvYml1Z2Nnd3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjEwODAsImV4cCI6MjA5NjczNzA4MH0.-cuhO_h9daFKmz4Km9ISHgmds-9p7h2_7B3MSAmj80I';
+const SUPA_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY
+};
+
+async function syncToCloud(data) {
+  // 同步所有有變動的資料（pending、editor、reviewer 有值，或 status 改變）
+  const updates = data.filter(d => d.pending || d.editor || d.reviewer || d.status !== '已審核');
+  if(updates.length === 0) return true;
+  let allOk = true;
+  for(const d of updates) {
+    // 更新用的欄位（與原始資料表一致，不含可能不存在的 version/author）
+    const updBody = {
+      procedure: d.procedure, anesthesia: d.anesthesia, position: d.position,
+      disinfect: d.disinfect, tools: d.tools || '', supplies: d.supplies || '',
+      meds: d.meds || '', implantNotes: d.implantNotes || '', doctorHabits: d.doctorHabits || '',
+      notes: d.notes || '', status: d.status, pending: d.pending || null,
+      editor: d.editor || '', editorDate: d.editorDate || '',
+      reviewer: d.reviewer || '', reviewDate: d.reviewDate || ''
+    };
+    // 新增用的欄位（POST 需要 id 與 dept）
+    const insBody = { id: d.id, dept: d.dept, ...updBody };
+    try {
+      // 先嘗試更新（PATCH）；若雲端沒有該筆，PATCH 影響 0 列，再用 POST 新增
+      const patchRes = await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+        method: 'PATCH',
+        headers: {...SUPA_HEADERS, 'Prefer':'return=representation'},
+        body: JSON.stringify(updBody)
+      });
+      let patched = [];
+      try { patched = await patchRes.json(); } catch(e){ patched = []; }
+      if(!patchRes.ok) { allOk = false; continue; }
+      if(!Array.isArray(patched) || patched.length === 0){
+        // 雲端沒有 → 新增
+        const postRes = await fetch(SUPA_URL + '/rest/v1/surgical_data', {
+          method: 'POST',
+          headers: {...SUPA_HEADERS, 'Prefer':'return=minimal'},
+          body: JSON.stringify(insBody)
+        });
+        if(!postRes.ok) allOk = false;
+      }
+    } catch(e) { allOk = false; }
+  }
+  return allOk;
+}
+
+async function syncOneToCloud(d) {
+  // 單筆完整同步（審核通過時用）
+  await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + d.id, {
+    method: 'PATCH',
+    headers: SUPA_HEADERS,
+    body: JSON.stringify({
+      procedure: d.procedure,
+      anesthesia: d.anesthesia,
+      position: d.position,
+      disinfect: d.disinfect,
+      tools: d.tools || '',
+      supplies: d.supplies || '',
+      meds: d.meds || '',
+      implantNotes: d.implantNotes || '',
+      doctorHabits: d.doctorHabits || '',
+      notes: d.notes || '',
+      status: d.status,
+      pending: null,
+      editor: d.editor || '',
+      editorDate: d.editorDate || '',
+      reviewer: d.reviewer || '',
+      reviewDate: d.reviewDate || ''
+    })
+  });
+}
+
+async function loadFromCloud() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
+      { headers: SUPA_HEADERS }
+    );
+    if(!res.ok) return null;
+    const _j = await res.json();
+    return Array.isArray(_j) ? _j.filter(d=>GROUP_DEPT_SET.has(d.dept)) : _j;
+  } catch(e) { return null; }
+}
+
+async function loadAllFromCloud() {
+  try {
+    const res = await fetch(
+      SUPA_URL + '/rest/v1/surgical_data?select=*&order=id',
+      { headers: SUPA_HEADERS }
+    );
+    if(!res.ok) return null;
+    const _j = await res.json();
+    return Array.isArray(_j) ? _j.filter(d=>GROUP_DEPT_SET.has(d.dept)) : _j;
+  } catch(e) { return null; }
+}
+const ALL_DEPTS = ["全部科別", "泌尿科", "達文西手術"];
+const GROUP_DEPTS = ["泌尿科", "達文西手術"];
+const GROUP_DEPT_SET = new Set(GROUP_DEPTS);
+
+const DEPT_REVIEWERS = {"泌尿科": ["林靜子", "郭妍伶", "蕭帆妤", "王婷婷"], "達文西手術": ["高靖緹", "周芳怡", "蕭帆妤", "王婷婷"]};
+const ADMINS = ["蕭帆妤", "王婷婷"];
+const STAFF = ["何尚謙", "余宗芸", "劉祐呈", "卓湘晴", "吳婉菁", "周芳怡", "張佩琪", "張瑋恩", "張芸甄", "徐禾沐", "曾雅筠", "朱庭宜", "李佳容", "李宜諮", "李宜鵑", "李靜怡", "林奕辰", "林峙廷", "林昕澄", "林靜子", "楊衣甄", "江嘉琪", "汪瑄柔", "洪怡婷", "王嘉羚", "王婷婷", "王婷玉", "王玉仙", "盧貞君", "程郁淳", "簡晏欣", "羅秀如", "蕭帆妤", "蕭睬容", "蘇奕臻", "謝佩芳", "辜嬿潔", "郭妍伶", "鄒昀珊", "鄒芮宸", "陳明瑄", "陳柏宇", "陳玉茹", "陳玥汝", "陳筠心", "陳金燕", "高靖緹", "黃予婕", "黃佩琪", "黃品喆", "黃怡婷", "黃沂晨", "黃淑嬅", "黃玉秀"];
+const STAFF_SET = new Set(STAFF);
+
+const DEPT_COLORS = {
+  "骨科":       "#1a5276",
+  "胸腔外科":   "#e67e22",
+  "耳鼻喉科":   "#d4ac0d",
+  "心臟外科":   "#c0392b",
+  "神經外科":   "#7c5fd4",
+  "達文西手術": "#1abc9c",
+  "婦產科":     "#e056a0",
+  "一般外科":   "#e86b2a",
+  "直腸外科":   "#c0392b",
+  "乳房外科":   "#c0478a",
+  "小兒外科":   "#27ae8f",
+  "整形外科":   "#e0903a",
+  "泌尿科":     "#16a085",
+  "眼科":       "#8e44ad",
+  "口腔外科":   "#7d6608",
+  "心臟外科(張)": "#c0392b",
+  "心臟外科(陳)": "#c0392b"
+};
+const DEFAULT_DATA = [{"id": 54, "dept": "達文西手術", "procedure": "LAR (Low Anterior Resection)", "anesthesia": "ETGA", "position": "截石臥位-架腳", "disinfect": "Alcohol B-I(紗球消肚子) / Aq-BI(棉棒消會陰)", "tools": "外科大包(APGS01) / 內視鏡組(AIGS110) / 擴張器(AIGSO6) / 被單鉗×2(C0009B) / 嬰兒鉤(R0002) / 尖被鉗×1(C0009S) / IGS020 / 內視鏡充氣管含鐵頭(A000302) / 3件手術衣×2(A200112) / 1件手術衣×4(A200113) / Adison teeth(AF00001) / 器械盤(A000010) / 燈把×2(A000060) / 手術碗大×1(A000050)", "supplies": "15/20號刀片 / 彈繃6吋×2 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / 2-0 prolene直針 / 3-0 D-tach備 / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / 3-0/4-0 Maxon備 / 大腳套 / 棉棒 / 4x4顯紗×1 / 紗條×1 / 紗球×1 / NS包 / 內視鏡袋", "meds": "", "implantNotes": "達文西/一般外科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 雙極電燒線(藍線) / 保溫瓶 / 綠紫金Hemo lok槍 / 豬爬子(2房代消) / 無菌手臂套(依手臂數取) / 5mm-8mm通用密閉閥(依手臂數取)", "doctorHabits": "Dr.徐宇辰/熊副：Balloon Trocar 12x100x1 / 傷口保護套+蓋子(60mm/80mm) / CDH29/33 / 荷美敷 / CO2接1號(煙干擾較少) / 手臂：1號-Fenestrated Bipolar(471205) / 2號-鏡頭(10mm30度) / 3號-剪刀(470179) / 4號-VSE(480422) / Hemolok(470230)紫色備", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / 器械上去前打給汙區放水", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 55, "dept": "達文西手術", "procedure": "Myomectomy + VTH + 懸吊 + 會陰修補", "anesthesia": "ETGA", "position": "架腳-截石臥位", "disinfect": "Alcohol B-I(紗球消肚子) / Aq-BI(棉棒消會陰)", "tools": "腹腔鏡包(APGS150) / 內視鏡組(AIGN01) / D&C包(PGN06) / 被單鉗×1(C0009B) / 尖被鉗×1(C0009S) / 手術碗大×2(A000050) / Adison teeth(AF00001) / 內視鏡充氣管含鐵頭(A000302) / 3件手術衣×2(A200112) / 1件手術衣×4(A200113) / 4條治療巾×1(A200111) / 中單×2(A200114) / 器械盤(A000010) / 燈把×2(A000060) / NS包", "supplies": "15/10號刀片 / CWV+球 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / Foley 14Fr+bag / 大腳套×2 / 4x4顯紗×1 / 紗球×1", "meds": "", "implantNotes": "達文西/泌尿科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 雙極電燒線(藍線) / 保溫瓶 / Endo bag大小 / 無菌手臂套(依手臂數取) / 5mm-8mm通用密閉閥(依手臂數取) / 用PGN06台上放Foley子宮托放完用中單蓋起來 / 單純懸吊+修補另備：PGN01/PGN06/PGN002/IGN010 / 導氣針 / 拋棄式子宮托 / 11mm達勝trocar / 2-0 V-Loc30cm / 2-0 Ti-cron多條 / 紗條×1 / B-braun mesh / 可吸收Protack / 若要會陰修補先台下做再上台，最後兩塊白紗塞陰道明早取出", "doctorHabits": "Dr.龔晏萱：Balloon Trocar 12x100x1 / 達勝11mm/12mm都備 / 加長型Suction / XS保護套 / 導氣針 / 1-0 V-Loc30cm / 2-0 V-Loc30cm / Pitressin 1:80 / 關傷口：1-0 Vicryl(J603)+4-0 Polysorb(SL-691)+傷口膠(愛麗敷) / 手臂：1號-Force Bipolar(471405) / 2號-鏡頭 / 3號-電燒湯匙(470184) / 夾針器 Mega needle driver(470194) / Dr.徐靖：達勝11mm Trocar / 11號刀片 / 導氣針 / 子宮托打空氣不打N/S / Pitressin 1:100 / XS保護套 / 1-0 V-Loc30cm / 關傷口：Liqband / 手臂：1號-Fenestrated Bipolar(471205) / 2號-鏡頭 / 3號-Spatula(470184) / 4號-ProGrasp(471093)", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / 器械上去前打給汙區放水", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 56, "dept": "達文西手術", "procedure": "Nephrectomy / Partial Nephrectomy", "anesthesia": "ETGA", "position": "右腎-病人左側臥 / 左腎-病人右側臥", "disinfect": "Alcohol B-I(紗球消肚子)", "tools": "腹腔鏡包(APGS150) / 內視鏡組(AIGS130) / 泌尿科基本包(AUR010) / 被單鉗×2(C0009B) / 嬰兒鉤(R0002) / 手術碗大×1(A000050) / 導尿包×1(A000040) / 內視鏡充氣管含鐵頭(A000302) / 3件手術衣×2(A200112) / 1件手術衣×4(A200113) / 4條治療巾×1(A200111) / 中單×2(A200114) / Adison teeth(AF00001) / 器械盤(A000010) / 燈把×2(A000060) / Lapar包(A200001)", "supplies": "15號刀片 / CWV+球 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / Surgicel(5x35) / Op site含pad / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / 血管識別帶(藍細×1包、黃細×1包) / 4x4顯紗×1 / 紗條×1 / 紗球×1", "meds": "", "implantNotes": "達文西/泌尿科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 雙極電燒線(藍線) / 保溫瓶 / 綠紫金Hemo lok槍 / Endo bag大小 / bulldog / 無菌手臂套(依手臂數取) / 5mm-8mm通用密閉閥(依手臂數取) / 右腎機器從右邊進 左腎機器從左邊進 / 朝上的手不收，平放用小兒棉被包起來 / 右腎要多拿內視鏡腸鉗頭頂肝 / Foley台下放", "doctorHabits": "Dr.柯智羣：Balloon Trocar 12x100x1 / 助手洞過濾性12mm×1 / 加長型Suction / 2-0 V-Loc30cm / 3-0 V-Loc15cm / Surgicel兩格一剪 / 止血Wound Clot10x10剪1/4泡7ml N/S×2 / 血管識別帶藍細黃細各半條用綠釘夾 / 7mm JP剪剩1/3放腎窩 / 關傷口：1-0 Vicryl(J603)+4-0 Polysorb(SL-691)+Liqband+Op site / 左腎手臂：1號-Maryland Bipolar(471172) / 2號-鏡頭 / 3號-剪刀(470179) / 4號-ProGrasp(471093) / 夾針器(471296帶剪右手)(471006不帶剪左手) / Dr.陳柏誠/莊德彥：Balloon Trocar 12x100x1 / 助手洞5mm×1 / 多條2-0 V-Loc30cm剪20cm / 右腎手臂：1號-ProGrasp(471093) / 2號-Fenestrated Bipolar(471205) / 3號-鏡頭 / 4號-剪刀(470179) / 夾針器×2 471006不帶剪兩手", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / 器械上去前打給汙區放水", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 57, "dept": "達文西手術", "procedure": "Prostate Resection (攝護腺切除)", "anesthesia": "ETGA", "position": "平躺、收雙手、術中頭低23度腳板放平", "disinfect": "Alcohol B-I(紗球消肚子) / Aq-BI(棉棒消會陰)", "tools": "腹腔鏡包(APGS150) / 內視鏡組(AIGS130) / 被單鉗×1(C0009B) / 金把持針器×1(A000020) / 手術碗大×1(A000050) / 導尿包×1(A000040) / 內視鏡充氣管含鐵頭(A000302) / 3件手術衣×2(A200112) / 1件手術衣×4(A200113) / Adeson teeth(AF00001) / 4條治療巾×1(A200111) / 中單×1(A200114) / 器械盤(A000010) / 燈把×2(A000060) / Lapar包(A200001) / 內視鏡袋(A200120) / 彈繃6吋×2", "supplies": "15號刀片 / CWV+球 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / Surgicel(5x35) / Op site含pad / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / 紗球×1 / Jelly包×3台上用 / 4x4顯紗×1 / 紗條×1", "meds": "", "implantNotes": "達文西/泌尿科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 雙極電燒線(藍線) / 保溫瓶 / 綠紫金Hemo lok槍 / Endo bag大小 / 無菌手臂套(依手臂數取) / 5mm-8mm通用密閉閥(依手臂數取) / 檢體：1.攝護腺前fat 2.攝護腺 3.左淋巴 4.右淋巴 / 膀胱打開計時算尿量(1分鐘1ml) / 縫V-Loc前確認紗條都在外面 / 關最後一針V-Loc換16Fr Foley / 換Foley後確認有尿出來", "doctorHabits": "Dr.柯智羣：Foley台上放 / Balloon Trocar 12x100x1 / 助手洞12mm×1+5mm×1 / 加長型Suction / 2-0 V-Loc30cm / 3-0 V-Loc15cm(兩條做雙頭針縫羊膜) / Surgicel兩格一剪 / 止血用羊膜或Wound Clot10x10 / 7mm JP剪1/3放骨盆腔 / 關傷口：1-0 Vicryl(J603)+4-0 Polysorb(SL-691)+Liqband+Op site / 手臂：1號-Maryland Bipolar(471172) / 2號-鏡頭 / 3號-剪刀(470179) / 4號-ProGrasp(471093) / 夾針器(471296帶剪右手)(471006不帶剪左手) / Dr.陳柏誠/莊德彥：同Dr.柯另加3-0 V-Loc30cm / 縫完膀胱用灌食空針打水測試 / 傷口膠(Surgiseal) / 手臂：手臂×2 471006不帶剪兩手", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / 彈繃術後血壓穩可拆", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 58, "dept": "達文西手術", "procedure": "TEP (全腹膜外疝氣修補術)", "anesthesia": "ETGA", "position": "平躺、腳板往下折、頂腰、收左手(布膠貼床邊)", "disinfect": "Alcohol B-I(紗球消肚子) + 75% Alcohol", "tools": "腹腔鏡包(APGS150) / 內視鏡組(AIGS110) / Adison teeth(AF00001) / 1件手術衣×4(A200113) / 3件手術衣×2(A200112) / 手術碗大×1(A000050) / 燈把×2(A000060) / 器械盤(A000010)", "supplies": "15號刀片 / 25號針頭 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / 2-0 prolene(VP977)多條 / 14Fr Foley / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / 3-0 Maxon(6233-41)備 / 紗球×1 / 紗條×1 / 4x4顯紗×1 / 彈繃6吋×2 / 內視鏡袋", "meds": "Ropica 10ml(術後注射，25號針頭)", "implantNotes": "達文西/一般外科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 保溫瓶 / 5mm-8mm通用密閉閥(依手臂數取) / 無菌手臂套(依手臂數取) / Mesh用2-0 prolene(VP977)固定", "doctorHabits": "Dr.吳東琰：Foley台下放 / Mesh用2-0 prolene(VP977)固定 / 術後打Ropica 10ml+25號針頭 / 備3-0 Maxon(6233-41) / 手臂：1號-ProGrasp(471093) / 2號-鏡頭(10mm30度) / 3號-夾針器(471296)帶剪刀", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / 器械上去前打給汙區放水", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 59, "dept": "達文西手術", "procedure": "婦產科 Staging (子宮切除+雙側卵巢輸卵管+雙側淋巴結+腹水+大網膜Omentum)", "anesthesia": "ETGA", "position": "架腳-截石臥位-頭低腳高", "disinfect": "Alcohol B-I(紗球消肚子) / Aq-BI(棉棒消會陰)", "tools": "腹腔鏡包(APGS150) / 內視鏡組(AIGN01) / D&C包(PGN06) / 被單鉗×2(C0009B) / 手術碗大×2(A000050) / VTH包(APGN020，用10號刀片) / Adison teeth×1(AF00001) / 內視鏡Bipolar(AB00010) / Deaver Retractor龔(ARGN002) / 3件手術衣×2(A200112) / 1件手術衣×4(A200113) / 4條治療巾×1(A200111) / 中單×2(A200114) / 器械盤(A000010) / 內視鏡充氣管含鐵頭(A000302) / 燈把×2", "supplies": "15/10號刀片 / 彈繃6吋×2 / C-arm套 / 導電片 / 10ml空針 / 2-0 silk / 記號筆 / 1-0 Vicryl(J603) / 4-0 Polysorb(SL-691) / 1-0 Vicryl(vcp345) / 2-0 Vicryl(vcp345) / 3-0 Vicryl(vcp311) / Foley 14Fr+bag / 大腳套×1 / NS包 / 4x4顯紗×2 / 紗球×1 / 紗條×1", "meds": "循血綠(染色顯影，用注射水10ml稀釋，Dr.龔備)", "implantNotes": "達文西/泌尿科代消：10mm30度鏡頭 / 鐵Trocar五件套組 / 單極電燒線(綠線) / 雙極電燒線(藍線) / 保溫瓶 / 5mm-8mm通用密閉閥(依手臂數取) / 無菌手臂套(依手臂數取) / 用PGN06台上放Foley子宮托放完用中單蓋起來 / 拿腹水用沖洗器沖點水再用20ml空針接suction管抽", "doctorHabits": "Dr.龔晏萱：Balloon Trocar 12x100x1 / 達勝11mm/12mm都備 / 加長型Suction / XS保護套 / 導氣針 / V-Loc30cm(1-0/2-0備) / Pitressin 1:80 / 會用循血綠 / 關傷口：1-0 Vicryl(J603)+4-0 Polysorb(SL-691)+愛麗敷+白紗+3M / 手臂：1號-Force Bipolar(471405) / 2號-鏡頭 / 3號-電燒湯匙(470184)或剪刀(470179) / 4號-ProGrasp(471093) / Mega needle driver(470194) / Dr.徐靖：達勝11mm Trocar / 11號刀片 / 導氣針 / 子宮托打空氣不打N/S / Pitressin 1:100 / XS保護套 / 拋棄式Suction / 做下面用角針或圓針+0 Polysorb / 1-0 V-Loc30cm / 關傷口：Liqband / 手臂：1號-Fenestrated Bipolar(471205) / 2號-鏡頭 / 3號-Spatula(470184) / 4號-ProGrasp(471093) / Mega needle driver(470194)", "notes": "鏡頭不能用任何消毒液擦拭，請用4x4紗布放保溫瓶 / console開始刷手要下去扶子宮托 / 算髒不能摸台上無菌", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "", "reviewDate": "115.06.17", "pending": null, "version": 1}, {"id": 9501, "dept": "泌尿科", "procedure": "Circumcision", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "包皮環切包(APUR060) / 3件手術衣(A200112) / 中單包(A200114) / 4條治療巾(Dr.華)(A200111) / 電燒頭(尖)(A000132) / 燈把(A000060) / 4*4/10片白紗(9520104) / 手術碗(小)(A000051) / 沖洗棉枝/7\"/包(9525131)", "supplies": "10ml空針 / 2.5cm自黏彈紗 / 15刀片 / 4-0 Polysorb(G181) / 25/27針頭 / 導電片", "meds": "1﹪xylocaine / 2﹪xylocaine / 2﹪xylocaine+E / Tetracycline 藥膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10ml空針、27號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.陳建志：導電片、10ml空針、25號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.陳建華：導電片、10ml空針、25號 針頭(大人)、27號(小孩)、*1% xylocaine15ml、+2﹪xylocaine+E 5ml、15號刀片、4-0 Polysorb(G181)、* Tetracycline 藥膏、白紗+2.5cm自黏彈紗 / Dr.柯智群：導電片、10ml空針、25號 針頭、2﹪ xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline藥膏、白紗+2.5cm 自黏、彈紗 / Dr.陳柏誠：導電片、10ml空針、25號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.吳昀叡：導電片、10ml空針、25號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.莊德彥：導電片、10ml空針、25號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗", "notes": "健保病人要送病理。 2.術後在外面護理站加壓觀察15分鐘。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9502, "dept": "泌尿科", "procedure": "Circumcision(包皮槍)", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "包皮環切包(APUR060) / 3件手術衣(A200112) / 中單包(A200114) / 4條治療巾(Dr.華)(A200111) / 電燒頭(尖)(A000132) / 燈把(A000060) / 4*4/10片白紗(9520104) / 手術碗(小)(A000051) / 沖洗棉枝/7\"/包(9525131)", "supplies": "10ml空針 / 2.5cm自黏彈紗 / 4-0 Polysorb(G181) / 特材 / 25/27針頭 / 導電片 / 包皮槍 / 15刀片 / 2-0silk", "meds": "1﹪xylocaine / 2﹪xylocaine / 2﹪xylocaine+E / Tetracycline 藥膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片(prn)、10ml空針、30號 針頭、2﹪xylocaine、15號刀片(prn)、4-0 Polysorb(G181)、(prn)、*消毒完的碗不下來術、中會使用、*電燒(prn)、*束帶、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.陳建志：導電片(prn)、10ml空針、25號 針頭、2﹪xylocaine、15號刀片、4-0 Polysorb(G181)、*2-0 silk、*小圓針(針盤)、*小剪刀、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.陳建華：導電片(prn)、10ml空針、25號 針頭(大人)、27號(小孩)、15號刀片、4-0 Polysorb(G181)、*2-0 silk、*小圓針(針盤)、*無菌Jelly、*電燒(prn)、*(2%Xylocaine10ml+、N/S10ml)抽出15ml後、再加2% Xylocaine+E、5ml、*Framycin gauze+、白紗+2.5cm自黏彈紗 / Dr.柯智群：導電片(prn)、10ml空針、25號 針頭、2﹪ xylocaine、4-0 Polysorb(G181)prn、*束帶、*Framycin 剪成3條、Cover wound+自黏、彈紗2.5cm / Dr.陳柏誠：導電片、10ml空針、25號 針頭、2﹪xylocaine、4-0 Polysorb(G181)、Prn、1號腸圓針、3-0silk、無菌jelly、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.莊德彥：導電片prn、10ml空針、25號 針頭、2﹪xylocaine、2-0 silk+圓針、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗 / Dr.吳昀叡：導電片、10ml空針、25號 針頭、2﹪xylocaine、4-0 Polysorb(G181)、Prn、1號腸圓針、2-0 silk、無菌jelly、*Tetracycline 藥膏、白紗+2.5cm 自黏彈紗", "notes": "步驟:包皮頭頸夾4支蚊鉗→電燒打開→包皮槍轉鬆取下包皮槍芯(包皮槍上的藍色塑膠套記得取下)→ Aq B-I→芯放入包皮內→2-0silk固定→轉緊槍取下紅色鈕鈕(計時2分鐘)→取下包皮送檢體→止血→ 依各醫師習慣包紮傷口→護理站觀察5分鐘。 *流動請記得填寫登記本(在12房)", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9503, "dept": "泌尿科", "procedure": "Vasectomy", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "包皮環切包(APUR060) / 4*4/10片白紗(9520104) / 輸精管切除包(AIUR010) / 電燒頭(尖)(A000132) / 輸精管切除包(陳建華醫師專用)(AIUR020) / 3件手術衣(A200112) / 中單包(A200114) / 手術碗(小)(A000051) / 燈把(A000060) / 4條治療巾(Dr.華)(A200111)", "supplies": "10ml空針 / 15號刀片 / 2-0 Silk / 4-0 Polysorb(SL-181) / 25/27針頭 / 導電片 / 5-0 Polysorb(UL202) / 3-0 Vicryl(vcp-311) / 6×7 OP Site / 4-0 chromic (264) / 4-0 Polysorb(SL-691) / 3M膠布 / 3-0 chromic (263)", "meds": "2﹪ xylocaine / Tetracycline 藥膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10ml空針、30號 針頭、2﹪xylocaine、2-0 Silk、(下面是Prn的線)、4-0 Polysorb(SL-691)、3-0 chromic (263)、3-0 Vicryl(vcp-311)、*Tetracycline藥膏白紗 + 3M / Dr.陳建志：導電片、10ml空針、25號 針頭、2﹪xylocaine、2-0 Silk(不要剪短)、(下面是Prn的線)、4-0Polysorb(SL-181、4-0 chromic (264)、*Tetracycline藥膏、白紗 + 3M、*雙腳中間往鼠蹊部吹 熱風38度 / Dr.陳建華：導電片、10ml空針、25號 針頭、2﹪Xylocaine、15號 刀片、2-0 Silk、5-0 Polysorb(UL202)、*Tetracycline藥膏、+ 白紗+6×7 OP Site、*病理留下給病人。、*鋪單用治療巾+中單、(不用洞巾)。、*單包除IUR02外，還、要再拆IUR01。、*毛全剃 / Dr.柯智群：導電片(尖電燒)、10ml空針、25號 針頭、2﹪xylocaine、2-0 Silk、(下面是Prn的線)、4-0Polysorb(SL-181、4-0 chromic (264)、*Tetracycline 藥膏、白紗 + 3M / Dr.陳柏誠：導電片、10ml空針、25號 針頭、2﹪xylocaine、2-0 Silk、(下面是Prn的線)、4-0Polysorb(SL-181)、4-0 chromic (264)、*Tetracycline 藥膏、白紗 + 3M / Dr.莊德彥：導電片(尖電燒)、10ml空針、27號 針頭、2﹪xylocaine、2-0 Silk(對半剪)、4-0 chromic塗藥膏、Tetracycline、*Tetracycline、白紗 + op site / Dr吳昀叡：導電片(尖電燒)、10ml空針、25號 針頭、2﹪xylocaine、2-0 Silk(prn對半剪)、*Tetracycline 藥膏、白紗 + 3M、加壓5分鐘", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9504, "dept": "泌尿科", "procedure": "Penis biopsy", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "包皮環切包(APUR060) / 3件手術衣(A200112) / 中單包(A200114) / 燈把(A000060) / 4*4/10片白紗(9520104) / 電燒頭(尖)(A000132) / 沖洗棉枝/7\"/包(9525131)", "supplies": "10ml空針 / 導電片 / 27號 針頭 / 3M膠布", "meds": "2﹪ xylocaine / Tetracycline 藥膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10ml空針、27號 針頭、2﹪xylocaine、*Tetracycline藥膏、白紗 + 3M / Dr.陳建志：導電片、10ml空針、27號 針頭、2﹪xylocaine、*Tetracycline藥膏白紗 + 3M / Dr.陳建華：導電片、10ml空針、27號 針頭、2﹪xylocaine、*Tetracycline 藥膏白紗 + 3M / Dr.柯智群：導電片、10ml空針、27號 針頭、2﹪xylocaine、*Tetracycline藥膏、白紗 + 3M / Dr.陳柏誠：導電片、10ml空針、27號 針頭、2﹪xylocaine、*Tetracycline藥膏、白紗 + 3M", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9505, "dept": "泌尿科", "procedure": "Condyloma / E-C", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "拆線剪(雙尖)BC341(AK00050) / 大洞巾97103(9B00114) / 艾迪生有齒鑷(BD511)(AF00010) / 電燒頭(尖)(A000132) / 一般中持針器15-2782x1(AH0001M) / 3*3白紗(9520102) / 鷹式鴨嘴+長鑷(ARGN030) / 沖洗棉枝/7\"/包(9525131) / 3號刀柄BB073(AK00010) / 手術碗(小)(A000051) / 被單鉗(鈍)BF464x5(AC0009B) / 白色引流管300cm(A000300) / 12號抽吸管GF354(AS00040) / 3件手術衣(A200112)", "supplies": "10ml空針 / 25號 針頭 / 導電片 / N95口罩", "meds": "2﹪ xylocaine / Tetracycline 藥膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10ml空針、25號 針頭、2﹪xylocaine、*Tetracycline 藥膏 / Dr.陳建志：導電片、10ml空針、25號 針頭、2﹪xylocaine、*Tetracycline 藥膏 / Dr.陳建華：導電片、10ml空針、25號 針頭、2﹪xylocaine、*Tetracycline 藥膏 / Dr.柯智群：導電片、10ml空針、25號 針頭、2﹪xylocaine、*Tetracycline 藥膏 / Dr.陳柏誠：導電片、10ml空針、25號 針頭、2﹪xylocaine、*Tetracycline 藥膏", "notes": "有需要用的器械再上table", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9506, "dept": "泌尿科", "procedure": "(大人) Herniorraphy", "anesthesia": "SA or ETGA or IVG", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I、Aq B-I", "tools": "泌尿科表淺包(APUR020) / 沖洗棉枝/7\"/包(9525131) / 12號抽吸管GF354(AS00040) / 4*4顯紗(9520140) / 3件手術衣(A200112) / 4*4/10片白紗(9520104) / 1件手術衣(A200113) / 花生米/(Dr.華)Prn(A000070) / 器械盤(A000010) / 理查士鉤(S)/(Dr.華)(AR0009S) / Lapar包(A200001) / 小自由板(Dr.華)(AR00180) / 手術碗(大)(A000050) / Kelly*2包(AC0003S) / 燈把(A000060)", "supplies": "導電片 / 25/27針頭 / 3-0 Nylon/4-0 Nylon / Mefix / 10號 刀片 / 1-0/2-0 Silk / 1-0 Vicry(j603) / 10ml 空針 / 8/12號 拋棄式尿管 / 1-0 Surgilon / 1-0 Vicry(vcp346) / 10*12 OP sid / 清潔片 / 2-0 Vicry(vcp317) / 3-0 Vicry(vcp311) / 特材 / 記號筆 / 4-0Polysorb(SL-691) / 1/2〞美容膠 / Mesh", "meds": "2﹪Xylocaine / 優膏 / Tetracycline 藥膏 / 20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、Surgilon、2-0Vicry(vcp345)、4-0Polysorb(SL-691)、1/2〞美容膠、*白紗 +op sid+紗捲+白紗+ Mefix。、*若是Mask或LA的病、人，再多拆10ml空針、+27號針頭+2%Xylocaine與記號、* Mesh泡Aq-BI水沖 / Dr.陳建志：導電片、10號 刀片、清潔片、12號 拋棄式尿管、1-0 Silk(線不剪)、1-0 Surgilon、1-0vicry(vcp346)、2-0Vicry(vcp317)、Nylon、*繡花：1/2美容膠+白紗+op site、*Nylon:優膏+白紗+Mefix。、* Mesh不泡Aq-BI / Dr.陳建華：導電片、10號 刀片、清潔片、電燒保護套、12號 拋棄式尿管、2-0 Silk、1-0vicry(j603)、2-0 Vicryl(VCP317)、Nylon或 polysorb、術後:10ml空針+25、號針頭、2﹪Xylocaine、* Tetracycline 藥膏、+白紗+Mefix。、*美容膠+白紗 +op、Site、* Mesh泡Aq-BI不沖洗用濕紗沾一沾 / Dr.柯智群：導電片、10號 刀片、清潔片、12號 拋棄式尿管、Silk、1-0 Surgilon、2-0 vicry(vcp317)、4-0 Polysorb(SL-691)、*美容膠+白紗+ Mefix。、* Mesh不泡Aq-BI、*不送病理 / Dr.陳柏誠：導電片、10號 刀片、清潔片、12號 拋棄式尿管、Silk、1-0 Surgilon、2-0 vicry(vcp317)、3-0 Nylon、*優膏+白紗+ Mefix。、* Mesh泡Aq-BI水沖 / Dr.莊德彥：導電片、10號 刀片、清潔片、12號 拋棄式尿管、Silk、1-0 Surgilon、2-0 vicry(vcp317)、3-0 Nylon、*優膏+白紗+ Mefix。、* Mesh泡Aq-BI水沖 / Dr.吳昀叡：導電片、10號 刀片、清潔片、12號 拋棄式尿管、2-0 Silk、Surgilon、3-0 Vicry(vcp317)、Nylon、*優膏+白紗+ Mefix。、* Mesh泡Aq-BI水沖", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9507, "dept": "泌尿科", "procedure": "(大人) Hydrocele", "anesthesia": "SA or ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "泌尿科表淺包(APUR020) / 沖洗棉枝/7\"/包(9525131) / 3件手術衣(A200112) / 4*4顯紗(9520140) / 1件手術衣(A200113) / 4*4/10片白紗(9520104) / 器械盤(A000010) / 手術碗(大)(A000050) / Lapar包(A200001) / 燈把(A000060)", "supplies": "導電片 / 清潔片 / 2-0 Vicry(vcp317) / 10ml空針 / 10號刀片 / 6mm 傷口引流管 / 25針頭 / 3-0 Vicry(vcp311) / 宜拉", "meds": "2%xylocaine / 優膏 / 20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10號 刀片、清潔片、3-0Vicry(vcp311)、*優膏+白紗+散紗+宜拉。 / Dr.陳建志：導電片、10號 刀片、清潔片、3-0Vicry(vcp311)、*優膏+白紗+散紗+宜拉。 / Dr.陳建華：導電片、10號 刀片、清潔片、Vicry(vcp317)、Vicry(vcp311)、2%xylocaine+10ml空針、+25G針頭、*優膏+白紗+散紗+宜拉。 / Dr.柯智群：導電片、10號 刀片、清潔片、3-0 Vicry(vcp311)、*優膏+白紗+散紗+、宜拉。 / Dr.陳柏誠：導電片、10號 刀片、清潔片、3-0Vicry(vcp311)、*優膏+白紗+散紗+宜拉。 / Dr.莊德彥：導電片、10號 刀片、清潔片、3-0Vicry(vcp311)、*優膏+白紗+散紗+宜拉。 / Dr.吳昀叡：導電片、10號 刀片、清潔片、3-0Vicry(vcp311)、*優膏+白紗+散紗+宜拉。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9508, "dept": "泌尿科", "procedure": "(大人) Orchiectomy", "anesthesia": "SA or ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I、Aq B-I", "tools": "泌尿科表淺包(APUR020) / 沖洗棉枝/7\"/包(9525131) / 3件手術衣(A200112) / 4*4顯紗(9520140) / 1件手術衣(A200113) / 4*4/10片白紗(9520104) / 器械盤(A000010) / 手術碗(大)(A000050) / Lapar包(A200001) / 燈把(A000060)", "supplies": "導電片 / 1-0 /2-0 Silk / 3-0 Vicry(vcp311) / 清潔片 / 2-0 Vicry(vcp317) / 宜拉 / 10號 刀片 / 3-0 Polysorb(GL-182)", "meds": "20ml N/S / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+宜拉。 / Dr.陳建志：導電片、10號 刀片、清潔片、1-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+宜拉。 / Dr.陳建華：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+、宜拉。 / Dr.柯智群：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+、宜拉。 / Dr.陳柏誠：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+、宜拉。 / Dr.莊德彥：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+、宜拉。 / Dr.吳昀叡：導電片、10號 刀片、清潔片、2-0 Silk、2-0 Vicry(vcp317)、3-0Polysorb(GL-182)、*優膏+白紗+散紗+、宜拉。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9509, "dept": "泌尿科", "procedure": "Varicocele", "anesthesia": "SA or ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I、Aq B-I", "tools": "泌尿科表淺包(APUR020) / 器械盤(A000010) / 艾迪生無齒鑷BD222*1(AF00020) / Lapar包(A200001) / 艾迪生有齒鑷(BD511)(AF00010) / 手術碗(大)(A000050) / 嬰兒鉤BT008(AR00030) / 燈把(A000060) / 自動開創器 BV066x1(AR0010S) / 沖洗棉枝/7\"/包(9525131) / 理查士鉤(S)/(Dr.華)(AR0009S) / 4*4顯紗(9520140) / 3件手術衣(A200112) / 4*4/10片白紗(9520104) / 1件手術衣(A200113)", "supplies": "導電片 / 10號 刀片 / 1-0 Vicry(VCP346) / 3-0 /4-0 Nylon / 清潔片 / 25/27號針頭 / 2-0 Vicryl(VCP317) / 3-0 Vicryl(VCP311) / 12號 拋棄式尿管 / 10ml空針 / 2-0/3-0 Silk / 1/2〞美容膠 / 宜拉/ Mefix / 3-0 Polysorb(GL-182) / 6×7 、10*12OP Site / 4-0 Polysorb(SL-691)", "meds": "2﹪Xylocaine / 優膏 / 20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、3-0 Silk、Vicry(VCP346)、Vicryl(VCP317)、4-0Polysorb(SL-691)、*1/2〞美容膠+白紗+、6×7 OP Site、*若是Mask或LA的病人，再多拆10ml空針+27號針頭+、2﹪Xylocaine與記號筆。 / Dr.陳建志：導電片、10號 刀片、清潔片、12號 拋棄式尿管、Silk、1-0Vicry(vcp346)、2-0Vicryl(VCP317)、3-0Nylon、*優膏+紗捲+白紗+宜、拉。 / Dr.陳建華：導電片、10號 刀片、清潔片、12號 拋棄式尿管、3-0 Silk、Vicryl(VCP317)、4-0Nylon或、4-0 Polysorb、術後:10ml空針+、25號針頭+、2﹪Xylocaine、*優膏+白紗+Mefix。、*美容膠+白紗+OP Site / Dr.柯智群：導電片、10號 刀片、12號 拋棄式尿管、清潔片、12號 拋棄式尿管、Silk、Vicryl(VCP311)、4-0Nylon、*優膏+白紗+Mefix / Dr.陳柏誠：導電片、10號 刀片、12號 拋棄式尿管、清潔片、12號 拋棄式尿管、Silk、Vicryl(VCP311)、4-0Nylon、*優膏+白紗+Mefix / Dr.莊德彥：導電片、10號 刀片、12號 拋棄式尿管、清潔片、12號 拋棄式尿管、Silk、Vicryl(VCP311)、4-0Nylon、*優膏+白紗+Mefix、CUR05(Babcock) / Dr.吳昀叡：導電片、10號 刀片、12號 拋棄式尿管、清潔片、12號 拋棄式尿管、2-0 Silk、3-0 Vicryl(VCP311)、4-0Nylon、*優膏+白紗+Mefix", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9510, "dept": "泌尿科", "procedure": "（小孩）Herniorraphy", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "小兒疝氣包(APPE020) / 手術碗(大)(A000050) / 3件手術衣(A200112) / 燈把(A000060) / 1件手術衣(A200113) / 沖洗棉枝/7\"/包(9525131) / 組織剪(志)(AK0006S) / 4*4/10片白紗(9520104) / Lapar包(大洞巾不鋪)(A200001) / 電燒頭(尖)(A000132)", "supplies": "導電片 / 15號 刀片 / 1/4〞美容膠 / 5-0 polysorb(GL-202) / 清潔片 / 5ml/10ml空針 / 6×7 OP Site / 4-0 polysorb(GL-181) / 8號 拋棄式尿管 / 25、27號 針頭 / 2-0 Silk / 3-0 Vicry(vcp311)", "meds": "2﹪Xylocaine / 20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。 / Dr.陳建志：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。 / Dr.陳建華：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、術後:10ml空針+、27號 針頭+、2﹪Xylocaine、*1/4〞美容膠+白紗+、6×7 OP Site。 / Dr.柯智群：導電片、15號 刀片、清潔片、8號 拋棄式尿管、Silk、3-0Vicry(vcp311)、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。 / Dr.陳柏誠：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9511, "dept": "泌尿科", "procedure": "（小孩）Hydrocele", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "小兒疝氣包(APPE020) / 手術碗(大)(A000050) / 3件手術衣(A200112) / 燈把(A000060) / 1件手術衣(A200113) / 沖洗棉枝/7\"/包(9525131) / 器械盤(A000010) / 4*4/10片白紗(9520104) / Lapar包(A200001)", "supplies": "導電片 / 15號 刀片 / 10ml空針 / 2-0 Silk / 清潔片 / 1/4〞美容膠 / 27號 針頭 / 4-0 polysorb(GL-181) / 8號 拋棄式尿管 / 6×7 OP Site / 3-0 Vicry(vcp311)", "meds": "Tetracycline藥膏 / 2﹪Xylocaine / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口:、Tetracycline 藥膏+、白紗+3M。 / Dr.陳建志：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口:、Tetracycline藥膏、+白紗+3M。 / Dr.陳建華：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、術後:10ml空針+、27號 針頭+、2﹪Xylocaine、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口: 優膏+、白紗+3M。 / Dr.柯智群：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口:、Tetracycline藥膏、+白紗+3M。 / Dr.陳柏誠：導電片、15號 刀片、清潔片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口:、Tetracycline藥膏、+白紗+3M。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9512, "dept": "泌尿科", "procedure": "（小孩）Ochiopexy", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "小兒疝氣包(APPE020) / 手術碗(大)(A000050) / 3件手術衣(A200112) / 燈把(A000060) / 1件手術衣(A200113) / 沖洗棉枝/7\"/包(9525131) / 器械盤(A000010) / 4*4/10片白紗(9520104) / Lapar包(A200001)", "supplies": "導電片 / 15號 刀片 / 2-0 Silk/3-0 Silk / 3-0 polysorb(GL-182) / 10×12 OP Site / 1/4〞美容膠 / 4-0 polysorb(GL-181) / 4-0 Chromic(CT264) / 8號 拋棄式尿管 / 記號筆 / 4-0 polysorb(UL-203) / 4-0 Chromic(CC194) / 27號 針頭 / 6×7 OP Site / 3-0 Vicryl(VCP311) / 10ml空針 / 宜拉 / 5-0 polysorb(GL-202)", "meds": "2﹪Xylocaine / Tetracycline 藥膏 / 優膏 / 20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、15號 刀片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口: Tetracycline 藥膏+白紗+3M。 / Dr.陳建志：導電片、15號 刀片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口: Tetracycline 藥膏+白紗+3M。 / Dr.陳建華：導電片、15號 刀片、8號 拋棄式尿管、記號筆、2-0 Silk、3-0 Silk、3-0 Vicryl(VCP311)、5-0 polysorb(GL-202)、術後:10ml空針+、27號 針頭+、2﹪Xylocaine、*1/4〞美容膠+白紗+、10×12 OP Site。、*陰囊傷口:、優膏+白紗+ OP Site+、散紗+宜拉。 / Dr.柯智群：導電片、15號 刀片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(UL-203)、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口: Tetracycline 藥膏+白紗+3M。 / Dr.陳柏誠：導電片、15號 刀片、8號 拋棄式尿管、2-0 Silk、4-0 polysorb(GL-181)、*1/4〞美容膠+白紗+、6×7 OP Site。、*陰囊傷口: Tetracycline 藥膏+白紗+3M。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9513, "dept": "泌尿科", "procedure": "I&D", "anesthesia": "SA or ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I、Aq B-I", "tools": "泌尿科表淺包(APUR020) / 沖洗棉枝/7\"/包(9525131) / 括匙(中) FK623x1(AK0008M) / 電燒頭(尖)(A000132) / Lapar包(A200001) / 4*4/10片白紗(9520104) / 3件手術衣(A200112) / 手術碗(大)(A000050) / 腳套(A200117) / 燈把(A000060) / 器械盤(A000010)", "supplies": "導電片 / 10號 刀片 / 宜拉 / 3-0 polysorb(GL-182) / 清潔片 / 10ml空針 / 4-0 polysorb(GL-181) / 6mm Penrose / 但丁 / 3-0 Nylone", "meds": "20ml N/S / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：導電片、10號 刀片、清潔片、3-0 polysorb(GL-182)、6mm Penrose、*優膏+白紗+散紗+、宜拉。 / Dr.陳建志：導電片、10號 刀片、清潔片、3-0 polysorb(GL-182)、6mm Penrose、*優膏+白紗+散紗+、宜拉。 / Dr.陳建華：導電片、10號 刀片、清潔片、3-0 polysorb(GL-182)、6mm Penrose、*優膏+白紗+散紗+、宜拉。 / Dr.柯智群：導電片、10號 刀片、清潔片、6mm Penrose、*優膏+白紗+散紗+、宜拉。 / Dr.陳柏誠：導電片、10號 刀片、清潔片、6mm Penrose、*優膏+白紗+散紗+、宜拉。", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9514, "dept": "泌尿科", "procedure": "PCN-D", "anesthesia": "LA", "position": "俯臥 or 側臥", "disinfect": "Alcohol B-I", "tools": "手術碗(小)(A000051) / 中單包(A200114) / 4*4/10片白紗(9520104) / GU鏡檢包(A20GU08) / 小縫合包(APGS040) / 3件手術衣(A200112) / 被單鉗(鈍)BF464x5(AC0009B) / 4條治療巾(A200111) / 大鋼盆(A000020)", "supplies": "10ml空針 / Jelly(3-4包) / 8Fr.Pigtail(一组) / 特材 / 25號 針頭 / 18號 PTC Needle / 3-0 Nylon / Fascial Dilactor(8-12Fr.) / 20ml 空針 / Guide Wire (彎) / Mefix / 11號 刀片 / 記號筆", "meds": "2﹪ xylocaine / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0Nylon / Dr.陳建志：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0 Nylon / Dr.陳建華：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0 Nylon / Dr.柯智群：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、8Fr. Pigtail(附針)、3-0 Nylon、*不用 Fascial、Dilactor。 / Dr.陳柏誠：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0Nylon / Dr.莊德彥：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0Nylon / Dr.吳昀叡：10ml空針、25號 針頭、2﹪xylocaine、20ml 空針、11號 刀片、Jelly(3-4包)、18號 PTC Needle、Guide Wire (彎)、記號筆、Fascial Dilactor*3支、8Fr. Pigtail、3-0Nylon", "notes": "1.備超音波機器。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9515, "dept": "泌尿科", "procedure": "TRUS-P(經直腸攝護腺切片手術)", "anesthesia": "IVGA", "position": "截石臥位 or 左側臥", "disinfect": "Aq B-I", "tools": "被單鉗(鈍)BF464x5(AC0009B) / 手術碗(小)(A000051) / 泌尿包(A200008) / 4*4/10片白紗(9520104) / 防水手術衣(3件/包)(A201113) / 4條治療巾(Dr.華prn)(A200111) / 1件手術衣(A200113) / 中單包(Dr.華prn)(A200114) / 沖洗棉枝/7\"/包(9525131) / 大鋼盆(A000020) / 直腸超音波探頭", "supplies": "Jelly / Biopsy槍 / 濾紙 / 10ml空針*2 / 2％Xylocaine jelly / 保險套", "meds": "", "implantNotes": "", "doctorHabits": "Dr.王炯珵：沖洗棉枝/2包、Jelly、濾紙*2、保險套、Biopsy槍、*病理分左右邊 / Dr.陳建志：沖洗棉枝/2包、Jelly、濾紙*2、保險套、Biopsy槍、*病理分左右邊 / Dr.陳建華：沖洗棉枝/2包、2％Xylocaine jelly、濾紙*2、保險套、Biopsy槍、*直腸超音波探頭擠、jelly後在套保險套、*病理分左右邊 / Dr.柯智群：沖洗棉枝、Jelly、濾紙*4、保險套、Biopsy槍、*Anal內不消、*病理分右內、右外、左內、左外 / Dr.陳柏誠：沖洗棉枝/2包、Jelly、濾紙*4、保險套、Biopsy槍、*病理分右內、右外、左內、左外 / Dr.莊德彥：沖洗棉枝/2包、Jelly、濾紙*4、保險套、Biopsy槍、*病理分右內、右外、左內、左外 / Dr.吳昀叡：沖洗棉枝/2包、Jelly、濾紙*4、保險套、Biopsy槍、*病理分右內、右外、左內、左外", "notes": "1.備超音波機器。 2.經直腸超音波探頭的管腔要沖洗乾淨，以免血塊塞住管腔。 3.若是OPD病人要詢問是否有吃抗生素，術前抗生素吃了再帶病人。 4.G3病人:Dr王:術前打Cefa ，請醫生開藥備註手術室使用。  其他醫生:詢問病人是否吃抗生素。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9516, "dept": "泌尿科", "procedure": "TRUS-P(經直腸攝護腺切片手術)+BOTOX Injection", "anesthesia": "IVGA", "position": "截石臥位 or 左側臥", "disinfect": "Aq B-I", "tools": "被單鉗(鈍)BF464x5(AC0009B) / 手術碗(小)(A000051) / 泌尿包(A200008) / 4*4/10片白紗(9520104) / 防水手術衣(3件/包)(A201113) / 4條治療巾(Dr.華prn)(A200111) / 1件手術衣(A200113) / 中單包(Dr.華prn)(A200114) / 沖洗棉枝/7\"/包(9525131) / 大鋼盆(A000020) / 直腸超音波探頭", "supplies": "Jelly / Biopsy槍 / 濾紙 / 10ml空針*2 / 2％Xylocaine jelly / 10 ml空針 (螺旋) / 保險套 / 18號針頭", "meds": "20ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：沖洗棉枝/2包、Jelly、濾紙*2、Biopsy槍、10 ml空針 (螺旋)、18號 needle、*病理分左右邊 / Dr.陳建志：沖洗棉枝/2包、Jelly、濾紙*2、Biopsy槍、10 ml空針 (螺旋)、18號 needle、*病理分左右邊 / Dr.陳建華：沖洗棉枝/2包、2％Xylocaine jelly、濾紙*2、Biopsy槍、10 ml空針 (螺旋)、18號 needle、*直腸超音波探頭擠、jelly後在套保險套、*病理分左右邊 / Dr.柯智群：沖洗棉枝、Jelly、濾紙*4、Biopsy槍、10 ml空針 (螺旋)、18號 needle、*Anal內不消、*病理分右內、右外、左內、左外 / Dr.陳柏誠：沖洗棉枝/2包、Jelly、濾紙*2、Biopsy槍、10 ml空針 (螺旋)、18號 needle、*病理分右內、右外、左內、左外", "notes": "1.備超音波機器。 2.經直腸超音波探頭的管腔要沖洗乾淨，以免血塊塞住管腔。 3. BOTOX藥物，藥庫前一天會送藥至手術室，病房計價。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9517, "dept": "泌尿科", "procedure": "SUI / Sling", "anesthesia": "ETGA", "position": "Lithotomy position(截石臥位)墊屁股、膝蓋向上、向           頭", "disinfect": "Alcohol B-I + Aq B-I", "tools": "膀胱懸吊術包(APUR030) / 中單包(A200114) / 10號抽吸管51-0810(prn)(AS00030) / 3件手術衣(A200112) / 鷹式鴨嘴+長鑷(prn)(ARGN030) / 1件手術衣(A200113) / 艾迪生有齒鑷(BD511)(AF00010) / 4*4/10片白紗(9520104) / 被單鉗(鈍)BF464x5(AC0009B) / 4*4顯紗(9520140) / Lapar包(A200001) / 沖洗棉枝/7\"/包(9525131) / 器械盤(A000010) / 大鋼盆(A000020) / 導尿包(A000040) / 燈把(A000060) / 腳套(A200117) / 電燒頭(長平)(A000133) / 鏡頭線(泡OPA) / 光源線 / 0°or 12°、70°膀胱鏡 / Brigde (短橋) / 16號 sheath", "supplies": "11、15號 刀片 / 但丁 / 2％Xylocainejelly(華) / 1-0Vicry(J603) / 10ml螺旋空針 / 美容膠 (1/2) / 尿袋+14號 Foley(台上on) / 1-0 Surgion(VTH使用) / 25號 針頭 / 清潔片 / 2/0 Silk(1919-51)*2 / 特材 / 20ml 空針 / IV set / 3-0Vicry(vcp311)*3-4 / 尿道支撐系統(自費、健保 / 記號筆 / OP Site (10*12) / 2-0 Vicry(vcp317)prn / C-Arm套 / Jelly(3-4包) / 4-0 Polysorb(SL-691)", "meds": "1Amp Bossmin×1 / 20ml N/S×5 / 2﹪Xylocaine+E / 20ml D/W / 優膏 / 500ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：2/0 Silk、3-0Vicry(vcp311)、4-0 Polysorb(SL-691)、*台下先會陰沖洗，鴨嘴 Aq-BI+N/S用但丁沖洗、*1Amp Bossmin +、N/S100ml、*Vaginal wound:優膏、紗捲(用silk縫1條、線，線貼在正中下腹、部) / Dr.陳建志 / Dr.陳建華：2/0 Silk 1-0Vicry(J603)、4-0 Polysorb(SL-691)、*台下先會陰沖洗， 用、鴨嘴Aq-BI+N/S、用但丁沖洗、*1Amp Bossmin×1+、N/S100ml、*Vaginal wound:優膏、紗捲(用silk縫1條、線，線貼在正中下腹、部) / Dr.柯智群：2/0 Silk、3-0Vicry(vcp311)、*台下先用鴨嘴Aq-BI棉棒、消毒、*2% Xylocaine+E、*Vaginal wound:優膏、紗捲(用silk縫1條、線，線貼在正中下腹、部) / Dr.陳柏誠：2/0 Silk、3-0Vicry(vcp311)、4-0 Polysorb(SL-691)、*台下先會陰沖洗， 用、鴨嘴Aq-BI+N/S、用但丁沖洗、*1Amp Bossmin×1+、N/S100ml、*Vaginal wound:優膏、紗捲(用silk縫1條、線，線貼在正中下腹、部)", "notes": "備影像系統。 連接兩台的替代器械:(PGN02)會陰修補包、(K0003)7號刀柄 (C0007)細長蚊鉗、(R0004)小肌鉤 (C0003S)Kelly、(F0006L)组織鑷 VTH→要拿PGN01盤內的子宮圓鉗，和使用1-0 Surgion (Dr.王)步驟:2-0 Silk+角針*4 釣會陰→計號筆→on Foley打D/W 5cc→  打1Amp Bossmin×1+ N/S100ml→先做會陰→腹部11號刀片→放Sling→看Scopy Vaginal wound:優紗捲(先捲1塊紗布後再包覆另1塊紗布再捲一層，要捲紮實，一  端用silk縫1條線後打結塗抹優膏，線貼在正中下腹部，手術護理記  錄傷口敷料要填寫陰道塞優紗捲，並交班恢復室)黏貼圖:   6.姿勢：截石臥位→墊屁股、膝蓋向上、向頭", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9518, "dept": "泌尿科", "procedure": "(男生)Sling", "anesthesia": "ETGA", "position": "Lithotomy position(截石臥位)墊屁股、膝蓋向上、向           頭", "disinfect": "Alcohol B-I + Aq B-I", "tools": "膀胱懸吊術包(APUR030) / 中單包(A200114) / 尖被鉗(AC0009S) / 3件手術衣(A200112) / Wire passer(KY201)(AIOR05) / 1件手術衣(A200113) / 直角鉗(AC0008L) / 4*4/10片白紗(9520104) / 電燒頭(長平)(A000133) / 4*4顯紗(9520140) / Lapar包(A200001) / 沖洗棉枝/7\"/包(9525131) / 器械盤(A000010) / 大鋼盆(A000020) / 導尿包(A000040) / 燈把(A000060) / 腳套(A200117) / 4*6棉墊(9520201) / 鏡頭線 / 光源線 / 0°or 12°、70°膀胱鏡 / 16號、21號 sheath / Brigde (短橋) / Sounding16Fr.18Fr.(代消)", "supplies": "15號刀片*2 / 但丁 / 2％Xylocainejelly(華) / 1-0Vicry(J603) / 10ml空針 / 美容膠 (1/2) / 尿袋+14號 Foley(台上on) 20號 Foley(Dr.柯) / 3-0 Nylon / 25號 針頭 / 清潔片 / 2/0 Silk(1919-51)*2 / 2號 Silk / 20ml 空針 / IV set / 3-0Vicry(vcp311)*3-4 / 特材 / 記號筆 / OP Site (10*12) / 2-0 Vicry(vcp317)prn / 尿道支撐系統 / C-Arm套 / Jelly(3-4包) / 4-0 Polysorb(SL-691) / Mesh(Tyco)", "meds": "1Amp Bossmin×1 / 20ml N/S×5 / 2﹪Xylocaine+E / 20ml D/W / 優膏 / 500ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：*台下先Anal沖洗， 用Aq-BI+N/S用但丁沖洗、*1Amp Bossmin×1+、N/S100ml、* Sounding16Fr、*會陰w/d:優膏+散紗+宜拉 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群：2/0 Silk、1-0Vicry(J603)、3-0 Nylon、*台下先消Anal後屁股墊、高、*Sounding18Fr、*20號 Foley、*會陰w/d:優膏+散紗+宜、拉 / Dr.陳柏誠", "notes": "備影像系統。 2.使用可調式系統時傷口包紮→*腹部w/d:優膏+PAD(4塊剪Y、2塊不剪)+Mefix  *會陰w/d:優膏+散紗+宜拉 3.(Dr.柯)可調式系統步驟:台上on Foley→尖被鉗將陰囊往上提→刀片→   Silk+角針數針→撥開露出尿道(prn看膀胱鏡)→  劃腹部傷口→Remove Foley Sounding18Fr→   廠商器械(prn看膀胱鏡)→放Mesh→固定Mesh→  W/d縫合。 4.姿勢：截石臥位→墊屁股、膝蓋向上、向頭", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9519, "dept": "泌尿科", "procedure": "Remove Sling", "anesthesia": "ETGA", "position": "Lithotomy position(截石臥位)", "disinfect": "Alcohol B-I + Aq B-I", "tools": "膀胱懸吊術包(APUR030) / 4*4/10片白紗(9520104) / Lapar包(A200001) / 4*4顯紗(9520140) / 器械盤(A000010) / 沖洗棉枝/7\"/包(9525131) / 導尿包(A000040) / 中單包(A200114) / 腳套(A200117) / 3件手術衣(A200112) / 大鋼盆(A000020) / 1件手術衣(A200113) / 燈把(A000060) / 4治療巾(A200111) / 電燒頭(長平)(A000133) / 尖被鉗(AC0009S) / 鏡頭線 / 光源線 / 0°or 12°、70°膀胱鏡 / Brigde (短橋) / 16號 sheath", "supplies": "11、15號 刀片 / 尿袋 / 14號 Foley / 2/0 Silk(1919-51)*2 / 10ml空針 / 美容膠 (1/2) / C-Arm套 / 3-0Vicry(vcp311)*3-4 / 25號 針頭 / 清潔片 / Jelly(3-4包) / 3-0Nylon / 20ml 空針 / IV set / 記號筆 / OP Site (10*12)", "meds": "1Amp Bossmin×1 / 20ml N/S×5 / 2﹪Xylocaine+E / 20ml D/W / 優膏 / 500ml N/S", "implantNotes": "", "doctorHabits": "Dr.王炯珵：*先看膀胱鏡→on Foley、*術中照相，拿下來的Mesh照相、*傷口:美容膠+白紗+OP site。、* Vaginal wound:優膏+紗捲×1。 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.備影像系統。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9520, "dept": "泌尿科", "procedure": "Penile curvature / Nesbit procedure", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "泌尿科表淺包(APURO20) / 3件手術衣(A200112) / 泌尿科顯微手術包(APUR04A) / 1件手術衣(A200113) / 小組織剪(柯)(AK0006S) / 器械盤(A000010) / 艾迪生無齒鑷 *2(柯)(AF00020) / 燈把(A000060) / Allis*2 (柯)(AC0006S) / Lapar包(A200001) / 沖洗棉枝(9525131) / OP 大碗(A000050) / 4*4 白紗(9520104)", "supplies": "15號 刀片 / 3/0(GG-182) / 3-0 polysorb(GL-182) / 14號(華)、16號 Foley / 20ml空針 / 4/0 Nylon (1741-31) / 4-0polysorb(UL-203) / 尿袋 / 23號 頭皮針 / 5/0 Nylon (1741-21)多包 / Jelly(3-4包) / 自黏彈紗 / 8號 拋棄式尿管 / 6/0 Nylon (1741-11) / 血管識別帶 / 記號筆 / 4-0 Prolen(vp-557) / Rubber(細)", "meds": "20ml N/S / tetracycline藥膏 / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：3-0 polysorb(GL-182)、4-0polysorb(UL-203)、4/0 Nylon (1741-31)、5/0 Nylon (1741-21)多包、6/0 Nylon (1741-11)、23號 頭皮針、8號 拋棄式尿管、*傷口：tetracycline藥膏+白紗+自黏彈紗。 / Dr.陳建志 / Dr.陳建華：Prolen(vp-557)、4-0polysorb(UL-203)、Rubber(細)、23號頭皮針、14號Foley、*傷口：優膏+白紗+自黏彈紗。 / Dr.柯智群：4-0polysorb(UL-203)、血管識別帶、23號 頭皮針、*台上on foley", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9521, "dept": "泌尿科", "procedure": "Hypospadias / Urthroplasty", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "外科小包(APGS030) / 3件手術衣(A200112) / 泌尿科顯微手術包(APUR04A) / 1件手術衣(A200113) / Lapar包(A200001) / 器械盤(A000010) / OP 大碗(A000050) / 燈把(A000060) / 沖洗棉枝(9525131) / 4*4 白紗(9520104)", "supplies": "64號 圓刀 / 4/0 Nylon (1756-31)(prn) / 記號筆 / 8 or 10號 拋棄式尿管 / 10ml空針 / 5-0 polysorb(GL-202) / 腎臟引流袋(prn) / 腎臟引流袋 / 23號 頭皮針(prn) / OP site (6*7) / Surgicel(5*7) / 27號 針頭 / Foley20Fr / 3ml 空針 / 尿袋", "meds": "1amp Bossmin(0.1ml) / 1% Xylocaine(10ml)(prn) / 20ml N/S (10ml)", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.wound cover: Surgicel+ OP site +網套。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9522, "dept": "泌尿科", "procedure": "VUR / Ureteroplasty", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I", "tools": "小兒剖腹包(APPE01) / 3件手術衣(A200112) / 泌尿科顯微手術包(APUR04A) / 1件手術衣(A200113) / 組織鑷(長)(AF0005B) / Lapar包(A200001) / 丹尼士開創器(ARUR01) / 器械盤(A000010) / OP 大碗(A000050) / 4*4 白紗(9520104) / 燈把(A000060) / 4*4顯紗(9520140) / 沖洗棉枝(9525131)", "supplies": "10、15號 刀片 / 2/0 Silk(1919-51) / 美容膠 (1/2\") / OP Site (10×12) / 8號 拋棄式尿管 / 3/0 Silk(W212) / 記號筆 / 4-0polysorb(UL-181) / Foley+尿袋", "meds": "", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.wound cover:美容膠+白紗+OP site。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9523, "dept": "泌尿科", "procedure": "輸精管重建術(reanastomosis)", "anesthesia": "LA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "輸精管切除包(AIUR010) / 燈把(A000060) / 泌尿科顯微手術包(APUR04A) / 3件手術衣(A200112) / 動靜脈分流包(prn)(APGS080) / Lapar包(A200001) / 輸精管切除包(陳建華)(AIUR010) / 沖洗棉枝(9525131) / 輸精管切除包(陳建華)(AIUR020) / 器械盤(A000010) / OP 小碗(A000051) / 4*4 白紗(9520104)", "supplies": "15號 刀片 / 7/0 prolene / 8-0 Nylon / 10ml空針 / 6-0 prolene / 白色保護套(6個) / 25 or 27號 針頭 / 3-0 polysorb(GG-182) / 24號 IC catheter / 血管識別帶(細) / 4/0 polysorb(GG-181)", "meds": "2﹪xylocaine / tetracycline 藥膏 / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華：15號 刀片、10ml空針+25號針頭、血管識別帶(細)、白色保護套(6個)、6-0 prolene、prolene(prn)、3-0 polysorb(GG-182)、4/0 polysorb(GG-181)、8-0 Nylon、*戴Loop 在麻機的玻璃櫃、*架延長板坐著開刀、*傷口：優膏+白紗+3M / Dr.柯智群 / Dr.陳柏誠", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9524, "dept": "泌尿科", "procedure": "ED(erectile dysfunction) / Venectomy(靜脈截除術)", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Aq B-I", "tools": "外科小包(APGS03) / 3件手術衣(A200112) / 泌尿科顯微手術包(APUR04A) / 1件手術衣(A200113) / 器械盤(A000010) / Lapar包(A200001) / OP 大碗(A000050) / 4*4 白紗(9520104) / 燈把(A000060) / 沖洗棉枝(9525131) / 尖電燒頭(A000132)", "supplies": "15號 刀片 / 3/0 Silk(W212) / 2-0 Silk / 自黏彈紗 / 10ml空針 / 6/0 Nylon / 4/0 polysorb(GG-181) / 27號 針頭 / 5-0 polysorb(GL-202) / 5-0 Nylon", "meds": "2% Xylocaine / tetracycline 藥", "implantNotes": "", "doctorHabits": "Dr.王炯珵：15號 刀片、2-0 Silk、4/0 polysorb(GG-181)、Nylon、* 傷口: tetracycline 藥膏+白紗+自黏彈紗。 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠 / Dr.高銘鴻", "notes": "", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9525, "dept": "泌尿科", "procedure": "Nephrectomy(平躺)", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I + Aq B-I", "tools": "泌尿科基本包(APUR01) / OP 大碗(A000050) / 布瓦特開創器(ARUR020) / 器械盤(A000010) / 蚊鉗(長)(AC0004L) / 燈把(A000060) / 血管鉗 Bulldog(ACGS051) / 導尿包(A000040) / 血管鉗FB471(備)(ACGS100) / 3件手術衣(A200112) / 血管鉗FA355(備)(ACGS080) / 1件手術衣(A200113) / 腎臟鉗(備)(ACUR02) / Lapar包(A200001) / 結石鉗(備)(ACUR01) / 治療巾(A200111) / 骨科抽吸頭(備)(ASOR010) / 中單(A200114) / 艾力斯鉗EA020(備)(AC0006L) / 4*4顯紗(9520140) / 深肌鉤BT443(備)(AR00160) / 沖洗棉枝(9525131) / 最深肌鉤BT445(備)(AR00170) / 4*4 白紗(9520104) / 自由板BT761(備)(ARGS050) / 4*6棉墊(9520201) / 電燒頭(長平)(A000133) / 18*18 腹部墊(9520203)", "supplies": "10、11、20號 刀片 / 1/0 Silk(1919-61) / 4-0 Polysorb(GL-181) / 花生米*2包 / 8號 拋棄式尿管 / 2/0 Silk(1919-51) / 3-0 Prolene(VP522) / CWV Drain 7mm/10mm / 血管識別帶 / 3/0 Silk(W212) / 4-0 Prolene(VP557) / CWV 球 / Foley+尿袋 / 3/0 Silk(GS-33-M) / 2/0 Nylon(1727-51) / 束腹帶 / N-G tube +小腿尿袋 / 1-0 Maxon(GMM-563-L) / 3/0 Nylon(1744-41) / Rubber(細)(粗)_ / 灌食空針 / 1/0 Vicry(vcp359) / Skin staple35W / 小腿尿袋 / 記號筆 / 2/0 Vicry(vcp345) / Surgicel 5*35 / Mefix / 安全針座 / 2/0 Vicry(vcp317) / Bone Wax / Surgiclip (M)or(L) / 3/0 Vicry(vcp311) / 導電片 / 但丁 / 3-0 Polysorb(GL-182) / 清潔片", "meds": "20ml N/S / 20ml D/W / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：1-0. 2-0.3-0Silk、Vicry(vcp359)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、* wound cover:優膏+Pad+Mefix。 / Dr.陳建志：1-0. 2-0.3-0Silk、Vicry(vcp359)、1-0 Maxon(GMM-563-L)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、* wound cover:優膏+Pad+Mefix。 / Dr.陳建華：1-0. 2-0.3-0Silk、Vicry(vcp359)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、* wound cover:優膏+Pad+Mefix。 / Dr.柯智群：1-0. 2-0.3-0Silk、Vicry(vcp359)、Vicry(vcp345)、Nylon或、Skin staple35W、花生米*2包、血管識別帶、8號 拋棄式尿管、* wound cover:優膏+Pad+Mefix。 / Dr.陳柏誠：1-0. 2-0.3-0Silk、Vicry(vcp359)、Vicry(vcp345)、Nylon或、Skin staple35W、花生米*2包、血管識別帶、8號 拋棄式尿管、* wound cover:優膏+Pad+Mefix。", "notes": "1.備諧波或Ligasure。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9526, "dept": "泌尿科", "procedure": "Nephrectomy(側躺)", "anesthesia": "ETGA", "position": "側躺", "disinfect": "Alcohol B-I", "tools": "泌尿科基本包(APUR01) / 導尿包(A000040) / 肋骨切開器(APUR050) / 3件手術衣(A200112) / 蚊鉗(長)(AC0004L) / 1件手術衣(A200113) / 血管鉗 Bulldog(ACGS051) / Lapar包(A200001) / 腎臟鉗(備)(ACUR02) / 治療巾(A200111) / 深肌鉤BT443(備)(AR00160) / 中單(A200114) / 最深肌鉤BT445(備)(AR00170) / 4*4顯紗(9520140) / 自由板BT761(備)(ARGS050) / 沖洗棉枝(9525131) / 電燒頭(長平)(A000133) / 4*4 白紗(9520104) / OP 大碗(A000050) / 4*6棉墊(9520201) / 器械盤(A000010) / 18*18 腹部墊(9520203) / A000060 RUR020 IGS17 / 燈把 布瓦特 Endo bulldog / KOR12 KOR04S KOR04M / 磨骨器(備用) (備用) (備用)", "supplies": "10、11、20號 刀片 / 1/0 Silk(1919-61) / 4-0 Polysorb(GL-181) / 花生米*2包 / 8號 拋棄式尿管 / 2/0 Silk(1919-51) / 3-0 Prolene(VP522) / CWV Drain 7mm/10mm / 血管識別帶 / 3/0 Silk(W212) / 4-0 Prolene(VP557) / CWV 球 / Foley+尿袋 / 3/0 Silk(GS-33-M) / 2/0 Nylon(1727-51) / 束腹帶 / N-G tube +小腿尿袋 / 1-0 Maxon(GMM-563-L) / 3/0 Nylon(1744-41) / Rubber(細)(粗)_ / 灌食空針 / 1/0 Vicry(vcp359) / Skin staple35W / 小腿尿袋 / 記號筆 / 2/0 Vicry(vcp345) / Surgicel 5*35 / Mefix / 安全針座 / 2/0 Vicry(vcp317) / Bone Wax / Surgiclip (M)or(L) / 3/0 Vicry(vcp311) / 導電片 / 但丁 / 3-0 Polysorb(GL-182) / 清潔片", "meds": "20ml N/S / 20ml D/W / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：1-0. 2-0.3-0Silk、Vicry(vcp359)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、Bone Wax、* wound cover:優膏+Pad+Mefix。 / Dr.陳建志：1-0. 2-0.3-0Silk、Vicry(vcp359)、1-0 Maxon(GMM-563-L)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、Bone Wax、* wound cover:優膏+Pad+Mefix。 / Dr.陳建華：1-0. 2-0.3-0Silk、Vicry(vcp359)、2/0 Vicry(vcp345)、3-0 Nylon、花生米*2包、血管識別帶、8號 拋棄式尿管、Bone Wax、* wound cover:優膏+Pad+Mefix。 / Dr.柯智群：1-0. 2-0.3-0Silk、Vicry(vcp359)、Vicry(vcp345)、Nylon或、Skin staple35W、花生米*2包、血管識別帶、8號 拋棄式尿管、Bone Wax、* wound cover:優膏+Pad+Mefix。 / Dr.陳柏誠：1-0. 2-0.3-0Silk、Vicry(vcp359)、Vicry(vcp345)、Nylon或、Skin staple35W、花生米*2包、血管識別帶、8號 拋棄式尿管、Bone Wax、* wound cover:優膏+Pad+Mefix。", "notes": "1.備諧波刀或Ligasure。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9527, "dept": "泌尿科", "procedure": "Radical Prostatectomy", "anesthesia": "ETGA", "position": "平躺", "disinfect": "Alcohol B-I +Aq B-I", "tools": "泌尿科基本包(APUR01) / 導尿包(A000040) / 布瓦特開創器(ARUR02A) / 治療巾(A200111) / Allis(大)(AC0006L) / 中單(A200114) / 蚊鉗(長)(AC0004L) / OP 大碗(A000050) / 自由板(ARGS05) / 4*4顯紗(9520140) / 腎臟鉗(ACUR02) / 沖洗棉枝(9525131) / 3件手術衣(A200112) / 4*4 白紗(9520104) / 1件手術衣(A200113) / 4*6棉墊(9520201) / Lapar包(A200001) / 18*18 腹部墊(9520203) / 器械盤(A000010) / 電燒頭(長平)(A000133) / 燈把(A000060)", "supplies": "10、20號 刀片 / Surgiclip (M)or(L) / CWV Drain 7mm/10mm / 1/0 Silk / 8號 拋棄式尿管 / 清潔片 / CWV 球 / 2/0 Silk(1919-51) / 血管識別帶 / 導電片 / Rubber(細) / 3/0 Silk(W212) / Foley+尿袋 / 記號筆 / 小腿尿袋 / 1/0 Vicry(vcp359) / N-G tube +小腿尿袋 / Surgicel 5*35 / 宜拉 / 2/0 Vicry(vcp345) / 灌食空針 / Skin staple35W / 花生米*2包 / 3/0 Nylon / 但丁 / 束腹帶", "meds": "20ml N/S / 20ml D/W / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.wound cover:優膏+Pad+宜拉。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9528, "dept": "泌尿科", "procedure": "Enterocystoplasty", "anesthesia": "ETGA", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I + Aq B-I", "tools": "泌尿科基本包(APUR01) / 3件手術衣(A200112) / 布瓦特開創器(ARUR020) / 1件手術衣(A200113) / 組織鑷(細)(AF0005S) / Lapar包(A200001) / 一般小持針器(AH0001S) / 治療巾(A200111) / 腸胃鉗包(APGS090) / 中單(A200114) / 深部器械包(APGS120) / 4*4顯紗(9520140) / 蚊鉗(長)(AC0004L) / 沖洗棉枝(9525131) / 電燒頭(長平)(A000133) / 4*4 白紗(9520104) / OP 大碗(A000050) / 4*6棉墊(9520201) / 器械盤(A000010) / 18*18 腹部墊(9520203) / 燈把(A000060) / 導尿包(A000040)", "supplies": "10、11、20號 刀片 / Surgiclip S/M / 3-0 Vicry(vcp311)多包 / Skin staple 35W / 導電片 / Surgicel 5*35 / 3/0 Nylon / Rubber(粗)+小腿尿袋 / 清潔片 / 1/0 Silk / 4-0 Maxon(6217-31) / 花生米*2包 / Foley+尿袋(table) / 2/0 Silk(1919-51) / CWV Drain 7mm/10mm / 束腹帶 / 3 Way22 Fr. Foley / 3/0 Silk(W212) / CWV球 / Mefix / BT Set / 3-0 Silk(GS33M) / 10/20/60ml空針 / 記號筆 / N-G tube +小腿尿袋 / 1/0 Vicry(vcp359) / 血管試別帶 / 安全針座 / 灌食空針 / 2-0 Vicry(vcp345)", "meds": "20ml N/S / 20ml D/W / 2000ml N/S(連續沖洗) / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：2-0.3-0Silk、3-0 Silk(GS33M)、Vicry(vcp359)、Vicry(vcp345)、Vicry(vcp311)、3-0 Nylon、花生米*2包、* wound cover:優紗+Pad+Mefix。 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "*GS：1-0 Silk、3-0 Silk(GS33M)、4-0 Maxon *Rubber drain常放renal fossa的位置， Rubber(粗)+小腿尿袋。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9529, "dept": "泌尿科", "procedure": "Renal Biopsy", "anesthesia": "LA", "position": "俯臥", "disinfect": "Alcohol B-I", "tools": "外科小包(PGS030) / 沖洗棉枝(9525131) / 手術碗(小)(A000051) / 4*4 白紗(9520104) / 中單包(A200114) / 4條治療巾(A200111) / Sona+Guide", "supplies": "11號刀片 / PTC Needle 18號 / Jelly 3包 / 10ml/20ml空針 / Biopsy槍 / 3-0 Nylon / 25號針頭 / 濾紙 / 宜拉", "meds": "2% Xylocaine / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵：*濾紙放在很濕的紗布、上、*平躺一天 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "備超音波機器。 要刷手。 3.檢體放置流程: (1)免疫螢光固定液(放藥用冰箱，須冷藏4℃;放入標本後就不須冷藏)*1 (2)電顯固定液(放藥用冰箱，須冷藏4℃;放入標本後就不須冷藏)*1 (3)福馬林固定液(室溫)*1 (4)濾紙不放入1.2.3瓶內，小心檢體不要夾斷了 (5)檢體上貼上病人基本資料並註明採檢日期,用泡泡袋包好放入盒子外貼病理封條  (6)本院病理檢查申請單(單位批價、病理外送; 病理單註明外送) *1 (7)馬偕醫院病理組織檢查委託單*1 (8)病歷內附腎臟內科醫師已填寫完成的Renal Biopsy Case Information 單張 (一份1張) (9)黃色信封袋*1(裝1.2.3.7.8) (10)宅配勾隔日中午到即可 (11)黑貓宅急便電話(0972597944 ) (26710792) (12)馬偕病理科”楊小姐”電話02-28094661﹟2493", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9530, "dept": "泌尿科", "procedure": "Ureteroureterostomy", "anesthesia": "ETGA", "position": "側躺 or架腳", "disinfect": "Alcohol B-I +Aq B-I", "tools": "泌尿科基本包(APUR01) / 燈把(A000060) / 布瓦特開創器(ARUR020) / Lapar包(A200001) / 蚊鉗(長)(AC0004L) / 治療巾(A200111) / 腎臟鉗(ACUR02) / 中單(A200114) / 深肌鉤BT443(AR00160) / 4*4顯紗(9520140) / 最深肌鉤BT445(AR00170) / 沖洗棉枝(9525131) / Bone cutter(側躺用)(KOR04M) / 4*4 白紗(9520104) / 磨骨器 (側躺用)(KOR12) / 4*6棉墊(9520201) / 電燒頭(長平)(A000133) / 18*18 腹部墊(9520203) / OP 大碗(A000050) / 腳套(A200117) / 器械盤(A000010) / 鏡頭線 / 0度or 12膀胱鏡70度膀胱鏡 / 21Fr. Sheath / R-P 鏡 / 光源線 / 6Fr. 輸尿管鏡(URS) / Brigde (短橋) / 橘色Nipple", "supplies": "10、11、20號 刀片 / CWV Drain 7mm/10mm / BT Set / 3-0 Silk(GS33M) / 導電片 / CWV球 / 鏡頭套 / 1/0 Vicry(vcp359) / 清潔片 / Bone Wax(側躺用) / (直)Gudie Wire / 2-0 Vicry(vcp345) / Foley+尿袋 / 血管試別帶 / 束腹帶 / 3-0 Vicry(vcp311) / 但丁 / Surgicel 5*35 / Mefix / 2/0 Nylon(1727-51) / 記號筆 / Skin staple35W / 2/0 Silk(1919-51) / 3/0 Nylon(1744-41) / 10/20ml空針 / 8號 拋棄式尿管 / 3/0 Silk(W212)", "meds": "20ml N/S / 20ml D/W / 1000ml N/S / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.架腳時要備影像系統、高速沖洗pump 機。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}, {"id": 9531, "dept": "泌尿科", "procedure": "Open Cystolithotomy", "anesthesia": "SA or ETGA or IVG", "position": "Supine position(平躺)", "disinfect": "Alcohol B-I、Aq B-I", "tools": "泌尿科表淺包(APUR020) / 3件手術衣(A200112) / 下腹開(ARGN010) / 1件手術衣(A200113) / 結石鉗(ACUR01) / Lapar包(A200001) / 肌鉤(AR0006) / 4*4/10片白紗(9520104) / 丹尼士開創器(備)(ARUR01) / 4*4顯紗(9520140) / OP 大碗(A000050) / 沖洗棉枝/7\"/包(9525131) / 器械盤(A000010)", "supplies": "10、15號 刀片 / 10ml空針 / 灌食空針(灌膀胱使用) / 2-0 Vicry(vcp345/317)數條 / 導電片 / 但丁 / 20Fr.Foley+尿袋(台上on) / 3-0 Vicry(vcp311)數條 / 清潔片 / 記號筆 / 2/0 Silk(1919-51) / 3/0 Nylon(1744-41) / 矽質16Fr. Foley / 1/0 Vicry(vcp359/346)", "meds": "20ml N/S / 20ml D/W / 優膏", "implantNotes": "", "doctorHabits": "Dr.王炯珵 / Dr.陳建志 / Dr.陳建華 / Dr.柯智群 / Dr.陳柏誠", "notes": "1.2-0、3-0 Vicry吊膀胱，關膀胱。 2.若膀胱不夠脹會台上on Foley用灌食空針抽N/S打。 3.Wound cover:優膏+白紗+Mefix。", "status": "已審核", "author": "原編著", "editor": "", "editorDate": "", "reviewer": "郭妍伶", "reviewDate": "115.06.17", "version": 1, "pending": null}];
+function loadData(){
+  try{
+    const s = localStorage.getItem(STORAGE_KEY);
+    if(s) return JSON.parse(s);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+async function saveData(){
+  // 先存本機，確保不會白改
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
+  showToast('✅ 已送出（本機已存）');
+  // 雲端在背景同步，成功或失敗都不卡畫面
+  try {
+    const ok = await syncToCloud(DATA);
+    if(ok) showToast('☁️ 已同步雲端，其他人可看到');
+    else showToast('⚠️ 雲端同步未完成，稍後會自動重試');
+    return ok;
+  } catch(e) {
+    showToast('⚠️ 雲端暫時無法連線，資料已存本機');
+    return false;
+  }
+}
+
+let DATA = loadData();
+let currentUser = null;
+let currentDept = '', currentAne = 'all', currentSearch = '', currentDoctor = 'all';
+let lockedDept = '';
+let fpId = null;
+let editingId = null, reviewTargetId = null, selectedReviewer = null;
+
+function isReviewer(name){ return ADMINS.includes(name) || Object.values(DEPT_REVIEWERS).some(a=>a.includes(name)); }
+function canReview(name,dept){ return ADMINS.includes(name)||(DEPT_REVIEWERS[dept]||[]).includes(name); }
+function getUserLabel(name){
+  if(ADMINS.includes(name)) return '全科管理員';
+  const depts=Object.entries(DEPT_REVIEWERS).filter(([d,a])=>a.includes(name)).map(([d])=>d);
+  if(depts.length) return depts.join('、')+' 審核者';
+  return '編輯者';
+}
+
+// LOGIN
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('logoutBtn').addEventListener('click', doLogout);
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{
+  if(!currentUser) return;
+  const btn=document.getElementById('refreshBtn');
+  btn.textContent='⏳ 同步中';
+  btn.disabled=true;
+  const cloudData = await loadFromCloud();
+  if(cloudData && cloudData.length > 0){
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    const cloudIds = new Set(cloudData.map(d=>d.id));
+    const newItems = DEFAULT_DATA.filter(d=> !cloudIds.has(d.id) );
+    DATA = [...cloudData, ...newItems];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    if(newItems.length > 0) syncToCloud(newItems).catch(()=>{});
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    if(nowPending > 0) showToast(`🔔 有 ${nowPending} 筆待審核術式`);
+    else showToast('✅ 已是最新資料');
+  } else { showToast('⚠️ 無法取得雲端資料'); }
+  btn.textContent='↻ 同步';
+  btn.disabled=false;
+});
+
+let pollTimer = null;
+
+async function doLogin(){
+  const name = document.getElementById('loginName').value.trim();
+  if(!name){ showToast('請輸入姓名'); return; }
+  if(!STAFF_SET.has(name)){ showToast('此姓名不在手術室人員名單中，無法登入'); return; }
+  currentUser = name;
+  try{ localStorage.setItem('sp_current_user', name); }catch(e){}
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userNameDisplay').textContent = name;
+  document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
+  // 先用本機資料快速顯示，不等雲端
+  // 先用 DEFAULT_DATA 快速顯示
+  DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  try{ const _p=new URLSearchParams(location.search).get('dept'); if(_p && GROUP_DEPT_SET.has(_p)){ currentDept=_p; lockedDept=_p; const _t=document.getElementById('hdrTitle'); if(_t)_t.textContent=_p; const _su=document.getElementById('hdrSub'); if(_su)_su.textContent='手術用物準備手冊'; } }catch(e){}
+  renderAll();
+  showToast('⏳ 從雲端載入資料...');
+  startPolling();
+  // 從 Supabase 載入完整最新資料
+  loadFromCloud().then(cloudData => {
+    if(!cloudData || cloudData.length === 0){
+      showToast('✅ 已載入（' + DATA.length + ' 筆）');
+      return;
+    }
+    const cloudIds = new Set(cloudData.map(d=>d.id));
+    // 以雲端為主（保留使用者修改），檔案只補雲端沒有的新 id
+    const newItems = DEFAULT_DATA.filter(d=> !cloudIds.has(d.id) );
+    DATA = [...cloudData, ...newItems];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    renderAll();
+    showToast('✅ 已載入（' + DATA.length + ' 筆）');
+    if(newItems.length > 0) syncToCloud(newItems).catch(()=>{});
+  }).catch(()=>{ showToast('✅ 已載入（' + DATA.length + ' 筆）'); });
+}
+function doLogout(){
+  stopPolling();
+  currentUser = null;
+  try{ localStorage.removeItem('sp_current_user'); }catch(e){}
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginName').value = '';
+}
+
+function startPolling(){
+  stopPolling();
+  pollTimer = setInterval(async ()=>{
+    if(!currentUser) return;
+    const cloudData = await loadFromCloud();
+    if(!cloudData || cloudData.length === 0) return;
+    // 雲端只存審核狀態，合併回 DATA
+    const prevPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    const cloudMap = new Map(cloudData.map(d=>[d.id, d]));
+    DATA = DATA.map(d=>{
+      const cloud = cloudMap.get(d.id);
+      if(!cloud) return d;
+      return {...d, status: cloud.status||d.status, pending: cloud.pending||null,
+        editor: cloud.editor||'', editorDate: cloud.editorDate||'',
+        reviewer: cloud.reviewer||'', reviewDate: cloud.reviewDate||''};
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    const nowPending = DATA.filter(s=>s.pending && canReview(currentUser,s.dept)).length;
+    updateNotif();
+    if(nowPending > prevPending){
+      renderCards();
+      showToast('🔔 有 ' + nowPending + ' 筆新增待審核術式！');
+    }
+  }, 30000);
+}
+function stopPolling(){
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+}
+
+// FILTER
+function getFiltered(){
+  return DATA.filter(s=>{
+    const dOk = lockedDept ? s.dept===lockedDept : (currentDept===''||s.dept===currentDept);
+    if(!dOk) return false;
+    if(!currentSearch) return true;
+    const q = currentSearch.toLowerCase();
+    return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
+  });
+}
+
+function renderAll(){
+  renderDepts();
+  renderCards();
+  updateNotif();
+}
+
+
+
+
+
+
+
+
+function renderDepts(){
+  const existing = new Set(DATA.map(d=>d.dept));
+  // 強制加入 DEFAULT_DATA 的科別，避免雲端舊資料讓按鈕消失
+  DEFAULT_DATA.forEach(d=>existing.add(d.dept));
+  if(lockedDept){ document.getElementById('deptWrap').style.display='none'; document.getElementById('deptWrap').innerHTML=''; return; }
+  document.getElementById('deptWrap').innerHTML = ALL_DEPTS
+    .filter(d=>d!=='全部科別'&&existing.has(d))
+    .map(d=>{
+      const color = DEPT_COLORS[d]||'#5b8fa8';
+      const isActive = currentDept===d;
+      const style = d==='全部科別'
+        ? (isActive?'background:var(--teal);border-color:var(--teal);color:#fff;':'')
+        : (isActive?`background:${color};border-color:${color};color:#fff;box-shadow:0 2px 8px ${color}40;`:`border-color:${color}60;color:${color};`);
+      return `<button class="dept-btn" style="${style}" onclick="setDept('${d}')">${d}</button>`;
+    }).join('');
+}
+
+function setDept(d){ currentDept=d; renderDepts(); renderCards(); }
+
+function renderFilters(){ /* 麻醉篩選已移除 */ }
+function setAne(k){ currentAne=k; renderFilters(); renderCards(); }
+
+document.getElementById('nav-back').addEventListener('click',()=>{
+  document.getElementById('fpBack').click();
+});
+
+document.getElementById('searchInput').addEventListener('input', e=>{
+  currentSearch = e.target.value;
+  renderCards();
+});
+
+function aneBadge(a){
+  const u=a.toUpperCase();
+  if(u.includes('ETGA')) return `<span class="badge badge-blue">ETGA</span>`;
+  if(u.includes('L.A')||u.includes('IVG')) return `<span class="badge badge-green">L.A/IVG</span>`;
+  return `<span class="badge badge-amber">${a.split(' ')[0]}</span>`;
+}
+function statusBadge(s){
+  return s==='已審核'?'<span class="badge badge-approved">✓ 已審核</span>':'<span class="badge badge-pending">⏳ 待審核</span>';
+}
+function deptBadge(d){
+  const c=DEPT_COLORS[d]||'#5b8fa8';
+  return `<span class="badge" style="background:${c}18;color:${c};border-color:${c}40;font-size:13px;">${d}</span>`;
+}
+
+function renderCards(){
+  const f = getFiltered();
+  const deptCount = currentDept===''
+    ? DATA.length
+    : DATA.filter(d=>d.dept===currentDept).length;
+  const pendingCount = DATA.filter(d=>d.pending).length;
+  let stats = `<div class="stat-pill">總計 <strong>${lockedDept?DATA.filter(d=>d.dept===lockedDept).length:DATA.length}</strong> 筆</div>`;
+  if(pendingCount>0) stats += `<div class="stat-pill" style="border-color:var(--red);color:var(--red);">🔴 待審 <strong>${pendingCount}</strong></div>`;
+  document.getElementById('statsBar').innerHTML = stats;
+  const w = document.getElementById('cardsWrap');
+  if(!f.length){ w.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到符合的術式</div></div>'; return; }
+  w.innerHTML = f.map((s,i)=>{
+    const color = DEPT_COLORS[s.dept]||'#5b8fa8';
+    return `<div class="card" id="card-${s.id}" style="animation-delay:${i*.02}s;border-left-color:${color};" onclick="openFp(${s.id})">
+      <div class="card-header">
+        <div class="card-title">${s.procedure}${s.pending?' <span style="color:var(--red);font-size:14px;font-weight:700;">●待審</span>':''}</div>
+        <div class="card-chevron">›</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// FULLPAGE
+function toROC(d){
+  // 將日期字串或Date轉民國年 115.07.01
+  let dt;
+  if(!d) dt=new Date();
+  else if(d instanceof Date) dt=d;
+  else { const t=Date.parse(d); dt=isNaN(t)?new Date():new Date(t); }
+  const y=dt.getFullYear()-1911;
+  const m=String(dt.getMonth()+1).padStart(2,'0');
+  const day=String(dt.getDate()).padStart(2,'0');
+  return y+'.'+m+'.'+day;
+}
+function verLabel(s){
+  const v=s.version||1;
+  const dt=s.reviewDate? (/^\d+\.\d/.test(s.reviewDate)? s.reviewDate : toROC(s.reviewDate)) : DEFAULT_REVIEW_DATE;
+  return `<span class="badge badge-ver">${dt}　V${v}</span>`;
+}
+function openFp(id){
+  fpId=id;
+  document.getElementById('fullpage').style.cssText='display:block;';
+  document.getElementById('bottomNav').style.display='flex';
+  document.getElementById('fullpage').scrollTop=0;
+  renderFp();
+}
+document.getElementById('fpBack').addEventListener('click',()=>{
+  document.getElementById('fullpage').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  fpId=null;
+  renderDepts();
+});
+
+document.getElementById('fpPrint').addEventListener('click',()=>{
+  if(!fpId) return;
+  const s = DATA.find(d=>d.id===fpId);
+  if(!s) return;
+  const row=(label,val)=> val? `<tr><th>${label}</th><td>${String(val).replace(/ \/ /g,'<br>')}</td></tr>`:'';
+  const verTxt = (s.reviewDate? (/^\d+\.\d/.test(s.reviewDate)? s.reviewDate : toROC(s.reviewDate)) : DEFAULT_REVIEW_DATE)+'　V'+(s.version||1);
+  const html = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>${s.procedure}</title>
+  <style>
+    *{font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;}
+    body{padding:24px 28px;color:#222;}
+    h1{font-size:22px;margin:0 0 2px;}
+    .dept{color:#666;font-size:14px;margin-bottom:2px;}
+    .ver{color:#888;font-size:13px;margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;vertical-align:top;font-size:14px;line-height:1.6;}
+    th{background:#f2f2f2;width:90px;white-space:nowrap;font-weight:700;}
+    .foot{margin-top:18px;font-size:12px;color:#999;text-align:right;}
+    .dr-hl{background:linear-gradient(transparent 35%, #fff3a0 35%, #ffe95c 90%, transparent 90%);border-radius:3px;padding:0 3px;font-weight:700;color:#3a2f00;}
+    @media print{body{padding:0;} .dr-hl{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+  </style></head><body>
+  <div class="dept">${s.dept}</div>
+  <h1>${s.procedure}</h1>
+  <div class="ver">${verTxt}${s.reviewer?'　審核：'+s.reviewer:''}</div>
+  <table>
+    ${row('麻醉方式',s.anesthesia)}
+    ${row('姿勢',s.position)}
+    ${row('消毒方式',s.disinfect)}
+    ${row('工具/器械',s.tools)}
+    ${row('耗材',s.supplies)}
+    ${row('藥物',s.meds)}
+    ${row('植入物/代消',s.implantNotes)}
+    ${s.doctorHabits? `<tr><th>醫師習慣</th><td>${hlDr(String(s.doctorHabits).replace(/ \/ /g,'<br>'))}</td></tr>`:''}
+    ${row('備註',s.notes)}
+  </table>
+  <div class="foot">手術室手術用物準備手冊　列印日期 ${toROC(new Date())}</div>
+  <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else { showToast('請允許彈出視窗以列印'); }
+});
+document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
+
+
+function renderFp(){
+  const s=DATA.find(d=>d.id===fpId); if(!s) return;
+  const color=DEPT_COLORS[s.dept]||'#5b8fa8';
+  document.getElementById('fpDept').textContent=s.dept;
+  document.getElementById('fpDept').style.color=color;
+  document.getElementById('fpTitle').textContent=s.procedure;
+  let body='';
+  body+=`<div class="fp-meta">${verLabel(s)}</div>`;
+ 
+  let rec=[];
+  if(s.editor) rec.push(`<span>✏️ 修改者：<strong>${s.editor}</strong>${s.editorDate?' ('+s.editorDate+')':''}</span>`);
+  if(s.reviewer) rec.push(`<span>✅ 審核者：<strong>${s.reviewer}</strong>${s.reviewDate?' ('+s.reviewDate+')':''}</span>`);
+  body+=`<div class="fp-record">${rec.join('')}</div>`;
+  if(s.pending){
+    const canRev=canReview(currentUser,s.dept);
+    let diffs='';
+    const fields=[['術式名稱',s.procedure,s.pending.procedure],['麻醉方式',s.anesthesia,s.pending.anesthesia],
+      ['手術姿勢',s.position,s.pending.position],['消毒方式',s.disinfect,s.pending.disinfect],
+      ['工具器械',s.tools,s.pending.tools],['耗材',s.supplies,s.pending.supplies],
+      ['藥物',s.meds,s.pending.meds],['備註',s.implantNotes,s.pending.implantNotes],
+      ['醫生習慣',s.doctorHabits,s.pending.doctorHabits],['注意事項',s.notes,s.pending.notes]];
+    fields.forEach(([label,old,nw])=>{
+      if((old||'')!==(nw||''))
+        diffs+=`<div class="diff-row"><div class="diff-label">${label}</div><div class="diff-old">${old||'（空白）'}</div><div class="diff-new">${nw||'（空白）'}</div></div>`;
+    });
+    body+=`<div class="pending-notice">
+      <div class="pending-title">⏳ 待審核的修改內容</div>
+      <div class="pending-sub">✏️ 修改者：<strong>${s.pending.editor}</strong>（${s.pending.editorDate}）</div>
+      ${diffs||'<div style="font-size:15px;color:var(--text3)">（無欄位變更）</div>'}
+      ${canRev?`<button class="btn-review" onclick="openReview(${s.id})">✅ 審核通過，正式公佈</button>`:'<div style="font-size:14px;color:var(--text3);margin-top:8px;">（需等待本科審核者審核）</div>'}
+    </div>`;
+  }
+  body+=`
+      <div class="fp-section"><div class="fp-label c-amber">姿勢</div><div class="fp-content">${s.position||'—'}</div></div>
+      <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
+      ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.split(/ \/ /).map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
+      ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.split(/ \/ /).map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
+      ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
+      ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
+      ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${hlDr(spaceDoctors(s.doctorHabits))}</div></div>`:''}
+      ${s.notes?`<div class="fp-section"><div class="fp-label c-accent">注意事項</div><div class="fp-content">${s.notes}</div></div>`:''}
+    `;
+  document.getElementById('fpBody').innerHTML=body;
+}
+
+
+// MODAL
+document.getElementById('btnAdd').addEventListener('click',()=>openModal(null));
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.getElementById('modalCancel').addEventListener('click',closeModal);
+document.getElementById('modalSave').addEventListener('click',saveRecord);
+document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('modalOverlay')) closeModal(); });
+
+
+// === 編輯框自動長高 ===
+function autoGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+function bindAutoGrow(){
+  document.querySelectorAll('#modalOverlay textarea').forEach(t=>{
+    if(t._agBound) return;
+    t._agBound=true;
+    t.addEventListener('input',()=>autoGrow(t));
+  });
+}
+function growAllTextareas(){
+  document.querySelectorAll('#modalOverlay textarea').forEach(t=>autoGrow(t));
+}
+
+function openModal(id){
+  editingId=id;
+  const r=id?DATA.find(d=>d.id===id):null;
+  document.getElementById('modalTitle').textContent=id?'編輯術式':'新增術式';
+  document.getElementById('f_editor').value=currentUser||'';
+  document.getElementById('f_dept').value=r?.dept||'骨科';
+  document.getElementById('f_procedure').value=r?.procedure||'';
+  document.getElementById('f_anesthesia').value=r?.anesthesia||'';
+  document.getElementById('f_position').value=r?.position||'';
+  document.getElementById('f_disinfect').value=r?.disinfect||'';
+  document.getElementById('f_tools').value=r?.tools||'';
+  document.getElementById('f_supplies').value=r?.supplies||'';
+  document.getElementById('f_meds').value=r?.meds||'';
+  document.getElementById('f_implantNotes').value=r?.implantNotes||'';
+  document.getElementById('f_doctorHabits').value=r?.doctorHabits||'';
+  document.getElementById('f_notes').value=r?.notes||'';
+  renderPhotoPreviews();
+  const mo = document.getElementById('modalOverlay');
+  mo.classList.add('show');
+  mo.style.zIndex = '400';
+  bindAutoGrow();
+  setTimeout(growAllTextareas, 30);
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); editingId=null; }
+
+// PHOTO HANDLING
+
+
+function compressImage(file, maxW){
+  return new Promise((resolve)=>{
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > maxW){ h = h * maxW / w; w = maxW; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function renderPhotoPreviews(){}
+
+
+
+async function saveRecord(){
+  const p=document.getElementById('f_procedure').value.trim();
+  const a=document.getElementById('f_anesthesia').value.trim();
+  if(!p||!a){ showToast('⚠️ 術式名稱和麻醉方式為必填'); return; }
+  const today=new Date().toLocaleDateString('zh-TW');
+  if(editingId){
+    const idx=DATA.findIndex(d=>d.id===editingId);
+    DATA[idx].pending={
+      procedure:p, anesthesia:a,
+      position:document.getElementById('f_position').value.trim(),
+      disinfect:document.getElementById('f_disinfect').value.trim(),
+      tools:document.getElementById('f_tools').value.trim(),
+      supplies:document.getElementById('f_supplies').value.trim(),
+      meds:document.getElementById('f_meds').value.trim(),
+      implantNotes:document.getElementById('f_implantNotes').value.trim(),
+      doctorHabits:document.getElementById('f_doctorHabits').value.trim(),
+      notes:document.getElementById('f_notes').value.trim(),
+      
+      editor:currentUser, editorDate:today
+    };
+  }else{
+    const newId=Math.max(0,...DATA.map(d=>d.id))+1;
+    DATA.push({
+      id:newId, dept:document.getElementById('f_dept').value,
+      procedure:p, anesthesia:a,
+      position:document.getElementById('f_position').value.trim(),
+      disinfect:document.getElementById('f_disinfect').value.trim(),
+      tools:document.getElementById('f_tools').value.trim(),
+      supplies:document.getElementById('f_supplies').value.trim(),
+      meds:document.getElementById('f_meds').value.trim(),
+      implantNotes:document.getElementById('f_implantNotes').value.trim(),
+      doctorHabits:document.getElementById('f_doctorHabits').value.trim(),
+      notes:document.getElementById('f_notes').value.trim(),
+      
+      status:'待審核', author:currentUser,
+      editor:'', editorDate:'', reviewer:'', reviewDate:'', pending:null
+    });
+  }
+  // 先關閉視窗（不卡住），資料已存本機；雲端在背景同步
+  closeModal();
+  renderAll();
+  if(fpId) renderFp();
+  saveData();
+}
+
+// REVIEW
+function openReview(id){
+  reviewTargetId=id; selectedReviewer=null;
+  const s=DATA.find(d=>d.id===id);
+  const list=[...new Set([...(DEPT_REVIEWERS[s.dept]||[]),...ADMINS])];
+  document.getElementById('reviewProcName').textContent=`「${s.pending?.procedure||s.procedure}」`;
+  document.getElementById('reviewerList').innerHTML=list.map(r=>
+    `<button class="reviewer-btn" onclick="selectReviewer('${r}',this)">${r}</button>`
+  ).join('');
+  document.getElementById('reviewOverlay').classList.add('show');
+}
+function selectReviewer(name,btn){
+  selectedReviewer=name;
+  document.querySelectorAll('.reviewer-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+document.getElementById('reviewCancel').addEventListener('click',()=>{ document.getElementById('reviewOverlay').classList.remove('show'); });
+document.getElementById('reviewOk').addEventListener('click',async ()=>{
+  if(!selectedReviewer){ showToast('請選擇審核者姓名'); return; }
+  const idx=DATA.findIndex(d=>d.id===reviewTargetId);
+  if(idx<0) return;
+  const today=toROC(new Date());
+  const draft=DATA[idx].pending;
+  const prevV=DATA[idx].version||1;
+  Object.assign(DATA[idx],draft);
+  DATA[idx].status='已審核';
+  DATA[idx].reviewer=selectedReviewer;
+  DATA[idx].reviewDate=today;
+  DATA[idx].version=prevV+1;
+  DATA[idx].pending=null;
+  document.getElementById('reviewOverlay').classList.remove('show');
+  await saveData();
+  renderAll();
+  if(fpId===reviewTargetId) renderFp();
+});
+document.getElementById('reviewOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('reviewOverlay')) document.getElementById('reviewOverlay').classList.remove('show'); });
+
+// NOTIF
+function updateNotif(){
+  const myPending=DATA.filter(s=>s.pending && s.pending.editor && canReview(currentUser,s.dept));
+  const banner=document.getElementById('notifBanner');
+  if(myPending.length>0){
+    banner.classList.remove('hidden');
+    document.getElementById('notifTitle').textContent=`🔴 你有 ${myPending.length} 筆術式待審核`;
+    document.getElementById('notifSub').textContent=[...new Set(myPending.map(s=>s.dept))].join('、')+' → 點此查看';
+  }else{ banner.classList.add('hidden'); }
+}
+document.getElementById('notifBanner').addEventListener('click',()=>{
+  const myPending=DATA.filter(s=>s.pending&&canReview(currentUser,s.dept));
+  if(myPending.length>0) openFp(myPending[0].id);
+});
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// 跨科自動登入：若同瀏覽器已登入，換科時免重新輸入
+(function(){
+  try{
+    const saved = localStorage.getItem('sp_current_user');
+    if(saved && STAFF_SET.has(saved)){
+      const el=document.getElementById('loginName');
+      if(el) el.value=saved;
+      doLogin();
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
