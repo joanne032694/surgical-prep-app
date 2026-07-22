@@ -462,7 +462,8 @@ const GROUP_DEPT_SET = new Set(GROUP_DEPTS);
 
 const DEPT_REVIEWERS = {"眼科": ["王嘉羚", "張佩琪", "蕭帆妤", "王婷婷"], "耳鼻喉科": ["洪怡婷", "蕭帆妤", "王婷婷"], "口腔外科": ["謝佩芳", "林昕澄", "蕭帆妤", "王婷婷"]};
 const ADMINS = ["蕭帆妤", "王婷婷"];
-const STAFF = ["何尚謙", "余宗芸", "劉祐呈", "卓湘晴", "吳婉菁", "周芳怡", "張佩琪", "張瑋恩", "張芸甄", "徐禾沐", "曾雅筠", "朱庭宜", "李佳容", "李宜諮", "李宜鵑", "李靜怡", "林奕辰", "林峙廷", "林昕澄", "林靜子", "楊衣甄", "江嘉琪", "汪瑄柔", "洪怡婷", "王嘉羚", "王婷婷", "王婷玉", "王玉仙", "盧貞君", "程郁淳", "簡晏欣", "羅秀如", "蕭帆妤", "蕭睬容", "蘇奕臻", "謝佩芳", "辜嬿潔", "郭妍伶", "鄒昀珊", "鄒芮宸", "陳明瑄", "陳柏宇", "陳玉茹", "陳玥汝", "陳筠心", "陳金燕", "高靖緹", "黃予婕", "黃佩琪", "黃品喆", "黃怡婷", "黃沂晨", "黃淑嬅", "黃玉秀"];
+const STAFF = ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷", "何尚謙", "余宗芸", "劉祐呈"];
+const REVIEWERS = ["李靜怡", "張瑋恩", "蕭帆妤", "王婷婷"];  // 審核權限：科組長和護理長
 const STAFF_SET = new Set(STAFF);
 
 const DEPT_COLORS = {
@@ -614,7 +615,7 @@ let pollTimer = null;
 async function doLogin(){
   const name = document.getElementById('loginName').value.trim();
   if(!name){ showToast('請輸入姓名'); return; }
-  if(!STAFF_SET.has(name)){ showToast('此姓名不在手術室人員名單中，無法登入'); return; }
+  // 所有人都可以登入
   currentUser = name;
   try{ localStorage.setItem('sp_current_user', name); }catch(e){}
   document.getElementById('loginScreen').classList.add('hidden');
