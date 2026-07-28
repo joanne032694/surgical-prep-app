@@ -631,7 +631,7 @@ function getFiltered(){
     if(!dOk) return false;
     if(!currentSearch) return true;
     const q = currentSearch.toLowerCase();
-    return [s.procedure,s.anesthesia,s.position,s.dept,s.tools||'',s.supplies||'',s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
+    return [s.procedure,s.anesthesia,s.position,s.dept,(Array.isArray(s.tools)?s.tools.join("/"):(s.tools||"")),(Array.isArray(s.supplies)?s.supplies.join("/"):(s.supplies||"")),s.notes||'',s.doctorHabits||''].some(v=>v.toLowerCase().includes(q));
   });
 }
 
@@ -825,8 +825,8 @@ function renderFp(){
   body+=`
       <div class="fp-section"><div class="fp-label c-amber">姿勢</div><div class="fp-content">${s.position||'—'}</div></div>
       <div class="fp-section"><div class="fp-label c-teal">消毒方式</div><div class="fp-content">${s.disinfect||'—'}</div></div>
-      ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${s.tools.map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
-      ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${s.supplies.map(t=>`<span class="fp-tag">${t.trim()}</span>`).join('')}</div></div>`:''}
+      ${s.tools?`<div class="fp-section"><div class="fp-label c-accent">工具 ／ 器械</div><div class="fp-tags">${(Array.isArray(s.tools)?s.tools:[]).map(t=>`<span class="fp-tag">${(typeof t==="string"?t:JSON.stringify(t)).trim()}</span>`).join('')}</div></div>`:''}
+      ${s.supplies?`<div class="fp-section"><div class="fp-label c-green">耗材</div><div class="fp-tags">${(Array.isArray(s.supplies)?s.supplies:[]).map(t=>`<span class="fp-tag">${(typeof t==="string"?t:JSON.stringify(t)).trim()}</span>`).join('')}</div></div>`:''}
       ${s.meds?`<div class="fp-section"><div class="fp-label c-red">藥物</div><div class="fp-content" style="color:var(--red);font-weight:700;">${s.meds}</div></div>`:''}
       ${s.implantNotes?`<div class="fp-section"><div class="fp-label c-amber">備註</div><div class="fp-content">${s.implantNotes}</div></div>`:''}
       ${s.doctorHabits?`<div class="fp-section"><div class="fp-label c-teal">醫生習慣</div><div class="fp-content">${hlDr(spaceDoctors(s.doctorHabits))}</div></div>`:''}
