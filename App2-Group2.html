@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -266,7 +265,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="logout-btn btn-tinted" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
       <button class="logout-btn btn-sync" id="refreshBtn">↻ 同步</button>
-      <button class="logout-btn" id="debugCloudBtn" style="display:none;background:#e67e22;color:#fff;border-color:#e67e22;" title="檢視雲端資料">☁️</button><button class="logout-btn" id="cleanPendingBtn" style="display:none;background:#c0392b;color:#fff;border-color:#c0392b;" title="清除雲端所有半殘待審">🧹清假待審</button>
+      <button class="logout-btn" id="debugCloudBtn" style="display:none;background:#e67e22;color:#fff;border-color:#e67e22;" title="檢視雲端資料">☁️</button><button class="logout-btn" id="cleanPendingBtn" style="display:none;background:#c0392b;color:#fff;border-color:#c0392b;" title="清除雲端所有半殘待審">🧹清假待審</button><button class="logout-btn" id="listExtraBtn" style="display:none;background:#2980b9;color:#fff;border-color:#2980b9;" title="檢視雲端多餘筆數">📋多餘</button>
       <button class="logout-btn btn-logout" id="logoutBtn">登出</button>
     </div>
   </div>
@@ -606,6 +605,48 @@ document.getElementById('cleanPendingBtn').addEventListener('click', async ()=>{
   }
   alert('清除完成：\n成功 '+done+' 筆\n失敗 '+fail+' 筆'+(failMsg?'\n\n錯誤：'+failMsg:'')+'\n\n請按同步按鈕重新載入。');
 });
+
+// 列出雲端多餘筆數（雲端有但檔案沒有 或 科別跟檔案不符）
+document.getElementById('listExtraBtn').addEventListener('click', async ()=>{
+  const cloud = await loadFromCloud();
+  if(!cloud){ alert('讀取雲端失敗'); return; }
+  // 建立檔案 id→dept 對照
+  const fileMap = new Map();
+  DEFAULT_DATA.forEach(d=>fileMap.set(d.id, d));
+  const extras=[];    // 雲端有但檔案沒有
+  const wrongDept=[]; // 雲端有,檔案也有,但科別不同
+  cloud.forEach(d=>{
+    const f = fileMap.get(d.id);
+    if(!f){
+      extras.push(d);
+    } else if(f.dept !== d.dept){
+      wrongDept.push({cloud:d, file:f});
+    }
+  });
+  // 依科別分組列出
+  const byDept={};
+  extras.forEach(d=>{
+    if(!byDept[d.dept]) byDept[d.dept]=[];
+    byDept[d.dept].push(d);
+  });
+  let msg = '=== 雲端多餘筆數（檔案沒有的）===\n';
+  msg += '總共 '+extras.length+' 筆\n\n';
+  Object.keys(byDept).sort().forEach(k=>{
+    msg += '【'+k+'】'+byDept[k].length+' 筆:\n';
+    byDept[k].forEach(d=>{
+      msg += '  id='+d.id+' '+d.procedure.substring(0,30)+'\n';
+    });
+    msg += '\n';
+  });
+  if(wrongDept.length>0){
+    msg += '=== 科別跟檔案不符 ===\n'+wrongDept.length+' 筆:\n';
+    wrongDept.forEach(x=>{
+      msg += '  id='+x.cloud.id+' '+x.cloud.procedure.substring(0,25)+
+             ' 雲端='+x.cloud.dept+' 檔案='+x.file.dept+'\n';
+    });
+  }
+  alert(msg);
+});
 document.getElementById('refreshBtn').addEventListener('click', async ()=>{
   if(!currentUser) return;
   const btn=document.getElementById('refreshBtn');
@@ -644,6 +685,7 @@ async function doLogin(){
   if(ADMINS.includes(name)){
     const db=document.getElementById('debugCloudBtn'); if(db) db.style.display='inline-flex';
     const cb=document.getElementById('cleanPendingBtn'); if(cb) cb.style.display='inline-flex';
+    const eb=document.getElementById('listExtraBtn'); if(eb) eb.style.display='inline-flex';
   }
   // 先用本機資料快速顯示，不等雲端
   // 先用 DEFAULT_DATA 快速顯示
