@@ -265,7 +265,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <div style="display:flex;gap:6px;align-items:center;">
       <button class="logout-btn btn-tinted" id="menuBtn" onclick="location.href='index.html'" title="回選單換科">☰ 換科</button>
       <button class="logout-btn btn-sync" id="refreshBtn">↻ 同步</button>
-      <button class="logout-btn" id="debugCloudBtn" style="display:none;background:#e67e22;color:#fff;border-color:#e67e22;" title="檢視雲端資料">☁️</button><button class="logout-btn" id="cleanPendingBtn" style="display:none;background:#c0392b;color:#fff;border-color:#c0392b;" title="清除雲端所有半殘待審">🧹清假待審</button><button class="logout-btn" id="listExtraBtn" style="display:none;background:#2980b9;color:#fff;border-color:#2980b9;" title="檢視雲端多餘筆數">📋多餘</button><button class="logout-btn" id="exportExtraBtn" style="display:none;background:#16a085;color:#fff;border-color:#16a085;" title="匯出多餘資料為JSON">💾匯出</button><button class="logout-btn" id="cleanDupBtn" style="display:none;background:#8e44ad;color:#fff;border-color:#8e44ad;" title="一鍵清除雲端重複筆">🗑️清重複</button>
+      
       <button class="logout-btn btn-logout" id="logoutBtn">登出</button>
     </div>
   </div>
@@ -304,7 +304,7 @@ document.querySelector('link[rel="manifest"]').href = manifestURL;
     <button class="fp-back" id="fpBack">‹</button>
     <div class="fp-info"><div class="fp-dept" id="fpDept"></div><div class="fp-title" id="fpTitle"></div></div>
     <button class="fp-edit" id="fpPrint" title="列印此術式" style="margin-right:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
-        <button class="fp-edit" id="fpDelete" title="刪除此術式（僅管理員）" style="margin-right:8px;display:none;background:#c0392b;color:#fff;border-color:#c0392b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        
         <button class="fp-edit" id="fpEdit">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     </button>
@@ -551,128 +551,10 @@ document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('loginName').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('logoutBtn').addEventListener('click', doLogout);
 
-// 偵錯按鈕：顯示雲端該檔資料的簡要（管理員專用）
-document.getElementById('debugCloudBtn').addEventListener('click', async ()=>{
-  const cloud = await loadFromCloud();
-  if(!cloud){ alert('讀取雲端失敗'); return; }
-  const summary = {};
-  cloud.forEach(d=>{ summary[d.dept] = (summary[d.dept]||0)+1; });
-  const pending = cloud.filter(d=>d.pending);
-  const orphan = cloud.filter(d=>d.pending && !d.pending.editor); // 待審但沒編輯者=半殘
-  let msg = '雲端資料統計：\n';
-  Object.keys(summary).forEach(k=>{ msg += '  '+k+': '+summary[k]+' 筆\n'; });
-  msg += '\n待審總數：'+pending.length+' 筆\n';
-  if(pending.length>0){
-    msg += '待審明細：\n';
-    pending.slice(0,10).forEach(d=>{
-      msg += '  ['+d.dept+'] id='+d.id+' '+d.procedure.substring(0,20)+
-             ' 修改者='+(d.pending.editor||'(空)')+'\n';
-    });
-  }
-  if(orphan.length>0){
-    msg += '\n⚠ 半殘待審(pending無editor)：'+orphan.length+' 筆\n';
-    orphan.forEach(d=>{ msg += '  id='+d.id+' '+d.procedure.substring(0,25)+'\n'; });
-  }
-  alert(msg);
-});
 
-// 一鍵清除雲端所有「半殘待審」（pending 存在但沒 editor，或 pending 內容為空）
-document.getElementById('cleanPendingBtn').addEventListener('click', async ()=>{
-  const cloud = await loadFromCloud();
-  if(!cloud){ alert('讀取雲端失敗'); return; }
-  const bad = cloud.filter(d=>{
-    if(!d.pending) return false;
-    // 判斷半殘：pending 沒有 editor，或 pending 是空物件
-    if(typeof d.pending !== 'object') return true;
-    if(!d.pending.editor && !d.pending.procedure) return true;
-    return false;
-  });
-  if(bad.length===0){ alert('雲端沒有半殘待審'); return; }
-  const list = bad.slice(0,20).map(d=>'  ['+d.dept+'] '+d.procedure.substring(0,20)).join('\n');
-  const ok = confirm('偵測到 '+bad.length+' 筆半殘待審，將把它們的 pending 清空（不刪除術式本身）。\n\n'+list+(bad.length>20?'\n  ...':'')+'\n\n確定清除？');
-  if(!ok) return;
-  let done=0, fail=0, failMsg='';
-  for(const d of bad){
-    try{
-      const res = await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.'+d.id, {
-        method: 'PATCH',
-        headers: {...SUPA_HEADERS, 'Prefer':'return=minimal'},
-        body: JSON.stringify({ pending: null, status: '已審核' })
-      });
-      if(res.ok) done++;
-      else { fail++; if(!failMsg){ const t=await res.text(); failMsg='PATCH '+res.status+': '+t.substring(0,150); } }
-    }catch(e){ fail++; if(!failMsg) failMsg=(e.message||e); }
-  }
-  alert('清除完成：\n成功 '+done+' 筆\n失敗 '+fail+' 筆'+(failMsg?'\n\n錯誤：'+failMsg:'')+'\n\n請按同步按鈕重新載入。');
-});
 
-// 列出雲端多餘筆數（雲端有但檔案沒有 或 科別跟檔案不符）
-document.getElementById('listExtraBtn').addEventListener('click', async ()=>{
-  const cloud = await loadFromCloud();
-  if(!cloud){ alert('讀取雲端失敗'); return; }
-  const fileIds = new Set(DEFAULT_DATA.map(d=>d.id));
-  const extras = cloud.filter(d=>!fileIds.has(d.id));
-  // 依科別分組並排序
-  const byDept={};
-  extras.forEach(d=>{
-    if(!byDept[d.dept]) byDept[d.dept]=[];
-    byDept[d.dept].push(d);
-  });
-  Object.keys(byDept).forEach(k=>byDept[k].sort((a,b)=>a.id-b.id));
-  let msg = '雲端多餘筆數（檔案沒有的）：共 '+extras.length+' 筆\n';
-  msg += '━━━━━━━━━━━━━━━━━━\n';
-  Object.keys(byDept).sort().forEach(k=>{
-    msg += '\n【'+k+'】'+byDept[k].length+' 筆\n';
-    byDept[k].forEach(d=>{
-      const proc=(d.procedure||'(無名)').substring(0,32);
-      const rev=d.reviewer||'?';
-      const pend=d.pending?' [待審]':'';
-      msg += '  id='+d.id+' '+proc+' 審='+rev+pend+'\n';
-    });
-  });
-  msg += '\n━━━━━━━━━━━━━━━━━━\n';
-  msg += '判斷方式：\n';
-  msg += '• 認識的正式術式 → 保留\n';
-  msg += '• 測試殘留(如 TEST/測試) → 用紅垃圾桶刪除\n';
-  msg += '• 不確定 → 先進去看內容再決定';
-  alert(msg);
-});
 
-// 匯出雲端多餘筆數為 JSON 檔（給程式維護者合併進 DEFAULT_DATA）
-document.getElementById('exportExtraBtn').addEventListener('click', async ()=>{
-  const cloud = await loadFromCloud();
-  if(!cloud){ alert('讀取雲端失敗'); return; }
-  const fileIds = new Set(DEFAULT_DATA.map(d=>d.id));
-  const extras = cloud.filter(d=>!fileIds.has(d.id));
-  if(extras.length===0){ alert('沒有多餘筆數可匯出'); return; }
-  const json = JSON.stringify(extras, null, 2);
-  const blob = new Blob([json], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'App2-cloud-extras-'+new Date().toISOString().slice(0,10)+'.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-  alert('已下載 '+extras.length+' 筆到「'+a.download+'」\n\n請把這個檔案傳給程式維護者。');
-});
 
-// 一鍵清除雲端所有重複筆數（管理員操作）
-const CLEAN_DUP_IDS = [2001, 9000, 9004, 9005, 9006, 9007, 9008, 9009, 9010, 9011, 9012, 9013, 9014, 9015, 9016, 9017, 9018, 9019, 9024, 9025, 9026, 9027, 9028, 9029, 10053];
-document.getElementById('cleanDupBtn').addEventListener('click', async ()=>{
-  const ok = confirm('確定刪除雲端這 '+CLEAN_DUP_IDS.length+' 筆重複資料嗎？\n\n這些筆檔案已有或已合併，可安全刪除。\n\n刪除後請按同步。');
-  if(!ok) return;
-  let done=0, fail=0, failMsg='';
-  for(const id of CLEAN_DUP_IDS){
-    try{
-      const res = await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.'+id, {
-        method:'DELETE', headers:SUPA_HEADERS
-      });
-      if(res.ok) done++;
-      else { fail++; if(!failMsg){ const t=await res.text(); failMsg='DELETE '+res.status+': '+t.substring(0,150); } }
-    }catch(e){ fail++; if(!failMsg) failMsg=(e.message||e); }
-  }
-  alert('清除完成：\n成功刪除 '+done+' 筆\n失敗 '+fail+' 筆'+(failMsg?'\n\n錯誤：'+failMsg:'')+'\n\n請按同步按鈕重新載入。');
-});
 document.getElementById('refreshBtn').addEventListener('click', async ()=>{
   if(!currentUser) return;
   const btn=document.getElementById('refreshBtn');
@@ -707,14 +589,6 @@ async function doLogin(){
   document.getElementById('mainApp').style.display = 'block';
   document.getElementById('userNameDisplay').textContent = name;
   document.getElementById('userRoleDisplay').textContent = '｜' + getUserLabel(name);
-  // 全科管理員顯示偵錯按鈕
-  if(ADMINS.includes(name)){
-    const db=document.getElementById('debugCloudBtn'); if(db) db.style.display='inline-flex';
-    const cb=document.getElementById('cleanPendingBtn'); if(cb) cb.style.display='inline-flex';
-    const eb=document.getElementById('listExtraBtn'); if(eb) eb.style.display='inline-flex';
-    const xb=document.getElementById('exportExtraBtn'); if(xb) xb.style.display='inline-flex';
-    const cd=document.getElementById('cleanDupBtn'); if(cd) cd.style.display='inline-flex';
-  }
   // 先用本機資料快速顯示，不等雲端
   // 先用 DEFAULT_DATA 快速顯示
   DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -792,28 +666,34 @@ function getFiltered(){
 
 // 以「科別+術式名」為準合併雲端與檔案資料，避免舊 id 造成重複
 function mergeCloud(cloudData){
-  const keyOf = d => (d.dept||'') + '||' + (d.procedure||'');
-  const fileMap = new Map(DEFAULT_DATA.map(d=>[keyOf(d), d]));
+  // 以「術式名」為主 key（不含 dept），確保同一術式只出現一次；科別以檔案為準（修正雲端錯標）
+  const normProc = s => (s||'').replace(/\s+/g,'').toLowerCase();
+  const fileByProc = new Map(DEFAULT_DATA.map(d=>[normProc(d.procedure), d]));
   const fileIds = new Set(DEFAULT_DATA.map(d=>d.id));
   const out = [];
-  const seen = new Set();
-  // 先放檔案（DEFAULT_DATA）的順序，若雲端有同一筆且 id 相符（代表是現行資料的編輯版）就用雲端
-  const cloudByKey = new Map();
+  const seenProc = new Set();
+  // 先建雲端資料索引：同一術式若有多筆，優先保留檔案中的 id
+  const cloudByProc = new Map();
   (cloudData||[]).forEach(d=>{
-    const k = keyOf(d);
-    // 同一個 key 若有多筆，優先保留 id 在檔案中的那筆
-    if(!cloudByKey.has(k) || fileIds.has(d.id)) cloudByKey.set(k, d);
+    const k = normProc(d.procedure);
+    if(!cloudByProc.has(k) || fileIds.has(d.id)) cloudByProc.set(k, d);
   });
+  // 依檔案順序輸出：檔案有的用檔案版（若雲端該術式 id 與檔案相符則採用雲端最新內容，但科別強制檔案版）
   DEFAULT_DATA.forEach(d=>{
-    const k = keyOf(d);
-    const c = cloudByKey.get(k);
-    out.push(c && fileIds.has(c.id) ? c : d);
-    seen.add(k);
+    const k = normProc(d.procedure);
+    const c = cloudByProc.get(k);
+    if(c && fileIds.has(c.id)){
+      // 雲端有這筆且 id 對得上檔案 → 用雲端內容（可能是使用者剛改的），但科別強制檔案版
+      out.push({...c, dept: d.dept});
+    } else {
+      out.push(d);
+    }
+    seenProc.add(k);
   });
-  // 雲端有、檔案沒有的（使用者自行新增的術式）才補進來
+  // 雲端有、檔案「術式名」也沒有的（使用者自行在 App 內新增的術式）才補進來
   (cloudData||[]).forEach(d=>{
-    const k = keyOf(d);
-    if(!seen.has(k)){ out.push(d); seen.add(k); }
+    const k = normProc(d.procedure);
+    if(!seenProc.has(k)){ out.push(d); seenProc.add(k); }
   });
   return out;
 }
@@ -920,9 +800,6 @@ function openFp(id){
   document.getElementById('fullpage').style.cssText='display:block;';
   document.getElementById('bottomNav').style.display='flex';
   document.getElementById('fullpage').scrollTop=0;
-  // 只有全科管理員能看到刪除按鈕
-  const delBtn=document.getElementById('fpDelete');
-  if(delBtn) delBtn.style.display = (typeof ADMINS!=='undefined' && ADMINS.includes(currentUser)) ? 'inline-flex' : 'none';
   renderFp();
 }
 document.getElementById('fpBack').addEventListener('click',()=>{
@@ -976,37 +853,6 @@ document.getElementById('fpPrint').addEventListener('click',()=>{
 });
 document.getElementById('fpEdit').addEventListener('click',()=>{ if(fpId) openModal(fpId); });
 
-// 刪除功能（僅全科管理員可用）
-document.getElementById('fpDelete').addEventListener('click', async ()=>{
-  if(!fpId) return;
-  const s = DATA.find(d=>d.id===fpId);
-  if(!s) return;
-  const ok = confirm('確定要刪除以下術式嗎？\n\n【'+s.dept+'】'+s.procedure+'\n\n此動作無法復原！雲端資料也會一起刪除。');
-  if(!ok) return;
-  // 從本機移除
-  const idx = DATA.findIndex(d=>d.id===fpId);
-  if(idx<0) return;
-  const delId = fpId;
-  DATA.splice(idx,1);
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }catch(e){}
-  // 刪雲端
-  try{
-    const res = await fetch(SUPA_URL + '/rest/v1/surgical_data?id=eq.' + delId, {
-      method: 'DELETE',
-      headers: SUPA_HEADERS
-    });
-    if(res.ok) showToast('🗑️ 已刪除（本機+雲端）');
-    else {
-      const t = await res.text();
-      showToast('本機已刪除，但雲端失敗');
-      alert('雲端刪除失敗\n\nDELETE ' + res.status + ': ' + t.substring(0,180) + '\n\n（請截圖給程式維護者）');
-    }
-  }catch(e){
-    showToast('本機已刪除，雲端連線失敗');
-  }
-  closeFp();
-  renderAll();
-});
 
 
 function renderFp(){
